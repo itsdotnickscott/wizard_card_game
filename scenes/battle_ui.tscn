@@ -1,0 +1,159 @@
+[gd_scene load_steps=2 format=3 uid="uid://ds5bf8cdlryeg"]
+
+[ext_resource type="Script" path="res://scripts/battle_ui.gd" id="1_bixgw"]
+
+[node name="BattleUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_bixgw")
+metadata/_edit_lock_ = true
+
+[node name="Hand" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 446.0
+offset_right = 938.0
+offset_bottom = 596.0
+alignment = 1
+
+[node name="PlayerStats" type="Label" parent="."]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 278.0
+offset_right = 230.0
+offset_bottom = 379.0
+text = "♥ HEALTH:
+🔮 MANA:
+✖ DISCARD:
+🃏  DECK:"
+
+[node name="HPValue" type="Label" parent="PlayerStats"]
+layout_mode = 0
+offset_left = 111.0
+offset_right = 173.0
+offset_bottom = 23.0
+text = "100/100"
+
+[node name="ManaValue" type="Label" parent="PlayerStats"]
+layout_mode = 0
+offset_left = 111.0
+offset_top = 26.0
+offset_right = 173.0
+offset_bottom = 49.0
+text = "4/4"
+
+[node name="DiscardValue" type="Label" parent="PlayerStats"]
+layout_mode = 0
+offset_left = 111.0
+offset_top = 52.0
+offset_right = 173.0
+offset_bottom = 75.0
+text = "3/3"
+
+[node name="DeckValue" type="Label" parent="PlayerStats"]
+layout_mode = 0
+offset_left = 110.0
+offset_top = 78.0
+offset_right = 178.0
+offset_bottom = 101.0
+text = "28/28"
+
+[node name="EnemyStats" type="Label" parent="."]
+layout_mode = 0
+offset_left = 800.0
+offset_top = 10.0
+offset_right = 1002.0
+offset_bottom = 66.0
+text = "♥ HEALTH:"
+vertical_alignment = 2
+
+[node name="Name" type="Label" parent="EnemyStats"]
+layout_mode = 0
+offset_left = -3.0
+offset_top = 7.0
+offset_right = 189.0
+offset_bottom = 30.0
+text = "⚔ ENEMY ⚔"
+horizontal_alignment = 1
+
+[node name="HPValue" type="Label" parent="EnemyStats"]
+layout_mode = 0
+offset_left = 108.0
+offset_top = 33.0
+offset_right = 191.0
+offset_bottom = 56.0
+text = "100/100"
+
+[node name="Spells" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 312.0
+offset_bottom = 248.0
+
+[node name="Thrust" type="Label" parent="Spells"]
+layout_mode = 2
+text = "❔  MAGIC THRUST               [ 4   4  ]"
+
+[node name="Weave" type="Label" parent="Spells"]
+layout_mode = 2
+text = "❓  CHROMATIC WEAVE      [ 3   4   5  ]"
+
+[node name="Blast" type="Label" parent="Spells"]
+layout_mode = 2
+text = "❔  ELEMENTAL BLAST        [ 4   4   4  ]"
+
+[node name="CastButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 947.0
+offset_top = 445.0
+offset_right = 1102.0
+offset_bottom = 572.0
+text = "🔮 CAST"
+
+[node name="DiscardButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 994.0
+offset_top = 582.0
+offset_right = 1133.0
+offset_bottom = 627.0
+text = "✖ DISCARD"
+
+[node name="SortToggle" type="CheckButton" parent="."]
+layout_mode = 0
+offset_left = 441.0
+offset_top = 611.0
+offset_right = 485.0
+offset_bottom = 635.0
+button_pressed = true
+
+[node name="ElementLabel" type="Label" parent="SortToggle"]
+layout_mode = 0
+offset_left = -67.0
+offset_right = -3.0
+offset_bottom = 23.0
+text = "Element"
+
+[node name="ValueLabel" type="Label" parent="SortToggle"]
+layout_mode = 0
+offset_left = 47.0
+offset_right = 91.0
+offset_bottom = 23.0
+text = "Value"
+
+[node name="SelectLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 838.0
+offset_top = 611.0
+offset_right = 878.0
+offset_bottom = 634.0
+text = "0/3"
+horizontal_alignment = 1
+
+[connection signal="pressed" from="CastButton" to="." method="_on_cast_button_pressed"]
+[connection signal="pressed" from="DiscardButton" to="." method="_on_discard_button_pressed"]
+[connection signal="toggled" from="SortToggle" to="." method="_on_sort_button_toggled"]

@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=3 uid="uid://bbdhec2d0jaoc"]
+
+[ext_resource type="Script" path="res://scripts/card.gd" id="1_032k1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0j5ra"]
+bg_color = Color(0.841309, 0.823926, 0.667196, 0.792157)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="Card" type="Control"]
+custom_minimum_size = Vector2(100, 150)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 100.0
+offset_bottom = 150.0
+script = ExtResource("1_032k1")
+
+[node name="Selected" type="Panel" parent="."]
+visible = false
+z_index = -1
+layout_mode = 0
+offset_left = 7.0
+offset_top = 8.0
+offset_right = 93.0
+offset_bottom = 142.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_0j5ra")
+
+[node name="Button" type="Button" parent="."]
+custom_minimum_size = Vector2(100, 150)
+layout_mode = 0
+offset_right = 100.0
+offset_bottom = 150.0
+text = "1
+🔥"
