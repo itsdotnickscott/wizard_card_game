@@ -17,7 +17,7 @@ func start_battle() -> void:
 func player_turn() -> void:
 	battle_ui.reset_selected_cards()
 	player.draw_to_limit()
-	player.sort_hand(battle_ui.sort_toggle.button_pressed)
+	player.sort_cards(player.hand, battle_ui.sort_toggle.button_pressed)
 	battle_ui.update_display(player)
 
 
@@ -43,7 +43,7 @@ func _ready() -> void:
 
 
 func _on_battle_ui_sort_hand(by_value: bool) -> void:
-	player.sort_hand(by_value)
+	player.sort_cards(player.hand, by_value)
 	battle_ui.update_display(player)
 
 

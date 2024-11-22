@@ -37,7 +37,7 @@ func _update_player_stats(player: Player) -> void:
 	$PlayerStats/HPValue.text = "%d/%d" % [player.health, player.max_health]
 	$PlayerStats/ManaValue.text = "%d/%d" % [player.mana, player.max_mana]
 	$PlayerStats/DiscardValue.text = "%d/%d" % [player.discards_left, player.max_discards]
-	$PlayerStats/DeckValue.text = "%d/%d" % [player.deck.size(), 28]
+	$PlayerStats/DeckValue.text = "%d/%d" % [player.deck.size(), 30]
 	$SelectLabel.text = "%d/%d" % [selected_cards.size(), select_limit]
 
 
