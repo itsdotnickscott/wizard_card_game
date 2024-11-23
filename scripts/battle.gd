@@ -6,8 +6,12 @@ extends Node2D
 @onready var battle_ui: Control = get_node("BattleUI")
 
 
+var total_dmg: float = 0.0
+
+
 ## Currently called in [method _ready].
 func start_battle() -> void:
+	total_dmg = 0.0
 	player.battle_start()
 
 	# For now, only the player gets a turn
@@ -25,7 +29,12 @@ func player_turn() -> void:
 ## The [Player] uses the cast action.
 func cast_action(selected_cards: Array[Card]) -> void:
 	player.cast_cards(selected_cards)
-	enemy.take_dmg(player.calc_dmg(selected_cards))
+
+	var dmg = player.calc_dmg(selected_cards)
+	enemy.take_dmg(dmg)
+	total_dmg += dmg
+	battle_ui.update_enemy_stats(enemy, dmg, total_dmg)
+	
 	player_turn()
 
 

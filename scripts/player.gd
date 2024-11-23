@@ -15,6 +15,7 @@ var mana: int = max_mana
 var discards_left: int = max_discards
 
 var deck: Array[Card] = []
+var max_deck_size: int = 0
 var spellbook: Array[Spell] = []
 
 var hand: Array[Card] = []
@@ -238,5 +239,6 @@ func _spell_analysis() -> void:
 
 func _ready() -> void:
 	deck = _create_base_deck()
+	max_deck_size = deck.size()
 	spellbook = _create_base_spellbook()
 	_spell_analysis()
