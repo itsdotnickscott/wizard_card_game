@@ -30,7 +30,7 @@ func player_turn() -> void:
 func cast_action(selected_cards: Array[Card]) -> void:
 	player.cast_cards(selected_cards)
 
-	var dmg = player.calc_dmg(selected_cards)
+	var dmg := player.calc_dmg(selected_cards)
 	enemy.take_dmg(dmg)
 	total_dmg += dmg
 	battle_ui.update_enemy_stats(enemy, dmg, total_dmg)

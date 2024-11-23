@@ -50,10 +50,10 @@ func cast_cards(selected_cards: Array[Card]) -> bool:
 ## Given an [Array] of [Card] objects, find the spell matching the selection and calculate its
 ## damage value.
 func calc_dmg(selected_cards: Array[Card]) -> float:
-	var base = 0.0
+	var base:= 0.0
 
 	# Check for valid spell in spellbook
-	var valid = valid_spells(selected_cards)
+	var valid := valid_spells(selected_cards)
 
 	for i in range(spellbook.size()):
 		if valid[i]:
@@ -107,7 +107,8 @@ func valid_spells(selected_cards: Array[Card]) -> Array[bool]:
 func valid_set(selected_cards: Array[Card]) -> bool:
 	for i in range(selected_cards.size() - 1):
 		if selected_cards[i].value != selected_cards[i + 1].value:
-			return false
+			if i == selected_cards.size() - 2 and selected_cards[0].value != 2:
+				return false
 	
 	return true
 
@@ -115,6 +116,7 @@ func valid_set(selected_cards: Array[Card]) -> bool:
 ## Returns [code][true][/code] if every [Card] in [param selected_cards] are in ascending
 ## [member Card.value].
 func valid_run(selected_cards: Array[Card]) -> bool:
+	# TODO: Implement face card (W)
 	for i in range(selected_cards.size() - 1):
 		if selected_cards[i].value != (selected_cards[i + 1].value - 1):
 			return false
@@ -157,7 +159,7 @@ func draw_to_limit() -> void:
 ## Draws the top [Card] of the [member Player.deck] to the [member Player.hand]. Returns
 ## the [Card] drawn.
 func draw_card_to_hand() -> Card:
-	var next = deck.pop_front()
+	var next: Card = deck.pop_front()
 
 	if next == null:
 		print("can't draw card, deck empty")
@@ -181,7 +183,7 @@ func reset_deck() -> void:
 ## Sorts [member Player.hand] by [member Card.value] if [param by_value] is [code]true[/code].
 ## Otherwise, it sorts it by [member Card.element]. Modifies the existing [Array].
 func sort_cards(cards: Array[Card], by_value: bool) -> void:
-	var asc_value = func (a: Card, b: Card) -> int:
+	var asc_value := func (a: Card, b: Card) -> int:
 		if by_value:
 			return a.value < b.value
 		else:
@@ -190,17 +192,18 @@ func sort_cards(cards: Array[Card], by_value: bool) -> void:
 	cards.sort_custom(asc_value)
 
 
-## Returns a 27-card_scene [Deck], with three of each value (2-10) split up evenly
-## among three different elements (fire, water, earth).
+## Returns a 30-card_scene [Deck], with three of each value (2-10), and a Face card (W)
+## split up evenly among three different elements (fire, water, earth).[br]
+## Face cards that are worth 11 damage and can be used in runs before 2 and after 10.
 func _create_base_deck() -> Array[Card]:
 	var new_deck: Array[Card] = []
 
-	var val: int = 2
-	var elem: int = 0
+	var val := 2
+	var elem := 0
 
-	for i in range(9):
+	for i in range(10):
 		for j in range(3):
-			var new_card = card_scene.instantiate()
+			var new_card: Card = card_scene.instantiate()
 			new_card.init(val, elem)
 			new_deck.append(new_card)
 			elem = (elem + 1)
@@ -213,9 +216,9 @@ func _create_base_deck() -> Array[Card]:
 ## Returns three starting [Spell] objects, Twin Bolts (Set, 2 Cards, Any), Chromatic Weave
 ## (Run, 3 Cards, Match Any), and Elemental Blast (Set, 3 Cards, Any)).
 func _create_base_spellbook() -> Array[Spell]:
-	var bolt = Spell.new("Twin Bolt", Spell.ValCombo.SET, Spell.ElemCombo.ANY, 2, 0.5)
-	var weave = Spell.new("Elemental Weave", Spell.ValCombo.RUN, Spell.ElemCombo.MATCH_ANY, 3, 1.0)
-	var blast = Spell.new("Chromatic Blast", Spell.ValCombo.SET, Spell.ElemCombo.ANY, 3, 1.25)
+	var bolt := Spell.new("Twin Bolt", Spell.ValCombo.SET, Spell.ElemCombo.ANY, 2, 0.5)
+	var weave := Spell.new("Elemental Weave", Spell.ValCombo.RUN, Spell.ElemCombo.MATCH_ANY, 3, 1.0)
+	var blast := Spell.new("Chromatic Blast", Spell.ValCombo.SET, Spell.ElemCombo.ANY, 3, 1.25)
 
 	return [bolt, weave, blast]
 
@@ -241,4 +244,4 @@ func _ready() -> void:
 	deck = _create_base_deck()
 	max_deck_size = deck.size()
 	spellbook = _create_base_spellbook()
-	_spell_analysis()
+	#_spell_analysis()

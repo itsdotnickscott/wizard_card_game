@@ -42,7 +42,8 @@ func init(val, elem) -> void:
 
 ## Sets the text of the button to the value/element of the card.
 func _set_display() -> void:
-	button.text = str(value) + "\n"
+	button.text = str(value) if value != 11 else "W"
+	button.text += "\n"
 
 	match element:
 		Element.WILD:
