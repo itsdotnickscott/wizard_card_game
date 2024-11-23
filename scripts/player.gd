@@ -7,7 +7,7 @@ var card_scene = preload("res://scenes/card.tscn")
 var max_health: int = 100
 var max_mana: int = 4
 var max_discards: int = 3
-var hand_limit: int = 5
+var hand_limit: int = 7
 var select_limit: int = 3
 
 var health: int = max_health
@@ -30,36 +30,40 @@ func battle_start() -> void:
 
 
 ## Removes 1 [member Player.mana] and discards given [Card] objects from the [member Player.hand].
-## Returns [code]true[/code] if [Player] has more mana (>0) left.
+## Returns [code]true[/code] if cast was successful.
 func cast_cards(selected_cards: Array[Card]) -> bool:
 	# Check for enough mana
 	if mana == 0:
 		print("out of mana")
 		return false
 
-	# Check for valid spell in spellbook
-	var valid = valid_spells(selected_cards)
-	print(valid)
-
-	for i in range(spellbook.size()):
-		if valid[i]:
-			print(spellbook[i].name + " - ", calc_dmg(spellbook[i], selected_cards))
-
 	mana -= 1
+
 	for card in selected_cards:
 		hand.erase(card)
 		discard.append(card)
 
-	return mana > 0
+	return true
 
 
-func calc_dmg(spell: Spell, selected_cards: Array[Card]):
+## Given an [Array] of [Card] objects, find the spell matching the selection and calculate its
+## damage value.
+func calc_dmg(selected_cards: Array[Card]) -> float:
 	var base = 0.0
 
-	for card in selected_cards:
-		base += card.value
+	# Check for valid spell in spellbook
+	var valid = valid_spells(selected_cards)
 
-	return base * spell.multi
+	for i in range(spellbook.size()):
+		if valid[i]:
+			for card in selected_cards:
+				base += card.value
+
+			print(spellbook[i].name + " - ", base * spellbook[i].multi)
+
+			return base * spellbook[i].multi
+
+	return 0
 
 
 ## Returns an [Array] of booleans, [code][true][/code] for every [Spell] that can currently score.
@@ -185,7 +189,7 @@ func sort_cards(cards: Array[Card], by_value: bool) -> void:
 	cards.sort_custom(asc_value)
 
 
-## Returns a 30-card_scene [Deck], with six of each value (2-6) split up evenly
+## Returns a 27-card_scene [Deck], with three of each value (2-10) split up evenly
 ## among three different elements (fire, water, earth).
 func _create_base_deck() -> Array[Card]:
 	var new_deck: Array[Card] = []
@@ -193,12 +197,12 @@ func _create_base_deck() -> Array[Card]:
 	var val: int = 2
 	var elem: int = 0
 
-	for i in range(5):
-		for j in range(6):
+	for i in range(9):
+		for j in range(3):
 			var new_card = card_scene.instantiate()
 			new_card.init(val, elem)
 			new_deck.append(new_card)
-			elem = (elem + 1) % 3
+			elem = (elem + 1)
 		val += 1
 		elem = 0
 
@@ -208,26 +212,26 @@ func _create_base_deck() -> Array[Card]:
 ## Returns three starting [Spell] objects, Twin Bolts (Set, 2 Cards, Any), Chromatic Weave
 ## (Run, 3 Cards, Match Any), and Elemental Blast (Set, 3 Cards, Any)).
 func _create_base_spellbook() -> Array[Spell]:
-	var bolt = Spell.new("Twin Bolt", Spell.ValCombo.SET, Spell.ElemCombo.ANY, 2, 1.0)
+	var bolt = Spell.new("Twin Bolt", Spell.ValCombo.SET, Spell.ElemCombo.ANY, 2, 0.5)
 	var weave = Spell.new("Elemental Weave", Spell.ValCombo.RUN, Spell.ElemCombo.MATCH_ANY, 3, 1.0)
 	var blast = Spell.new("Chromatic Blast", Spell.ValCombo.SET, Spell.ElemCombo.ANY, 3, 1.25)
 
 	return [bolt, weave, blast]
 
 
-func spell_analysis() -> void:
+func _spell_analysis() -> void:
 	for spell in spellbook:
 		print(spell.name)
 
 		if spell.val_combo == Spell.ValCombo.SET:
 			print("min damage: ", (2 * spell.card_amt) * spell.multi)
-			print("avg damage: ", (4 * spell.card_amt) * spell.multi)
-			print("max damage: ", (6 * spell.card_amt) * spell.multi)
+			print("avg damage: ", (6 * spell.card_amt) * spell.multi)
+			print("max damage: ", (10 * spell.card_amt) * spell.multi)
 
 		elif spell.val_combo == Spell.ValCombo.RUN:
 			print("min damage: ", (3 * spell.card_amt) * spell.multi)
-			print("avg damage: ", (4 * spell.card_amt) * spell.multi)
-			print("max damage: ", (5 * spell.card_amt) * spell.multi)
+			print("avg damage: ", (6 * spell.card_amt) * spell.multi)
+			print("max damage: ", (9 * spell.card_amt) * spell.multi)
 
 		print()
 
@@ -235,4 +239,4 @@ func spell_analysis() -> void:
 func _ready() -> void:
 	deck = _create_base_deck()
 	spellbook = _create_base_spellbook()
-	spell_analysis()
+	_spell_analysis()

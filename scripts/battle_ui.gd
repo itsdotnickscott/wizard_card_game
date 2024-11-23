@@ -28,9 +28,10 @@ func reset_selected_cards() -> void:
 
 
 ## Refreshes the Battle UI using the information from the [Player].
-func update_display(player: Player) -> void:
+func update_display(player: Player, enemy: Enemy) -> void:
 	_update_player_hand(player.hand)
 	_update_player_stats(player)
+	_update_enemy_stats(enemy)
 
 
 func _update_player_stats(player: Player) -> void:
@@ -53,6 +54,10 @@ func _update_player_hand(hand: Array[Card]) -> void:
 		player_hand_ui.add_child(card)
 		card.setup_card_for_ui()
 		card.update_selected.connect(_on_card_update_selected)
+
+
+func _update_enemy_stats(enemy: Enemy) -> void:
+	$EnemyStats/HPValue.text = "%d/%d" % [enemy.health, enemy.max_health]
 
 
 func _on_card_update_selected(card: Card, selected: bool) -> void:

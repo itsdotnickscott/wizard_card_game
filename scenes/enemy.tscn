@@ -1,8 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://bfsu0cdf4p143"]
+[gd_scene load_steps=3 format=3 uid="uid://bfsu0cdf4p143"]
 
+[ext_resource type="Script" path="res://scripts/enemy.gd" id="1_ctuts"]
 [ext_resource type="Texture2D" uid="uid://efmpttcnnimp" path="res://assets/sample_sprite.png" id="1_i777g"]
 
 [node name="Enemy" type="Node2D"]
+script = ExtResource("1_ctuts")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(3, 3)
