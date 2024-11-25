@@ -1,7 +1,7 @@
 class_name Enemy extends Node2D
 
 
-var max_health: int = 30
+var max_health: int = 100
 var health: int = max_health
 
 
