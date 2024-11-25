@@ -13,6 +13,7 @@ var total_dmg: float = 0.0
 func start_battle() -> void:
 	total_dmg = 0.0
 	player.battle_start()
+	battle_ui.set_deck_size(player.deck.size())
 
 	# For now, only the player gets a turn
 	player_turn()
@@ -22,17 +23,18 @@ func start_battle() -> void:
 func player_turn() -> void:
 	battle_ui.reset_selected_cards()
 	player.draw_to_limit()
-	player.sort_cards(player.hand, battle_ui.sort_toggle.button_pressed)
+	Analysis.sort_cards(player.hand, battle_ui.sort_toggle.button_pressed)
 	battle_ui.update_display(player, enemy)
 
 
 ## The [Player] uses the cast action.
 func cast_action(selected_cards: Array[Card]) -> void:
-	player.cast_cards(selected_cards)
-
-	var dmg := player.calc_dmg(selected_cards)
+	var spell := player.cast_cards(selected_cards)
+	
+	var dmg := Analysis.calc_dmg(selected_cards, spell)
 	enemy.take_dmg(dmg)
 	total_dmg += dmg
+
 	battle_ui.update_enemy_stats(enemy, dmg, total_dmg)
 	
 	player_turn()
@@ -54,7 +56,7 @@ func _ready() -> void:
 
 
 func _on_battle_ui_sort_hand(by_value: bool) -> void:
-	player.sort_cards(player.hand, by_value)
+	Analysis.sort_cards(player.hand, by_value)
 	battle_ui.update_player_hand(player.hand)
 
 

@@ -9,6 +9,7 @@ enum Element {
 	FIRE,
 	WATER,
 	EARTH,
+	ARCANA,
 }
 
 
@@ -16,7 +17,7 @@ enum Element {
 @onready var button = get_node("Button")
 
 
-var value: int
+var rank: int
 var element: Element
 var selected: bool = false
 
@@ -33,16 +34,16 @@ func setup_card_for_ui() -> void:
 	button.pressed.connect(_on_card_pressed)
 
 
-## Sets up the [member Card.value] and [member Card.element]. Should be called after using 
+## Sets up the [member Card.rank] and [member Card.element]. Should be called after using 
 ## [method instantiate] on a [Card] [PackedScene].
 func init(val, elem) -> void:
-	value = val
+	rank = val
 	element = elem
 	
 
-## Sets the text of the button to the value/element of the card.
+## Sets the text of the button to the rank/element of the card.
 func _set_display() -> void:
-	button.text = str(value) if value != 11 else "W"
+	button.text = str(rank) if rank != 11 else "W"
 	button.text += "\n"
 
 	match element:
@@ -54,6 +55,8 @@ func _set_display() -> void:
 			button.text += "💧"
 		Element.EARTH:
 			button.text += "🍃"
+		Element.ARCANA:
+			button.text += "🎆"
 
 
 func _on_card_pressed() -> void:
@@ -62,6 +65,6 @@ func _on_card_pressed() -> void:
 
 
 func _to_string() -> String:
-	return "Card(%d, %d)" % [value, element] 
+	return "Card(%d, %d)" % [rank, element] 
 
 
