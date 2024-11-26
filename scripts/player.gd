@@ -8,7 +8,7 @@ var max_health: int = 100
 var max_mana: int = 4
 var max_discards: int = 3
 var hand_limit: int = 7
-var select_limit: int = 4
+var select_limit: int = 7
 
 var health: int = max_health
 var mana: int = max_mana

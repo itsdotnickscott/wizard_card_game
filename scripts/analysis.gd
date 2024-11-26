@@ -26,9 +26,11 @@ func analyze_spells() -> void:
 
 ## Prints the title and hand composition of a [param spell] onto the console.
 static func get_spell_info(spell: Spell) -> String:
-	var subtitle := str(spell.quantity) + "x "
+	var subtitle := ""
 
 	for i in range(spell.parts()):
+		subtitle += str(spell.quantity[i]) + "x "
+
 		match spell.rank_combo[i]:
 			Spell.RankCombo.SET:
 				subtitle += "SET"
@@ -37,7 +39,7 @@ static func get_spell_info(spell: Spell) -> String:
 			Spell.RankCombo.ANY:
 				subtitle += "ANY"	
 
-		subtitle += " of %d, " % [spell.card_amt]
+		subtitle += " of %d, " % [spell.card_amt[i]]
 
 		match spell.elem_combo[i]:
 			Spell.ElemCombo.ANY:
