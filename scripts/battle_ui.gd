@@ -7,6 +7,7 @@ signal sort_hand(by_value: bool)
 
 
 @onready var player_hand_ui: HBoxContainer = get_node("Hand")
+@onready var player_spell_ui: VBoxContainer = get_node("Spells")
 @onready var sort_toggle: CheckButton = get_node("SortToggle")
 
 
@@ -35,6 +36,7 @@ func reset_selected_cards() -> void:
 ## Refreshes the Battle UI using the information from the [Player].
 func update_display(player: Player, enemy: Enemy) -> void:
 	update_player_hand(player.hand)
+	update_player_spells(player.spellbook)
 	update_player_stats(player)
 	update_enemy_stats(enemy)
 
@@ -45,6 +47,20 @@ func update_player_stats(player: Player) -> void:
 	$PlayerStats/DiscardValue.text = "%d/%d" % [player.discards_left, player.max_discards]
 	$PlayerStats/DeckValue.text = "%d/%d" % [player.deck.size(), deck_size]
 	$SelectLabel.text = "%d/%d" % [selected_cards.size(), select_limit]
+
+
+func update_player_spells(spells: Array[Spell]) -> void:
+	# TODO: Optimize a way to only update new/removed spells
+
+	# Delete current labels
+	for child in player_spell_ui.get_children():
+		player_spell_ui.remove_child(child)
+
+	# Create new labels for each spell
+	for spell in spells:
+		var label := Label.new()
+		label.text = Analysis.get_spell_info(spell)
+		player_spell_ui.add_child(label)
 
 
 func update_player_hand(hand: Array[Card]) -> void:

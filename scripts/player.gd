@@ -8,7 +8,7 @@ var max_health: int = 100
 var max_mana: int = 4
 var max_discards: int = 3
 var hand_limit: int = 7
-var select_limit: int = 4
+var select_limit: int = 7
 
 var health: int = max_health
 var mana: int = max_mana
@@ -52,7 +52,7 @@ func cast_cards(selected_cards: Array[Card]) -> Spell:
 func discard_cards(selected_cards: Array[Card]) -> bool:
 	if discards_left == 0:
 		print("out of discards")
-		return false
+		#return false
 
 	discards_left -= 1
 	for card in selected_cards:
@@ -99,18 +99,17 @@ func reset_deck() -> void:
 func _create_base_deck() -> Array[Card]:
 	var new_deck: Array[Card] = []
 
-	for t in range(1):
-		var val := 2
-		var elem := 0
+	var val := 2
+	var elem := 0
 
-		for i in range(10):
-			for j in range(4):
-				var new_card: Card = card_scene.instantiate()
-				new_card.init(val, elem)
-				new_deck.append(new_card)
-				elem += 1
-			val += 1
-			elem = 0
+	for i in range(10):
+		for j in range(4):
+			var new_card: Card = card_scene.instantiate()
+			new_card.init(val, elem)
+			new_deck.append(new_card)
+			elem += 1
+		val += 1
+		elem = 0
 
 	return new_deck
 
@@ -118,30 +117,17 @@ func _create_base_deck() -> Array[Card]:
 ## Returns three starting [Spell] objects, Twin Bolts (Set, 2 Cards, Any), Chromatic Weave
 ## (Run, 3 Cards, Match Any), and Elemental Blast (Set, 3 Cards, Any)).
 func _create_base_spellbook() -> Array[Spell]:
-	var bolt := Spell.new(
-		"Twin Bolt", 
-		Spell.RankCombo.SET, Spell.ElemCombo.ANY, 
-		2, 1, 15, 1.0
-	)
-	var blast := Spell.new(
-		"Chromatic Blast", 
-		Spell.RankCombo.SET, 
-		Spell.ElemCombo.ANY,
-		3, 1, 10, 2.0
-	)
-	var weave := Spell.new(
-		"Elemental Weave", 
-		Spell.RankCombo.RUN, 
-		Spell.ElemCombo.MATCH_ANY, 
-		3, 1, 15, 2.0
-	)
-
-	return [bolt, blast, weave]
+	return [
+		Spell.get_from_id("bolt"), 
+		Spell.get_from_id("orb"),  
+		Spell.get_from_id("blast"), 
+		Spell.get_from_id("weave"), 
+	]
 
 
 func _ready() -> void:
 	deck = _create_base_deck()
 	max_deck_size = deck.size()
-	spellbook = _create_base_spellbook()
-	var analysis = Analysis.new(spellbook, deck)
+	spellbook = Spell.get_all_spells() #_create_base_spellbook()
+	var analysis = Analysis.new(Spell.get_all_spells(), deck)
 	analysis.analyze_spells()
