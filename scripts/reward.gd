@@ -76,45 +76,42 @@ func gain_reward() -> void:
 
 	"""
 	SPELLBOOK
-		1-card
-
-		- Spark (Any Card)
-			Lvl 1: 5 x 1.0
-
 		2-card
 
-		- *** Twin Bolt (1 Set of 2, Any) [Starting]
+		- *** Twin Bolt (1 Set of 2, Any)
 			Lvl 1: 15 x 1.0
 
 		3-card
 
-		- *** Elemental Weave (1 Run of 3, Match Any) [Starting]
+		- *** Elemental Weave (1 Run of 3, Match Any)
 			Lvl 1: 10 x 2.0
 
-		- *** Chromatic Blast (1 Set of 3, Any) [Starting]
+		- *** Chromatic Blast (1 Set of 3, Any)
 			Lvl 1: 15 x 2.0
 
 		4-card
 
-		- Prismatic Orb (2 Sets of 2, Any)
-			Lvl 1: 20 x 2.0
+		- *** Prismatic Orb (2 Sets of 2, Any)
+			Lvl 1: 30 x 1.0
 
-		- Organic Fissure (1 Run of 4, Match Any)
+		- *** Organic Fissure (1 Run of 4, Match Any)
 			Lvl 1:
 
-		- Intense Rapture (1 Set of 4, Any)
+		- *** Intense Rapture (1 Set of 4, Any)
 			Lvl 1:
 
 		5-card
 
-		- Unstable Thread (1 Run of 5, Match Any)
+		- *** Unstable Thread (1 Run of 5, Any)
 			Lvl 1:
 
-		- Chaotic Force (1 Set of 5, Any)
+		- Chaotic Purge (1 Set of 5, Any)
 			Lvl 1:
 
-		- Natural Takeover (Any of 5, Match Any)
+		- *** Natural Takeover (1 Any of 5, Match Any)
 			Lvl 1:
+
+		- Brilliant Beam ()
 
 		6-card
 

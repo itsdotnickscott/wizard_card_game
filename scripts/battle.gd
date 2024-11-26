@@ -30,12 +30,15 @@ func player_turn() -> void:
 ## The [Player] uses the cast action.
 func cast_action(selected_cards: Array[Card]) -> void:
 	var spell := player.cast_cards(selected_cards)
-	
-	var dmg := Analysis.calc_dmg(selected_cards, spell)
-	enemy.take_dmg(dmg)
-	total_dmg += dmg
 
-	battle_ui.update_enemy_stats(enemy, dmg, total_dmg)
+	if spell == null:
+		print("No spell found!")
+	else:
+		var dmg := Analysis.calc_dmg(selected_cards, spell)
+		enemy.take_dmg(dmg)
+		total_dmg += dmg
+
+		battle_ui.update_enemy_stats(enemy, dmg, total_dmg)
 	
 	player_turn()
 
