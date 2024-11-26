@@ -50,13 +50,13 @@ func _to_string() -> String:
 
 static func get_spell_library() -> Dictionary:
 	return {
-		"bolt": Spell.new(
+		"spark": Spell.new(
 			"Spark", 
 			[Spell.RankCombo.SET], [Spell.ElemCombo.ANY], 
 			[2], [1], 15, 1.0
 		),
 
-		"orb": Spell.new(
+		"bolt": Spell.new(
 			"Twin Bolt",
 			[Spell.RankCombo.SET], [Spell.ElemCombo.ANY], 
 			[2], [2], 30, 1.0
@@ -80,6 +80,12 @@ static func get_spell_library() -> Dictionary:
 			[5], [1], 15, 3.0
 		),
 
+		"ray": Spell.new(
+			"Ray of Chaos", 
+			[Spell.RankCombo.SET, Spell.RankCombo.SET], [Spell.ElemCombo.ANY, Spell.ElemCombo.ANY], 
+			[3, 2], [1, 1], 10, 3.0
+		),
+
 		"takeover": Spell.new(
 			"Natural Takeover", 
 			[Spell.RankCombo.ANY], [Spell.ElemCombo.MATCH_ANY], 
@@ -96,6 +102,12 @@ static func get_spell_library() -> Dictionary:
 			"Intense Rapture", 
 			[Spell.RankCombo.SET], [Spell.ElemCombo.ANY], 
 			[4], [1], 10, 3.0
+		),
+
+		"purge": Spell.new(
+			"Chaotic Purge", 
+			[Spell.RankCombo.RUN], [Spell.ElemCombo.MATCH_ANY], 
+			[5], [1], 10, 3.0
 		),
 	}
 
