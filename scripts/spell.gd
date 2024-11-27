@@ -53,61 +53,61 @@ static func get_spell_library() -> Dictionary:
 		"spark": Spell.new(
 			"Spark", 
 			[Spell.RankCombo.SET], [Spell.ElemCombo.ANY], 
-			[2], [1], 10, 1.0
+			[2], [1], 5, 0.5
 		),
 
 		"bolt": Spell.new(
 			"Twin Bolt",
 			[Spell.RankCombo.SET], [Spell.ElemCombo.ANY], 
-			[2], [2], 10, 2.0
+			[2], [2], 15, 0.5
 		),
 
 		"blast": Spell.new(
 			"Chromatic Blast", 
 			[Spell.RankCombo.SET], [Spell.ElemCombo.ANY],
-			[3], [1], 30, 3.0
+			[3], [1], 30, 1.0
 		),
 		
 		"weave": Spell.new(
 			"Elemental Weave", 
 			[Spell.RankCombo.RUN], [Spell.ElemCombo.MATCH_ANY], 
-			[3], [1], 35, 3.0
+			[3], [1], 40, 1.0
 		),
 
 		"thread": Spell.new(
 			"Unstable Thread", 
 			[Spell.RankCombo.RUN], [Spell.ElemCombo.ANY], 
-			[5], [1], 30, 3.0
+			[5], [1], 30, 1.0
 		),
 
 		"chaos": Spell.new(
 			"Ray of Chaos", 
 			[Spell.RankCombo.SET, Spell.RankCombo.SET], [Spell.ElemCombo.ANY, Spell.ElemCombo.ANY], 
-			[3, 2], [1, 1], 40, 4.0
+			[3, 2], [1, 1], 40, 1.5
 		),
 
 		"takeover": Spell.new(
 			"Natural Takeover", 
 			[Spell.RankCombo.ANY], [Spell.ElemCombo.MATCH_ANY], 
-			[5], [1], 50, 5.0
+			[5], [1], 50, 2.0
 		),
 
 		"fissure": Spell.new(
 			"Organic Fissure", 
 			[Spell.RankCombo.RUN], [Spell.ElemCombo.MATCH_ANY], 
-			[4], [1], 60, 6.0
+			[4], [1], 60, 2.5
 		),
 
 		"purge": Spell.new(
 			"Ultimate Purge", 
 			[Spell.RankCombo.SET], [Spell.ElemCombo.ANY], 
-			[4], [1], 70, 7.0
+			[4], [1], 70, 3.0
 		),
 
 		"rapture": Spell.new(
 			"Intense Rapture", 
 			[Spell.RankCombo.RUN], [Spell.ElemCombo.MATCH_ANY], 
-			[5], [1], 80, 8.0
+			[5], [1], 80, 4.0
 		),
 	}
 
