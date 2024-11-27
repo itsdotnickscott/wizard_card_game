@@ -1,8 +1,6 @@
 class_name Analysis extends Resource
 
 
-const LOW_CARD = 2
-const HIGH_CARD = 11
 const HAND_SIZE = 7
 
 
@@ -41,7 +39,7 @@ func sample_probabilities(spell: Spell) -> void:
 
 	var best_hand := []
 
-	var samples := 2000
+	var samples := 10000
 	
 	for i in range(samples):
 		deck.shuffle()
@@ -56,7 +54,7 @@ func sample_probabilities(spell: Spell) -> void:
 
 			if dmg < min_dmg:
 				min_dmg = dmg
-			elif dmg > max_dmg:
+			if dmg > max_dmg:
 				max_dmg = dmg
 				best_hand = cards
 
@@ -65,7 +63,7 @@ func sample_probabilities(spell: Spell) -> void:
 	print("%d (%0.2f%%)" % [result, float(result) / samples * 100])
 	print("\tBest Hand: ", best_hand)
 	print("\tMin Dmg: ", min_dmg)
-	print("\tAvg Dmg/Cast: %0.2f" % [tot_dmg / result])
+	print("\tAvg Dmg: %0.2f" % [tot_dmg / result])
 	print("\tMax Dmg: ", max_dmg)
 	print("\tExpected Value: %0.2f" % [tot_dmg / samples])
 	
@@ -134,11 +132,28 @@ static func get_spell_info(spell: Spell) -> String:
 
 ## Returns the first [Spell] that can be case from the given [param hand].
 static func get_valid_spell(spells: Array[Spell], hand: Array[Card], exact: bool) -> Spell:
+	var valid := []
 	for spell in spells:
 		if is_valid_spell(spell, hand, exact):
-			return spell
+			valid.append(spell)
 	
-	return null
+	if valid.is_empty():
+		return null
+	elif valid.size() > 1:
+		var best: Spell = valid[0]
+		var high: float = calc_dmg(get_hand_from_spell(valid[0], hand), valid[0])
+		print(high)
+		for spell in valid.slice(1):
+			var scoring_hand := get_hand_from_spell(spell, hand)
+			var dmg := calc_dmg(scoring_hand, spell)
+
+			if dmg > high:
+				best = spell
+				high = dmg
+
+		return best
+	else:
+		return valid[0]
 
 
 ## Returns [code]true[/code] if given [param hand] works for [param spell].
@@ -200,7 +215,7 @@ static func get_unique_valid_hand(spell: Spell, combos: Array) -> Array:
 	for i in range(spell.parts()):
 		combinations.append(get_valid_combinations(spell, i, combos[i]))
 
-	var hands := build_valid_hands(combinations)
+	var hands := build_valid_hands(combinations, spell)
 
 	if hands.is_empty():
 		return []
@@ -231,6 +246,7 @@ static func get_valid_combinations(spell: Spell, part: int, hands: Array) -> Arr
 	# ie. a 2-pair could represent [[Card(2,0), Card(2,1)], [Card(3,0), Card(3,1)]]
 	for combo in combos:
 		var used := []
+		var sets := []
 
 		# A small hand represents one part of the combo ie. [Card(2,0), Card(2,1)]
 		for small_hand in combo:
@@ -241,10 +257,16 @@ static func get_valid_combinations(spell: Spell, part: int, hands: Array) -> Arr
 				if card in used:
 					unique = false
 					break
+				if spell.rank_combo[part] == Spell.RankCombo.SET and card.rank in sets:
+					unique = false
+					break
 				used.append(card)
 
 			if not unique:
 				break
+
+			if spell.rank_combo[part] == Spell.RankCombo.SET:
+				sets.append(small_hand[0].rank)
 		
 		# If used has every unique card needed to cast then add to valid combinations
 		if used.size() == spell.card_amt[part] * spell.quantity[part]:
@@ -252,7 +274,7 @@ static func get_valid_combinations(spell: Spell, part: int, hands: Array) -> Arr
 	return valid
 
 
-static func build_valid_hands(combos: Array, part: int=0, hand: Array=[]) -> Array:
+static func build_valid_hands(combos: Array, spell: Spell, part:=0, hand:=[]) -> Array:
 	# Base case: if we've reached the last part then we've constructed a unique hand
 	if part == combos.size():
 		return [hand]
@@ -268,7 +290,7 @@ static func build_valid_hands(combos: Array, part: int=0, hand: Array=[]) -> Arr
 				break
 
 		if unique:
-			var finished_hand = build_valid_hands(combos, part + 1, hand + small_hand)
+			var finished_hand = build_valid_hands(combos, spell, part + 1, hand + small_hand)
 			# Recursive case: if a card is unique it shows up as an empty array
 			if not finished_hand.is_empty():
 				hands += finished_hand
@@ -320,7 +342,7 @@ static func get_valid_runs(hand: Array[Card], spell: Spell, part: int) -> Array:
 				# Check if W and 2 can be bridged first
 				if card.rank == 11:
 					for r in runs:
-						if r[0].rank == 2:
+						if r[0].rank == 2 and r[-1].rank != 11:
 							if _check_elem_combo(spell.elem_combo[part], r[-1], card):
 								r.append(card)
 								break

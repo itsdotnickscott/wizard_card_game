@@ -130,5 +130,5 @@ func _ready() -> void:
 	max_deck_size = deck.size()
 	spellbook = Spell.get_all_spells() #_create_base_spellbook()
 	var analysis = Analysis.new(Spell.get_all_spells(), deck)
-	#var analysis = Analysis.new([Spell.get_from_id("ray")], deck)
+	#var analysis = Analysis.new([Spell.get_from_id("bolt")], deck)
 	analysis.analyze_spells()
