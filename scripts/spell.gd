@@ -53,13 +53,13 @@ static func get_spell_library() -> Dictionary:
 		"spark": Spell.new(
 			"Spark", 
 			[Spell.RankCombo.SET], [Spell.ElemCombo.ANY], 
-			[2], [1], 5, 0.5
+			[2], [1], 10, 0.5
 		),
 
 		"bolt": Spell.new(
 			"Twin Bolt",
 			[Spell.RankCombo.SET], [Spell.ElemCombo.ANY], 
-			[2], [2], 15, 0.5
+			[2], [2], 20, 0.5
 		),
 
 		"blast": Spell.new(
