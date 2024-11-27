@@ -44,7 +44,7 @@ func cast_cards(selected_cards: Array[Card]) -> Spell:
 		hand.erase(card)
 		discard.append(card)
 
-	return Analysis.get_valid_spell(spellbook, selected_cards)
+	return Analysis.get_valid_spell(spellbook, selected_cards, true)
 
 
 ## Discards given [Card] objects from the [member Player.hand]. Returns [code]true[/code] if 
@@ -130,4 +130,5 @@ func _ready() -> void:
 	max_deck_size = deck.size()
 	spellbook = Spell.get_all_spells() #_create_base_spellbook()
 	var analysis = Analysis.new(Spell.get_all_spells(), deck)
+	#var analysis = Analysis.new([Spell.get_from_id("bolt")], deck)
 	analysis.analyze_spells()

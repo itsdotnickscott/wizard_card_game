@@ -35,6 +35,7 @@ func cast_action(selected_cards: Array[Card]) -> void:
 		print("No spell found!")
 	else:
 		var dmg := Analysis.calc_dmg(selected_cards, spell)
+		print(spell.name + " - ", dmg)
 		enemy.take_dmg(dmg)
 		total_dmg += dmg
 
