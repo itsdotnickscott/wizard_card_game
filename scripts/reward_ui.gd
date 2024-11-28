@@ -4,10 +4,10 @@ extends Control
 @onready var choices_ui: VBoxContainer = get_node("VictoryPanel/Choices")
 
 
-var choices: Array = []
+var choices: Dictionary
 
 
-func set_rewards(rewards: Array):
+func set_rewards(rewards: Dictionary):
 	choices = rewards
 
 	# Delete current labels
@@ -15,7 +15,7 @@ func set_rewards(rewards: Array):
 		choices_ui.remove_child(child)
 
 	# Create new labels for each spell
-	for reward in rewards:
+	for reward in rewards.values():
 		var button := Button.new()
 
 		if reward is Spell:

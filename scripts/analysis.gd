@@ -1,9 +1,6 @@
 class_name Analysis extends Resource
 
 
-const HAND_SIZE = 7
-
-
 var spellbook: Array[Spell]
 var deck: Array[Card]
 
@@ -20,15 +17,15 @@ func _init(spells: Array[Spell], cards: Array[Card]) -> void:
 
 
 ## Prints out details of each [Spell] in [Analysis.spellbook] into the console.
-func analyze_spells() -> void:
+func analyze_spells(hand_size: int) -> void:
 	for spell in spellbook:
 		print("\n* -------------------------------------------------------------------- *\n")
 		print(get_spell_info(spell) + "\n")
-		sample_probabilities(spell)
+		sample_probabilities(spell, hand_size)
 
 
 ## Simulates hands and prints the probability the drawn hand matches the given [param spell].
-func sample_probabilities(spell: Spell) -> void:
+func sample_probabilities(spell: Spell, hand_size: int) -> void:
 	var result := 0
 
 	var min_dmg := INF
@@ -42,7 +39,7 @@ func sample_probabilities(spell: Spell) -> void:
 	for i in range(samples):
 		deck.shuffle()
 		var hand: Array[Card] = []
-		for j in range(HAND_SIZE):
+		for j in range(hand_size):
 			hand.append(deck[j])
 
 		if is_valid_spell(spell, hand, false):

@@ -59,6 +59,10 @@ trial
 """
 
 
+enum Rarity {
+	COMMON, UNCOMMON, RARE, EPIC
+}
+
 enum Type {
 	TOME,
 }
@@ -69,16 +73,41 @@ static func get_random_reward(type: Type) -> Variant:
 
 	match type:
 		Type.TOME:
-			var i := rng.randi_range(0, Spell.get_spell_library().size() - 1)
-			return Spell.get_spell_library().values()[i]
+			return get_random_tome(rng)
 		_:
 			return null
 
 
-static func get_random_rewards(quantity: int, type: Type) -> Array:
-	var choices := []
+static func get_random_rewards(quantity: int, type: Type) -> Dictionary:
+	var choices := {}
 	while choices.size() < quantity:
 		var reward = get_random_reward(type)
-		if not reward in choices:
-			choices.append(reward)
+		if not reward.name in choices.keys():
+			choices[reward.name] = reward
 	return choices
+
+
+static func get_random_tome(rng: RandomNumberGenerator) -> Spell:
+	var random := rng.randf_range(0.0, 100.0)
+	var spells := Spell.get_all_spells()
+	var choices := []
+	var rarity: Rarity
+
+	print(random)
+
+	if random < 70.0:
+		rarity = Rarity.COMMON
+	elif random < 90.0:
+		rarity = Rarity.UNCOMMON
+	elif random < 99.0:
+		rarity = Rarity.RARE
+	else:
+		rarity = Rarity.RARE
+		print("rolled epic spell, no epic spell available, returning rare spell for now")
+
+	for spell in spells:
+		if spell.tome_rarity == rarity:
+			choices.append(spell)
+
+	var choice := rng.randi_range(0, choices.size() - 1)
+	return choices[choice]

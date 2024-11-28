@@ -8,7 +8,7 @@ var max_health: int = 100
 var max_mana: int = 4
 var max_discards: int = 3
 var hand_limit: int = 7
-var select_limit: int = 7
+var select_limit: int = 4
 
 var health: int = max_health
 var mana: int = max_mana
@@ -118,8 +118,8 @@ func _create_base_deck() -> Array[Card]:
 ## (Run, 3 Cards, Match Any), and Elemental Blast (Set, 3 Cards, Any)).
 func _create_base_spellbook() -> Array[Spell]:
 	return [
-		Spell.get_from_id("bolt"), 
-		Spell.get_from_id("orb"),  
+		Spell.get_from_id("spark"), 
+		Spell.get_from_id("bolt"),  
 		Spell.get_from_id("blast"), 
 		Spell.get_from_id("weave"), 
 	]
@@ -128,7 +128,9 @@ func _create_base_spellbook() -> Array[Spell]:
 func _ready() -> void:
 	deck = _create_base_deck()
 	max_deck_size = deck.size()
-	spellbook = Spell.get_all_spells() #_create_base_spellbook()
-	var analysis = Analysis.new(Spell.get_all_spells(), deck)
+	#spellbook = Spell.get_all_spells() 
+	spellbook = _create_base_spellbook()
+	#var analysis = Analysis.new(Spell.get_all_spells(), deck)
 	#var analysis = Analysis.new([Spell.get_from_id("bolt")], deck)
-	analysis.analyze_spells()
+	var analysis = Analysis.new(spellbook, deck)
+	analysis.analyze_spells(hand_limit)

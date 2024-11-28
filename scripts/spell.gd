@@ -12,10 +12,11 @@ var card_amt: Array[int]
 var quantity: Array[int]
 var base: int
 var multi: float
+var tome_rarity: Reward.Rarity
 
 
 func _init(
-	spell_name: String, 
+	spell_name: String, rarity: Reward.Rarity,
 	rank: Array[RankCombo], elem: Array[ElemCombo], 
 	amt: Array[int], quant: Array[int], base_dmg: int, mult: float
 ) -> void:
@@ -31,6 +32,7 @@ func _init(
 	quantity = quant
 	base = base_dmg
 	multi = mult
+	tome_rarity = rarity
 
 
 func parts() -> int:
@@ -51,61 +53,61 @@ func _to_string() -> String:
 static func get_spell_library() -> Dictionary:
 	return {
 		"spark": Spell.new(
-			"Spark", 
+			"Spark", Reward.Rarity.COMMON,
 			[Spell.RankCombo.SET], [Spell.ElemCombo.ANY], 
 			[2], [1], 15, 0.5
 		),
 
 		"bolt": Spell.new(
-			"Twin Bolt",
+			"Twin Bolt", Reward.Rarity.COMMON,
 			[Spell.RankCombo.SET], [Spell.ElemCombo.ANY], 
 			[2], [2], 30, 0.5
 		),
 
 		"blast": Spell.new(
-			"Chromatic Blast", 
+			"Chromatic Blast", Reward.Rarity.COMMON,
 			[Spell.RankCombo.SET], [Spell.ElemCombo.ANY],
 			[3], [1], 30, 1.0
 		),
 		
 		"weave": Spell.new(
-			"Elemental Weave", 
+			"Elemental Weave", Reward.Rarity.COMMON,
 			[Spell.RankCombo.RUN], [Spell.ElemCombo.MATCH_ANY], 
-			[3], [1], 40, 1.0
+			[3], [1], 35, 1.0
 		),
 
 		"thread": Spell.new(
-			"Unstable Thread", 
+			"Unstable Thread", Reward.Rarity.COMMON,
 			[Spell.RankCombo.RUN], [Spell.ElemCombo.ANY], 
 			[5], [1], 30, 1.0
 		),
 
 		"chaos": Spell.new(
-			"Ray of Chaos", 
+			"Ray of Chaos", Reward.Rarity.UNCOMMON,
 			[Spell.RankCombo.SET, Spell.RankCombo.SET], [Spell.ElemCombo.ANY, Spell.ElemCombo.ANY], 
 			[3, 2], [1, 1], 40, 1.5
 		),
 
 		"takeover": Spell.new(
-			"Natural Takeover", 
+			"Natural Takeover", Reward.Rarity.UNCOMMON,
 			[Spell.RankCombo.ANY], [Spell.ElemCombo.MATCH_ANY], 
 			[5], [1], 50, 2.0
 		),
 
 		"fissure": Spell.new(
-			"Organic Fissure", 
+			"Organic Fissure", Reward.Rarity.UNCOMMON,
 			[Spell.RankCombo.RUN], [Spell.ElemCombo.MATCH_ANY], 
 			[4], [1], 60, 2.5
 		),
 
 		"purge": Spell.new(
-			"Ultimate Purge", 
+			"Ultimate Purge", Reward.Rarity.RARE,
 			[Spell.RankCombo.SET], [Spell.ElemCombo.ANY], 
 			[4], [1], 70, 3.0
 		),
 
 		"rapture": Spell.new(
-			"Intense Rapture", 
+			"Intense Rapture", Reward.Rarity.RARE,
 			[Spell.RankCombo.RUN], [Spell.ElemCombo.MATCH_ANY], 
 			[5], [1], 80, 4.0
 		),
