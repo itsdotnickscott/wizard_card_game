@@ -25,8 +25,6 @@ func analyze_spells() -> void:
 		print("\n* -------------------------------------------------------------------- *\n")
 		print(get_spell_info(spell) + "\n")
 		sample_probabilities(spell)
-		
-		
 
 
 ## Simulates hands and prints the probability the drawn hand matches the given [param spell].
@@ -39,7 +37,7 @@ func sample_probabilities(spell: Spell) -> void:
 
 	var best_hand := []
 
-	var samples := 10000
+	var samples := 1000
 	
 	for i in range(samples):
 		deck.shuffle()
@@ -142,7 +140,7 @@ static func get_valid_spell(spells: Array[Spell], hand: Array[Card], exact: bool
 	elif valid.size() > 1:
 		var best: Spell = valid[0]
 		var high: float = calc_dmg(get_hand_from_spell(valid[0], hand), valid[0])
-		print(high)
+
 		for spell in valid.slice(1):
 			var scoring_hand := get_hand_from_spell(spell, hand)
 			var dmg := calc_dmg(scoring_hand, spell)

@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://co63ppggsddeu"]
+[gd_scene load_steps=6 format=3 uid="uid://co63ppggsddeu"]
 
 [ext_resource type="Script" path="res://scripts/battle.gd" id="1_3jwy8"]
 [ext_resource type="PackedScene" uid="uid://ds5bf8cdlryeg" path="res://scenes/battle_ui.tscn" id="1_ft7lq"]
 [ext_resource type="PackedScene" uid="uid://boqhagawdgoqv" path="res://scenes/player.tscn" id="2_0x600"]
 [ext_resource type="PackedScene" uid="uid://bfsu0cdf4p143" path="res://scenes/enemy.tscn" id="3_b0wen"]
+[ext_resource type="PackedScene" uid="uid://djq5yfcgvs60j" path="res://scenes/reward_ui.tscn" id="5_gdms4"]
 
 [node name="Battle" type="Node2D"]
 script = ExtResource("1_3jwy8")
@@ -15,6 +16,9 @@ position = Vector2(380, 270)
 
 [node name="Enemy" parent="." instance=ExtResource("3_b0wen")]
 position = Vector2(840, 270)
+
+[node name="RewardUI" parent="." instance=ExtResource("5_gdms4")]
+visible = false
 
 [connection signal="cast" from="BattleUI" to="." method="cast_action"]
 [connection signal="discard" from="BattleUI" to="." method="discard_action"]

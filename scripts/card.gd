@@ -21,6 +21,8 @@ var rank: int
 var element: Element
 var selected: bool = false
 
+var ui_ready: bool = false
+
 
 func select_card(to_select: bool = true):
 	selected = to_select
@@ -32,6 +34,7 @@ func select_card(to_select: bool = true):
 func setup_card_for_ui() -> void:
 	_set_display()
 	button.pressed.connect(_on_card_pressed)
+	ui_ready = true
 
 
 ## Sets up the [member Card.rank] and [member Card.element]. Should be called after using 

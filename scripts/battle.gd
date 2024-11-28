@@ -3,7 +3,9 @@ extends Node2D
 
 @onready var player: Player = get_node("Player")
 @onready var enemy: Enemy = get_node("Enemy")
+
 @onready var battle_ui: Control = get_node("BattleUI")
+@onready var reward_ui: Control = get_node("RewardUI")
 
 
 var total_dmg: float = 0.0
@@ -39,6 +41,11 @@ func cast_action(selected_cards: Array[Card]) -> void:
 		enemy.take_dmg(dmg)
 		total_dmg += dmg
 
+		if enemy.health < 0:
+			reward_ui.visible = true
+			battle_ui.visible = false
+			reward_ui.set_rewards(Reward.get_random_rewards(3, Reward.Type.TOME))
+
 		battle_ui.update_enemy_stats(enemy, dmg, total_dmg)
 	
 	player_turn()
@@ -62,6 +69,3 @@ func _ready() -> void:
 func _on_battle_ui_sort_hand(by_value: bool) -> void:
 	Analysis.sort_cards(player.hand, by_value)
 	battle_ui.update_player_hand(player.hand)
-
-
-

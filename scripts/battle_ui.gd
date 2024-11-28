@@ -23,7 +23,7 @@ func set_select_limit(val: int) -> void:
 
 func set_deck_size(val: int) -> void:
 	deck_size = val
-
+	
 
 ## Clear the [member selected_cards] list.
 func reset_selected_cards() -> void:
@@ -73,8 +73,9 @@ func update_player_hand(hand: Array[Card]) -> void:
 	# Create new buttons based on player hand
 	for card in hand:
 		player_hand_ui.add_child(card)
-		card.setup_card_for_ui()
-		card.update_selected.connect(_on_card_update_selected)
+		if not card.ui_ready:
+			card.setup_card_for_ui()
+			card.update_selected.connect(_on_card_update_selected)
 
 
 func update_enemy_stats(enemy: Enemy, new_dmg: float = -1, tot_dmg: float = -1) -> void:

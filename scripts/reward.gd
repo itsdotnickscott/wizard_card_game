@@ -64,80 +64,21 @@ enum Type {
 }
 
 
-var type: Type
+static func get_random_reward(type: Type) -> Variant:
+	var rng := RandomNumberGenerator.new()
+
+	match type:
+		Type.TOME:
+			var i := rng.randi_range(0, Spell.get_spell_library().size() - 1)
+			return Spell.get_spell_library().values()[i]
+		_:
+			return null
 
 
-func _init(reward: Type) -> void:
-	type = reward
-
-
-func gain_reward() -> void:
-	pass
-
-	"""
-	SPELLBOOK
-		2-card
-
-		- *** Twin Bolt (1 Set of 2, Any)
-			Lvl 1: 15 x 1.0
-
-		3-card
-
-		- *** Elemental Weave (1 Run of 3, Match Any)
-			Lvl 1: 10 x 2.0
-
-		- *** Chromatic Blast (1 Set of 3, Any)
-			Lvl 1: 15 x 2.0
-
-		4-card
-
-		- *** Prismatic Orb (2 Sets of 2, Any)
-			Lvl 1: 30 x 1.0
-
-		- *** Organic Fissure (1 Run of 4, Match Any)
-			Lvl 1:
-
-		- *** Intense Rapture (1 Set of 4, Any)
-			Lvl 1:
-
-		5-card
-
-		- *** Unstable Thread (1 Run of 5, Any)
-			Lvl 1:
-
-		- Chaotic Purge (1 Set of 5, Any)
-			Lvl 1:
-
-		- *** Natural Takeover (1 Any of 5, Match Any)
-			Lvl 1:
-
-		- Brilliant Beam ()
-
-		6-card
-
-		- Rapid Rush (2 Runs of 3, Match Any)
-			Lvl 1: 20 x 2.0
-
-		- Spell Name (2 Sets of 3, Any)
-			Lvl 1: 20 x 2.0
-		
-		- Spell Name (3 Sets of 2, Any)
-			Lvl 1: 20 x 2.0
-		
-
-		
-	ARCANE TOME
-		 
-
-	FIRE TOME
-
-
-	WATER TOME
-
-
-	EARTH TOME
-
-
-	ANCIENT TOME
-
-	"""
+static func get_random_rewards(quantity: int, type: Type) -> Array:
+	var choices := []
+	while choices.size() < quantity:
+		var reward = get_random_reward(type)
+		if not reward in choices:
+			choices.append(reward)
+	return choices
