@@ -93,8 +93,6 @@ static func get_random_tome(rng: RandomNumberGenerator) -> Spell:
 	var choices := []
 	var rarity: Rarity
 
-	print(random)
-
 	if random < 70.0:
 		rarity = Rarity.COMMON
 	elif random < 90.0:

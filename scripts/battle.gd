@@ -19,6 +19,13 @@ func start_battle() -> void:
 
 	# For now, only the player gets a turn
 	player_turn()
+
+
+func next_battle() -> void:
+	battle_ui.visible = true
+	reward_ui.visible = false
+
+	start_battle()
 	
 
 ## The [Player] draws to the [member Player.hand_limit] and sorts their [member Player.hand].
@@ -42,9 +49,7 @@ func cast_action(selected_cards: Array[Card]) -> void:
 		total_dmg += dmg
 
 		if enemy.health < 0:
-			reward_ui.visible = true
-			battle_ui.visible = false
-			reward_ui.set_rewards(Reward.get_random_rewards(3, Reward.Type.TOME))
+			battle_end()
 
 		battle_ui.update_enemy_stats(enemy, dmg, total_dmg)
 	
@@ -69,3 +74,18 @@ func _ready() -> void:
 func _on_battle_ui_sort_hand(by_value: bool) -> void:
 	Analysis.sort_cards(player.hand, by_value)
 	battle_ui.update_player_hand(player.hand)
+
+
+func _on_reward_ui_upgrade_spell(spell: Spell) -> void:
+	player.upgrade_spell(spell)
+	next_battle()
+
+
+func _on_insta_win_pressed():
+	enemy.health = 0
+	battle_end()
+
+func battle_end():
+	reward_ui.visible = true
+	battle_ui.visible = false
+	reward_ui.set_rewards(Reward.get_random_rewards(3, Reward.Type.TOME))

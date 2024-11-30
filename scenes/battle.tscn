@@ -20,6 +20,15 @@ position = Vector2(840, 270)
 [node name="RewardUI" parent="." instance=ExtResource("5_gdms4")]
 visible = false
 
+[node name="InstaWin" type="Button" parent="."]
+offset_left = 1069.0
+offset_top = 1.0
+offset_right = 1151.0
+offset_bottom = 32.0
+text = "Insta-Win"
+
 [connection signal="cast" from="BattleUI" to="." method="cast_action"]
 [connection signal="discard" from="BattleUI" to="." method="discard_action"]
 [connection signal="sort_hand" from="BattleUI" to="." method="_on_battle_ui_sort_hand"]
+[connection signal="upgrade_spell" from="RewardUI" to="." method="_on_reward_ui_upgrade_spell"]
+[connection signal="pressed" from="InstaWin" to="." method="_on_insta_win_pressed"]

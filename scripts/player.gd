@@ -93,6 +93,16 @@ func reset_deck() -> void:
 	deck.shuffle()
 
 
+func upgrade_spell(new_spell: Spell) -> void:
+	for spell in spellbook:
+		if spell.name == new_spell.name:
+			spell.multi += 0.5
+			spell.base += 10
+			return
+
+	spellbook.append(new_spell)
+
+
 ## Returns a 30-card_scene [Deck], with three of each value (2-10), and a Face card (W)
 ## split up evenly among three different elements (fire, water, earth).[br]
 ## Face cards that are worth 11 damage and can be used in runs before 2 and after 10.
