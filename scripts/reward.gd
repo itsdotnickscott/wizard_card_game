@@ -64,30 +64,46 @@ enum Rarity {
 }
 
 enum Type {
-	TOME,
+	NONE=-1, TOME,
+}
+
+enum Tome {
+	SPELLBOOK, 
 }
 
 
-static func get_random_reward(type: Type) -> Variant:
+static func get_random_reward(type: Type=Type.NONE) -> Dictionary:
 	var rng := RandomNumberGenerator.new()
+
+	if type == Type.NONE:
+		var choice = rng.randf_range(0.0, 100.0)
+		
+		if choice < 100.0:
+			type = Type.TOME
 
 	match type:
 		Type.TOME:
-			return get_random_tome(rng)
+			return { Type.TOME: get_random_tome(rng) }
 		_:
-			return null
+			return { }
 
 
-static func get_random_rewards(quantity: int, type: Type) -> Dictionary:
-	var choices := {}
-	while choices.size() < quantity:
-		var reward = get_random_reward(type)
-		if not reward.name in choices.keys():
-			choices[reward.name] = reward
-	return choices
+static func get_random_tome(rng: RandomNumberGenerator) -> Array:
+	var tome := []
+	var choice := rng.randi_range(0, Tome.size() - 1)
+	var size := 3
+
+	match choice:
+		Tome.SPELLBOOK:
+			while tome.size() < size:
+				var spell = get_random_spell(rng)
+				if not (spell in tome):
+					tome.append(spell)
+
+	return tome
 
 
-static func get_random_tome(rng: RandomNumberGenerator) -> Spell:
+static func get_random_spell(rng: RandomNumberGenerator) -> Spell:
 	var random := rng.randf_range(0.0, 100.0)
 	var spells := Spell.get_all_spells()
 	var choices := []

@@ -5,6 +5,69 @@ enum RankCombo { SET, RUN, ANY }
 enum ElemCombo { ANY, MATCH_ANY }
 
 
+static var _library = {
+	"spark": Spell.new(
+		"Spark", Reward.Rarity.COMMON,
+		[Spell.RankCombo.SET], [Spell.ElemCombo.ANY], 
+		[2], [1], 15, 0.5
+	),
+
+	"bolt": Spell.new(
+		"Twin Bolt", Reward.Rarity.COMMON,
+		[Spell.RankCombo.SET], [Spell.ElemCombo.ANY], 
+		[2], [2], 30, 0.5
+	),
+
+	"blast": Spell.new(
+		"Chromatic Blast", Reward.Rarity.COMMON,
+		[Spell.RankCombo.SET], [Spell.ElemCombo.ANY],
+		[3], [1], 30, 1.0
+	),
+	
+	"weave": Spell.new(
+		"Elemental Weave", Reward.Rarity.COMMON,
+		[Spell.RankCombo.RUN], [Spell.ElemCombo.MATCH_ANY], 
+		[3], [1], 35, 1.0
+	),
+
+	"thread": Spell.new(
+		"Unstable Thread", Reward.Rarity.COMMON,
+		[Spell.RankCombo.RUN], [Spell.ElemCombo.ANY], 
+		[5], [1], 30, 1.0
+	),
+
+	"chaos": Spell.new(
+		"Ray of Chaos", Reward.Rarity.UNCOMMON,
+		[Spell.RankCombo.SET, Spell.RankCombo.SET], [Spell.ElemCombo.ANY, Spell.ElemCombo.ANY], 
+		[3, 2], [1, 1], 40, 1.5
+	),
+
+	"takeover": Spell.new(
+		"Natural Takeover", Reward.Rarity.UNCOMMON,
+		[Spell.RankCombo.ANY], [Spell.ElemCombo.MATCH_ANY], 
+		[5], [1], 50, 2.0
+	),
+
+	"fissure": Spell.new(
+		"Organic Fissure", Reward.Rarity.UNCOMMON,
+		[Spell.RankCombo.RUN], [Spell.ElemCombo.MATCH_ANY], 
+		[4], [1], 60, 2.5
+	),
+
+	"purge": Spell.new(
+		"Ultimate Purge", Reward.Rarity.RARE,
+		[Spell.RankCombo.SET], [Spell.ElemCombo.ANY], 
+		[4], [1], 70, 3.0
+	),
+
+	"rapture": Spell.new(
+		"Intense Rapture", Reward.Rarity.RARE,
+		[Spell.RankCombo.RUN], [Spell.ElemCombo.MATCH_ANY], 
+		[5], [1], 80, 4.0
+	),
+}
+
+
 var name: String
 var rank_combo: Array[RankCombo]
 var elem_combo: Array[ElemCombo]
@@ -51,80 +114,15 @@ func _to_string() -> String:
 
 
 static func get_spell_library() -> Dictionary:
-	return {
-		"spark": Spell.new(
-			"Spark", Reward.Rarity.COMMON,
-			[Spell.RankCombo.SET], [Spell.ElemCombo.ANY], 
-			[2], [1], 15, 0.5
-		),
-
-		"bolt": Spell.new(
-			"Twin Bolt", Reward.Rarity.COMMON,
-			[Spell.RankCombo.SET], [Spell.ElemCombo.ANY], 
-			[2], [2], 30, 0.5
-		),
-
-		"blast": Spell.new(
-			"Chromatic Blast", Reward.Rarity.COMMON,
-			[Spell.RankCombo.SET], [Spell.ElemCombo.ANY],
-			[3], [1], 30, 1.0
-		),
-		
-		"weave": Spell.new(
-			"Elemental Weave", Reward.Rarity.COMMON,
-			[Spell.RankCombo.RUN], [Spell.ElemCombo.MATCH_ANY], 
-			[3], [1], 35, 1.0
-		),
-
-		"thread": Spell.new(
-			"Unstable Thread", Reward.Rarity.COMMON,
-			[Spell.RankCombo.RUN], [Spell.ElemCombo.ANY], 
-			[5], [1], 30, 1.0
-		),
-
-		"chaos": Spell.new(
-			"Ray of Chaos", Reward.Rarity.UNCOMMON,
-			[Spell.RankCombo.SET, Spell.RankCombo.SET], [Spell.ElemCombo.ANY, Spell.ElemCombo.ANY], 
-			[3, 2], [1, 1], 40, 1.5
-		),
-
-		"takeover": Spell.new(
-			"Natural Takeover", Reward.Rarity.UNCOMMON,
-			[Spell.RankCombo.ANY], [Spell.ElemCombo.MATCH_ANY], 
-			[5], [1], 50, 2.0
-		),
-
-		"fissure": Spell.new(
-			"Organic Fissure", Reward.Rarity.UNCOMMON,
-			[Spell.RankCombo.RUN], [Spell.ElemCombo.MATCH_ANY], 
-			[4], [1], 60, 2.5
-		),
-
-		"purge": Spell.new(
-			"Ultimate Purge", Reward.Rarity.RARE,
-			[Spell.RankCombo.SET], [Spell.ElemCombo.ANY], 
-			[4], [1], 70, 3.0
-		),
-
-		"rapture": Spell.new(
-			"Intense Rapture", Reward.Rarity.RARE,
-			[Spell.RankCombo.RUN], [Spell.ElemCombo.MATCH_ANY], 
-			[5], [1], 80, 4.0
-		),
-	}
+	return _library
 
 
-static func get_all_spells() -> Array[Spell]:
-	var spells: Array[Spell] = []
-	for spell in get_spell_library().values():
-		spells.append(spell)
-	return spells
+static func get_all_spells() -> Array:
+	return _library.values()
 
 
 static func get_from_id(id: String) -> Spell:
-	var lib = get_spell_library()
-
-	if lib.has(id):
-		return lib[id]
+	if _library.has(id):
+		return _library[id]
 	else:
 		return null

@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://ms7b7vewq484"]
+
+[node name="DefeatUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DefeatPanel" type="Panel" parent="."]
+offset_left = 327.0
+offset_top = 48.0
+offset_right = 858.0
+offset_bottom = 163.0
+
+[node name="Label" type="Label" parent="DefeatPanel"]
+layout_mode = 0
+offset_left = 108.0
+offset_top = 13.0
+offset_right = 414.0
+offset_bottom = 270.0
+text = "DEFEAT!
+
+Game Over"
+horizontal_alignment = 1

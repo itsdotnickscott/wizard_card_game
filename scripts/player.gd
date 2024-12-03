@@ -93,14 +93,19 @@ func reset_deck() -> void:
 	deck.shuffle()
 
 
-func upgrade_spell(new_spell: Spell) -> void:
+func take_dmg(val: float):
+	# Currently just rounding down and ignoring floating value
+	health -= int(val)
+
+
+func level_up_spell(spell_to_lvl: Spell) -> void:
 	for spell in spellbook:
-		if spell.name == new_spell.name:
+		if spell == spell_to_lvl:
 			spell.multi += 0.5
 			spell.base += 10
 			return
 
-	spellbook.append(new_spell)
+	spellbook.append(spell_to_lvl)
 
 
 ## Returns a 30-card_scene [Deck], with three of each value (2-10), and a Face card (W)

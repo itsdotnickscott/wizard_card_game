@@ -1,15 +1,15 @@
-[gd_scene load_steps=6 format=3 uid="uid://co63ppggsddeu"]
+[gd_scene load_steps=8 format=3 uid="uid://co63ppggsddeu"]
 
 [ext_resource type="Script" path="res://scripts/battle.gd" id="1_3jwy8"]
 [ext_resource type="PackedScene" uid="uid://ds5bf8cdlryeg" path="res://scenes/battle_ui.tscn" id="1_ft7lq"]
 [ext_resource type="PackedScene" uid="uid://boqhagawdgoqv" path="res://scenes/player.tscn" id="2_0x600"]
 [ext_resource type="PackedScene" uid="uid://bfsu0cdf4p143" path="res://scenes/enemy.tscn" id="3_b0wen"]
 [ext_resource type="PackedScene" uid="uid://djq5yfcgvs60j" path="res://scenes/reward_ui.tscn" id="5_gdms4"]
+[ext_resource type="PackedScene" uid="uid://ms7b7vewq484" path="res://scenes/defeat_ui.tscn" id="6_pako5"]
+[ext_resource type="PackedScene" uid="uid://b3bc0c71i46go" path="res://scenes/escape_ui.tscn" id="6_pllud"]
 
 [node name="Battle" type="Node2D"]
 script = ExtResource("1_3jwy8")
-
-[node name="BattleUI" parent="." instance=ExtResource("1_ft7lq")]
 
 [node name="Player" parent="." instance=ExtResource("2_0x600")]
 position = Vector2(380, 270)
@@ -17,18 +17,38 @@ position = Vector2(380, 270)
 [node name="Enemy" parent="." instance=ExtResource("3_b0wen")]
 position = Vector2(840, 270)
 
-[node name="RewardUI" parent="." instance=ExtResource("5_gdms4")]
-visible = false
+[node name="UserInterface" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
-[node name="InstaWin" type="Button" parent="."]
+[node name="BattleUI" parent="UserInterface" instance=ExtResource("1_ft7lq")]
+layout_mode = 1
+
+[node name="DefeatUI" parent="UserInterface" instance=ExtResource("6_pako5")]
+visible = false
+layout_mode = 1
+
+[node name="EscapeUI" parent="UserInterface" instance=ExtResource("6_pllud")]
+visible = false
+layout_mode = 1
+
+[node name="RewardUI" parent="UserInterface" instance=ExtResource("5_gdms4")]
+visible = false
+layout_mode = 1
+
+[node name="InstaWin" type="Button" parent="UserInterface"]
+layout_mode = 0
 offset_left = 1069.0
 offset_top = 1.0
 offset_right = 1151.0
 offset_bottom = 32.0
 text = "Insta-Win"
 
-[connection signal="cast" from="BattleUI" to="." method="cast_action"]
-[connection signal="discard" from="BattleUI" to="." method="discard_action"]
-[connection signal="sort_hand" from="BattleUI" to="." method="_on_battle_ui_sort_hand"]
-[connection signal="upgrade_spell" from="RewardUI" to="." method="_on_reward_ui_upgrade_spell"]
-[connection signal="pressed" from="InstaWin" to="." method="_on_insta_win_pressed"]
+[connection signal="cast" from="UserInterface/BattleUI" to="." method="cast_action"]
+[connection signal="discard" from="UserInterface/BattleUI" to="." method="discard_action"]
+[connection signal="sort_hand" from="UserInterface/BattleUI" to="." method="_on_battle_ui_sort_hand"]
+[connection signal="escape" from="UserInterface/EscapeUI" to="." method="_on_escape"]
+[connection signal="upgrade_spell" from="UserInterface/RewardUI" to="." method="_on_reward_ui_upgrade_spell"]
+[connection signal="pressed" from="UserInterface/InstaWin" to="." method="_on_insta_win_pressed"]

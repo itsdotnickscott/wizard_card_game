@@ -19,9 +19,9 @@ func _init(spells: Array[Spell], cards: Array[Card]) -> void:
 ## Prints out details of each [Spell] in [Analysis.spellbook] into the console.
 func analyze_spells(hand_size: int) -> void:
 	for spell in spellbook:
-		print("\n* -------------------------------------------------------------------- *\n")
 		print(get_spell_info(spell) + "\n")
 		sample_probabilities(spell, hand_size)
+		print("\n* -------------------------------------------------------------------- *\n")
 
 
 ## Simulates hands and prints the probability the drawn hand matches the given [param spell].
