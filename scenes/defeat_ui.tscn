@@ -9,6 +9,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="DefeatPanel" type="Panel" parent="."]
+layout_mode = 0
 offset_left = 327.0
 offset_top = 48.0
 offset_right = 858.0

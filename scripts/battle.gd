@@ -123,6 +123,15 @@ func game_over() -> void:
 
 
 func _ready() -> void:
+	Spell.initialize_library()
+	Upgrade.initialize_library()
+	player.initialize()
+
+	#var analysis = Analysis.new(Spell.get_all_spells(), player.deck)
+	#var analysis = Analysis.new([Spell.get_from_id("bolt")], player.deck)
+	var analysis = Analysis.new(player.spellbook, player.deck)
+	analysis.analyze_spells(player.hand_limit)
+
 	battle_ui.set_select_limit(player.select_limit)
 	battle_ui.reset_selected_cards()
 	battle_ui.update_display(player, enemy)
@@ -134,11 +143,6 @@ func _ready() -> void:
 func _on_battle_ui_sort_hand(by_value: bool) -> void:
 	Analysis.sort_cards(player.hand, by_value)
 	battle_ui.update_player_hand(player.hand)
-
-
-func _on_reward_ui_upgrade_spell(spell: Spell) -> void:
-	player.level_up_spell(spell)
-	next_battle()
 
 
 func _on_insta_win_pressed():
@@ -154,4 +158,22 @@ func _on_escape(dmg: int):
 		game_over()
 		return
 	
+	next_battle()
+
+
+func _on_reward_level_up_spell(spell: Spell):
+	if spell in player.spellbook:
+		spell.level_up()
+	else:
+		player.spellbook.append(spell)
+
+	next_battle()
+
+
+func _on_reward_upgrade_spell(upg: Upgrade):
+	if upg in upg.spell.upgrades:
+		upg.level_up()
+	else:
+		upg.spell.upgrade(upg)
+
 	next_battle()

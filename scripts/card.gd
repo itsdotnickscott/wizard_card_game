@@ -4,7 +4,7 @@ class_name Card extends Control
 signal update_selected(card, selected)
 
 
-enum Element {
+enum Affinity {
 	WILD = -1,
 	FIRE,
 	WATER,
@@ -18,7 +18,7 @@ enum Element {
 
 
 var rank: int
-var element: Element
+var affinity: Affinity
 var selected: bool = false
 
 var ui_ready: bool = false
@@ -37,28 +37,28 @@ func setup_card_for_ui() -> void:
 	ui_ready = true
 
 
-## Sets up the [member Card.rank] and [member Card.element]. Should be called after using 
+## Sets up the [member Card.rank] and [member Card.affinity]. Should be called after using 
 ## [method instantiate] on a [Card] [PackedScene].
-func init(val, elem) -> void:
+func init(val: int, aff: Affinity) -> void:
 	rank = val
-	element = elem
+	affinity = aff
 	
 
-## Sets the text of the button to the rank/element of the card.
+## Sets the text of the button to the rank/affinity of the card.
 func _set_display() -> void:
 	button.text = str(rank) if rank != 11 else "W"
 	button.text += "\n"
 
-	match element:
-		Element.WILD:
+	match affinity:
+		Affinity.WILD:
 			button.text += "❔"
-		Element.FIRE:
+		Affinity.FIRE:
 			button.text += "🔥"
-		Element.WATER:
+		Affinity.WATER:
 			button.text += "💧"
-		Element.EARTH:
+		Affinity.EARTH:
 			button.text += "🍃"
-		Element.ARCANA:
+		Affinity.ARCANA:
 			button.text += "🎆"
 
 
@@ -68,6 +68,6 @@ func _on_card_pressed() -> void:
 
 
 func _to_string() -> String:
-	return "Card(%d, %d)" % [rank, element] 
+	return "Card(%d, %d)" % [rank, affinity] 
 
 

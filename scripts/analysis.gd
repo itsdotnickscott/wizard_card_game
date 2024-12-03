@@ -81,13 +81,13 @@ static func calc_dmg(hand: Array, spell: Spell) -> float:
 
 
 ## Sorts [member Player.hand] by [member Card.rank] if [param by_rank] is [code]true[/code].
-## Otherwise, it sorts it by [member Card.element]. Modifies the existing [Array].
+## Otherwise, it sorts it by [member Card.affinity]. Modifies the existing [Array].
 static func sort_cards(cards: Array[Card], by_rank: bool) -> void:
 	var asc_value := func(a: Card, b: Card) -> int:
 		if by_rank:
 			return a.rank < b.rank
 		else:
-			return a.element < b.element
+			return a.affinity < b.affinity
 
 	cards.sort_custom(asc_value)
 
@@ -109,10 +109,10 @@ static func get_spell_info(spell: Spell) -> String:
 
 		subtitle += " of %d, " % [spell.card_amt[i]]
 
-		match spell.elem_combo[i]:
-			Spell.ElemCombo.ANY:
+		match spell.aff_combo[i]:
+			Spell.AffCombo.ANY:
 				subtitle += "ANY"
-			Spell.ElemCombo.MATCH_ANY:
+			Spell.AffCombo.MATCH_ANY:
 				subtitle += "MATCH ANY"
 
 		subtitle += " | "
@@ -168,7 +168,7 @@ static func is_valid_spell(spell: Spell, hand: Array[Card], exact: bool) -> bool
 			Spell.RankCombo.RUN:
 				part = get_valid_runs(hand, spell, i)
 
-			Spell.RankCombo.ANY when spell.elem_combo[i] == Spell.ElemCombo.MATCH_ANY:
+			Spell.RankCombo.ANY when spell.aff_combo[i] == Spell.AffCombo.MATCH_ANY:
 				part = get_valid_match_anys(hand, spell, i)
 
 		if part.size() < spell.quantity[i]:
@@ -196,7 +196,7 @@ static func get_hand_from_spell(spell: Spell, hand: Array[Card]) -> Array:
 			Spell.RankCombo.RUN:
 				part = get_valid_runs(hand, spell, i)
 
-			Spell.RankCombo.ANY when spell.elem_combo[i] == Spell.ElemCombo.MATCH_ANY:
+			Spell.RankCombo.ANY when spell.aff_combo[i] == Spell.AffCombo.MATCH_ANY:
 				part = get_valid_match_anys(hand, spell, i)
 
 		combos.append(part)
@@ -328,7 +328,7 @@ static func get_valid_runs(hand: Array[Card], spell: Spell, part: int) -> Array:
 			for r in runs:
 				# Last card of run is 1 below current card
 				if card.rank == r[-1].rank + 1:
-					if _check_elem_combo(spell.elem_combo[part], r[-1], card):
+					if _check_aff_combo(spell.aff_combo[part], r[-1], card):
 						r.append(card)
 						added = true
 						break
@@ -338,7 +338,7 @@ static func get_valid_runs(hand: Array[Card], spell: Spell, part: int) -> Array:
 				if card.rank == 11:
 					for r in runs:
 						if r[0].rank == 2 and r[-1].rank != 11:
-							if _check_elem_combo(spell.elem_combo[part], r[-1], card):
+							if _check_aff_combo(spell.aff_combo[part], r[-1], card):
 								r.append(card)
 								break
 						elif r[0].rank > 2:
@@ -358,15 +358,15 @@ static func get_valid_runs(hand: Array[Card], spell: Spell, part: int) -> Array:
 
 
 static func get_valid_match_anys(hand: Array[Card], spell: Spell, part: int) -> Array:
-	var by_elem := {}
+	var by_aff := {}
 	for card in hand:
-		if by_elem.has(card.element):
-			by_elem[card.element].append(card)
+		if by_aff.has(card.affinity):
+			by_aff[card.affinity].append(card)
 		else:
-			by_elem[card.element] = [card]
+			by_aff[card.affinity] = [card]
 			
 	var sets := []
-	for cards in by_elem.values():
+	for cards in by_aff.values():
 		if cards.size() >= spell.card_amt[part]:
 			sets.append(cards)
 
@@ -382,14 +382,14 @@ static func get_valid_match_anys(hand: Array[Card], spell: Spell, part: int) -> 
 
 
 ## Returns [code][true][/code] if [param card1] and [param card2] are matching the 
-## element [param combo].
-static func _check_elem_combo(combo: Spell.ElemCombo, card1: Card, card2: Card) -> bool:
+## affinity [param combo].
+static func _check_aff_combo(combo: Spell.AffCombo, card1: Card, card2: Card) -> bool:
 	match combo:
-		Spell.ElemCombo.ANY:
+		Spell.AffCombo.ANY:
 			return true
 
-		Spell.ElemCombo.MATCH_ANY:
-			return card1.element == card2.element
+		Spell.AffCombo.MATCH_ANY:
+			return card1.affinity == card2.affinity
 
 		_:
 			return false
@@ -408,17 +408,17 @@ static func _count_ranks(hand: Array[Card]) -> Dictionary:
 	return ranks
 
 
-## Returns a [Dictionary] with the amount of each [member Card.element] in [param hand].
-static func _count_elems(hand: Array[Card]) -> Dictionary:
-	var elems: Dictionary = {}
+## Returns a [Dictionary] with the amount of each [member Card.affinity] in [param hand].
+static func _count_affs(hand: Array[Card]) -> Dictionary:
+	var affs: Dictionary = {}
 
 	for card in hand:
-		if card.element not in elems.keys():
-			elems[card.element] = 1
+		if card.affinity not in affs.keys():
+			affs[card.affinity] = 1
 		else:
-			elems[card.element] += 1
+			affs[card.affinity] += 1
 
-	return elems
+	return affs
 
 
 static func _get_run_combinations(cards: Array, size: int) -> Array:

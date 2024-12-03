@@ -60,7 +60,7 @@ trial
 
 
 enum Rarity {
-	COMMON, UNCOMMON, RARE, EPIC
+	COMMON, UNCOMMON, RARE, EPIC, LEGENDARY
 }
 
 enum Type {
@@ -68,7 +68,7 @@ enum Type {
 }
 
 enum Tome {
-	SPELLBOOK, 
+	KNOWLEDGE, INFERNAL, FLOWING, TERRA, ANCIENT,
 }
 
 
@@ -91,14 +91,20 @@ static func get_random_reward(type: Type=Type.NONE) -> Dictionary:
 static func get_random_tome(rng: RandomNumberGenerator) -> Array:
 	var tome := []
 	var choice := rng.randi_range(0, Tome.size() - 1)
-	var size := 3
+	var size := 1
 
 	match choice:
-		Tome.SPELLBOOK:
+		Tome.KNOWLEDGE:
 			while tome.size() < size:
 				var spell = get_random_spell(rng)
 				if not (spell in tome):
 					tome.append(spell)
+
+		_:
+			while tome.size() < size:
+				var upgrade = get_random_upgrade(rng, choice - 1)
+				if not (upgrade in tome):
+					tome.append(upgrade)
 
 	return tome
 
@@ -113,15 +119,29 @@ static func get_random_spell(rng: RandomNumberGenerator) -> Spell:
 		rarity = Rarity.COMMON
 	elif random < 90.0:
 		rarity = Rarity.UNCOMMON
-	elif random < 99.0:
+	elif random <= 100.0:
 		rarity = Rarity.RARE
-	else:
-		rarity = Rarity.RARE
-		print("rolled epic spell, no epic spell available, returning rare spell for now")
 
 	for spell in spells:
 		if spell.tome_rarity == rarity:
 			choices.append(spell)
+
+	var choice := rng.randi_range(0, choices.size() - 1)
+	return choices[choice]
+
+
+static func get_random_upgrade(rng: RandomNumberGenerator, aff: Card.Affinity) -> Upgrade:
+	var random := rng.randf_range(0.0, 100.0)
+	var upgrades := Upgrade.get_upgrades(aff)
+	var choices := []
+	var rarity: Rarity
+
+	if random <= 100.0:
+		rarity = Rarity.COMMON
+
+	for upgrade in upgrades:
+		if upgrade.tome_rarity == rarity:
+			choices.append(upgrade)
 
 	var choice := rng.randi_range(0, choices.size() - 1)
 	return choices[choice]

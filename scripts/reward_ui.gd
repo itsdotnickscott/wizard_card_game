@@ -1,7 +1,8 @@
 extends Control
 
 
-signal upgrade_spell(spell: Spell)
+signal level_up_spell(spell: Spell)
+signal upgrade_spell(upgrade: Upgrade)
 
 
 @onready var choices_ui: VBoxContainer = get_node("VictoryPanel/Choices")
@@ -23,14 +24,13 @@ func set_rewards(rewards: Dictionary):
 			Reward.Type.TOME:
 				for reward in rewards.values()[i]:
 					var button := Button.new()
-
-					if reward is Spell:
-						button.text = Analysis.get_spell_info(reward)
-						button.pressed.connect(_on_reward_chosen.bind(reward))
-
+					button.text = reward.name
 					choices_ui.add_child(button)
+					button.pressed.connect(_on_reward_chosen.bind(reward))
 
 
 func _on_reward_chosen(reward: Variant):
-		if reward is Spell:
-			upgrade_spell.emit(reward)
+	if reward is Spell:
+		level_up_spell.emit(reward)
+	elif reward is Upgrade:
+		upgrade_spell.emit(reward)

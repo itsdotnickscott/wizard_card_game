@@ -50,5 +50,6 @@ text = "Insta-Win"
 [connection signal="discard" from="UserInterface/BattleUI" to="." method="discard_action"]
 [connection signal="sort_hand" from="UserInterface/BattleUI" to="." method="_on_battle_ui_sort_hand"]
 [connection signal="escape" from="UserInterface/EscapeUI" to="." method="_on_escape"]
-[connection signal="upgrade_spell" from="UserInterface/RewardUI" to="." method="_on_reward_ui_upgrade_spell"]
+[connection signal="level_up_spell" from="UserInterface/RewardUI" to="." method="_on_reward_level_up_spell"]
+[connection signal="upgrade_spell" from="UserInterface/RewardUI" to="." method="_on_reward_upgrade_spell"]
 [connection signal="pressed" from="UserInterface/InstaWin" to="." method="_on_insta_win_pressed"]

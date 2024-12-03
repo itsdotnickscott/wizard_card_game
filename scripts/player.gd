@@ -1,16 +1,14 @@
-class_name Player extends Node2D
+class_name Player extends Unit
 
 
 var card_scene = preload("res://scenes/card.tscn")
 
 
-var max_health: int = 100
 var max_mana: int = 4
 var max_discards: int = 3
 var hand_limit: int = 7
 var select_limit: int = 4
 
-var health: int = max_health
 var mana: int = max_mana
 var discards_left: int = max_discards
 
@@ -27,6 +25,8 @@ var discard: Array[Card] = []
 func battle_start() -> void:
 	mana = max_mana
 	discards_left = max_discards
+	shield = 0
+
 	reset_deck()
 
 
@@ -93,38 +93,28 @@ func reset_deck() -> void:
 	deck.shuffle()
 
 
-func take_dmg(val: float):
-	# Currently just rounding down and ignoring floating value
-	health -= int(val)
-
-
-func level_up_spell(spell_to_lvl: Spell) -> void:
-	for spell in spellbook:
-		if spell == spell_to_lvl:
-			spell.multi += 0.5
-			spell.base += 10
-			return
-
-	spellbook.append(spell_to_lvl)
+func start_turn() -> void:
+	shield = 0
+	draw_to_limit()
 
 
 ## Returns a 30-card_scene [Deck], with three of each value (2-10), and a Face card (W)
-## split up evenly among three different elements (fire, water, earth).[br]
+## split up evenly among three different affinities (fire, water, earth).[br]
 ## Face cards that are worth 11 damage and can be used in runs before 2 and after 10.
 func _create_base_deck() -> Array[Card]:
 	var new_deck: Array[Card] = []
 
 	var val := 2
-	var elem := 0
+	var aff := 0
 
 	for i in range(10):
 		for j in range(4):
 			var new_card: Card = card_scene.instantiate()
-			new_card.init(val, elem)
+			new_card.init(val, aff)
 			new_deck.append(new_card)
-			elem += 1
+			aff += 1
 		val += 1
-		elem = 0
+		aff = 0
 
 	return new_deck
 
@@ -140,12 +130,8 @@ func _create_base_spellbook() -> Array[Spell]:
 	]
 
 
-func _ready() -> void:
+func initialize() -> void:
 	deck = _create_base_deck()
 	max_deck_size = deck.size()
 	#spellbook = Spell.get_all_spells() 
 	spellbook = _create_base_spellbook()
-	#var analysis = Analysis.new(Spell.get_all_spells(), deck)
-	#var analysis = Analysis.new([Spell.get_from_id("bolt")], deck)
-	var analysis = Analysis.new(spellbook, deck)
-	analysis.analyze_spells(hand_limit)

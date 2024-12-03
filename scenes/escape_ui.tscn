@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b3bc0c71i46go"]
 
-[ext_resource type="Script" path="res://scenes/escape_ui.gd" id="1_0rc1h"]
+[ext_resource type="Script" path="res://scripts/escape_ui.gd" id="1_0rc1h"]
 
 [node name="EscapeUI" type="Control"]
 layout_mode = 3
@@ -12,6 +12,7 @@ grow_vertical = 2
 script = ExtResource("1_0rc1h")
 
 [node name="EscapePanel" type="Panel" parent="."]
+layout_mode = 0
 offset_left = 327.0
 offset_top = 48.0
 offset_right = 858.0
@@ -29,6 +30,7 @@ text = "Out of Mana!
 horizontal_alignment = 1
 
 [node name="Escape" type="Button" parent="EscapePanel"]
+layout_mode = 0
 offset_left = 178.0
 offset_top = 60.0
 offset_right = 341.0
