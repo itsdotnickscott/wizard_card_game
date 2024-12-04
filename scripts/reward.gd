@@ -91,7 +91,7 @@ static func get_random_reward(type: Type=Type.NONE) -> Dictionary:
 static func get_random_tome(rng: RandomNumberGenerator) -> Array:
 	var tome := []
 	var choice := rng.randi_range(0, Tome.size() - 1)
-	var size := 1
+	var size := 3
 
 	match choice:
 		Tome.KNOWLEDGE:
@@ -102,7 +102,8 @@ static func get_random_tome(rng: RandomNumberGenerator) -> Array:
 
 		_:
 			while tome.size() < size:
-				var upgrade = get_random_upgrade(rng, choice - 1)
+				# Below line returns any upgrade for now
+				var upgrade = get_random_upgrade(rng) #get_random_upgrade(rng, choice - 1)
 				if not (upgrade in tome):
 					tome.append(upgrade)
 
@@ -130,7 +131,9 @@ static func get_random_spell(rng: RandomNumberGenerator) -> Spell:
 	return choices[choice]
 
 
-static func get_random_upgrade(rng: RandomNumberGenerator, aff: Card.Affinity) -> Upgrade:
+static func get_random_upgrade(
+	rng: RandomNumberGenerator, aff: Card.Affinity = Card.Affinity.WILD
+) -> Upgrade:
 	var random := rng.randf_range(0.0, 100.0)
 	var upgrades := Upgrade.get_upgrades(aff)
 	var choices := []
@@ -139,9 +142,13 @@ static func get_random_upgrade(rng: RandomNumberGenerator, aff: Card.Affinity) -
 	if random <= 100.0:
 		rarity = Rarity.COMMON
 
-	for upgrade in upgrades:
-		if upgrade.tome_rarity == rarity:
-			choices.append(upgrade)
+	if aff != Card.Affinity.WILD:
+		for upgrade in upgrades:
+			if upgrade.tome_rarity == rarity:
+				choices.append(upgrade)
 
-	var choice := rng.randi_range(0, choices.size() - 1)
-	return choices[choice]
+		var choice := rng.randi_range(0, choices.size() - 1)
+		return choices[choice]
+	else:
+		var choice := rng.randi_range(0, upgrades.size() - 1)
+		return upgrades[choice]

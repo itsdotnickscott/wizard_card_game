@@ -6,27 +6,27 @@ enum Target {
 }
 
 enum Proc {
-	INSTANT, 
+	START_TURN,
 	SPELL_CHECK, 
-	PLAYER_END_TURN, 
-	ENEMY_END_TURN
+	END_TURN
 }
 
 
-var name: String
-var target: Target
-var proc: Proc
+@export var name: String
+@export var target: Target
+@export var proc: Proc
+@export var turns: int
 
 
-func _init(new_name: String, applies_to: Target, procs_at: Proc) -> void:
-	name = new_name
+func _init(eff_name: String, applies_to: Target, procs_at: Proc, length: int) -> void:
+	name = eff_name
 	target = applies_to
 	proc = procs_at
+	turns = length
 
 
-func process(_targ: Unit) -> bool:
-	print("%s - This effect does nothing!" % [name])
-	return true
+func new_instance() -> Effect:
+	return Effect.new(name, target, proc, turns)
 
 
 ## ================  INDIVIDUAL EFFECTS  ================ #
@@ -34,63 +34,58 @@ func process(_targ: Unit) -> bool:
 
 ## Burn does extra damage over time.
 class Burn extends Effect:
-	var dmg: float
-	var turns: int
+	@export var dmg: float
 
 
 	func _init(applies_to: Target, procs_at: Proc, dmg_tick: float, length: int) -> void:
-		super("Burn", applies_to, procs_at)
+		super("Burn", applies_to, procs_at, length)
 		dmg = dmg_tick
-		turns = length
 
 
-	func process(targ: Unit) -> bool:
-		targ.take_dmg(dmg)
-		turns -= 1
-		print("%s - %s takes %d damage [%d turns remaining]" % [name, targ.name, dmg, turns])
-		return turns <= 0
+	func new_instance() -> Effect.Burn:
+		return Effect.Burn.new(target, proc, dmg, turns)
 
 
 ## Heal replenishes health.
 class Heal extends Effect:
-	var amt: float
+	@export var hp: float
 
 
-	func _init(applies_to: Target, procs_at: Proc, hp: float) -> void:
-		super("Heal", applies_to, procs_at)
-		amt = hp
+	func _init(applies_to: Target, procs_at: Proc, heal: float, length: int) -> void:
+		super("Heal", applies_to, procs_at, length)
+		hp = heal
 
 
-	func process(targ: Unit) -> bool:
-		targ.heal(amt)
-		print("%s - %s heals %d HP" % [name, targ.name, amt])
-		return false
+	func new_instance() -> Effect.Heal:
+		return Effect.Heal.new(target, proc, hp, turns)
 
 
 ## Shield protects against damage. By default, shield only lasts 1 turn.
 class Shield extends Effect:
-	var amt: float
+	@export var hp: float
 
 
-	func _init(applies_to: Target, procs_at: Proc, hp: float) -> void:
-		super("Shield", applies_to, procs_at)
-		amt = hp
+	func _init(applies_to: Target, procs_at: Proc, shield: float, length: int) -> void:
+		super("Shield", applies_to, procs_at, length)
+		hp = shield
 
 
-	func process(targ: Unit) -> bool:
-		targ.gain_shield(amt)
-		print("%s - %s shields for %d damage" % [name, targ.name, amt])
-		return false
+	func new_instance() -> Effect.Shield:
+		return Effect.Shield.new(target, proc, hp, turns)
 
 
 ## Wild makes the affinity be used in combination with any other.
 class Wild extends Effect:
-	var affinity: Card.Affinity
-	var card_limit: int
+	@export var affinity: Card.Affinity
+	@export var card_limit: int
 
 
-	func _init(aff: Card.Affinity, num_cards: int) -> void:
-		super("Wild", Target.PLAYER, Proc.SPELL_CHECK)
+	func _init(aff: Card.Affinity, num_cards: int, length: int) -> void:
+		super("Wild", Target.PLAYER, Proc.SPELL_CHECK, length)
 
 		affinity = aff
 		card_limit = num_cards
+
+
+	func new_instance() -> Effect.Wild:
+		return Effect.Wild.new(affinity, card_limit, turns)

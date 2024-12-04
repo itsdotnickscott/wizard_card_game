@@ -17,10 +17,10 @@ enum Affinity {
 @onready var button = get_node("Button")
 
 
-var rank: int
-var affinity: Affinity
-var selected: bool = false
+@export var rank: int
+@export var affinity: Affinity
 
+var selected: bool = false
 var ui_ready: bool = false
 
 

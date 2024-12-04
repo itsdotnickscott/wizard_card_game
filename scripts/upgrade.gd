@@ -4,22 +4,22 @@ class_name Upgrade extends Resource
 static var _library: Dictionary = {}
 
 
-var name: String
-var affinity: Card.Affinity
-var tome_rarity: Reward.Rarity
-var effect: Effect
-var spell: Spell
+@export var name: String
+@export var affinity: Card.Affinity
+@export var tome_rarity: Reward.Rarity
+@export var effects: Array[Effect]
+@export var spell: Spell
 
 
 func _init(
 	new_name: String, aff: Card.Affinity, rarity: Reward.Rarity, 
-	eff: Effect,
+	effect_list: Array[Effect],
 	give_to: Spell
 ) -> void:
 	name = new_name
 	affinity = aff
 	tome_rarity = rarity
-	effect = eff
+	effects = effect_list
 	spell = give_to
 
 
@@ -32,25 +32,25 @@ static func initialize_library() -> void:
 	_library = {
 		"fire_weave": Upgrade.new(
 			"Flame Weave", Card.Affinity.FIRE, Reward.Rarity.COMMON,
-			Effect.Burn.new(Effect.Target.ENEMY, Effect.Proc.ENEMY_END_TURN, 10, 3),
+			[Effect.Burn.new(Effect.Target.ENEMY, Effect.Proc.START_TURN, 10, 3)],
 			Spell.get_from_id("weave")
 		),
 
 		"water_weave": Upgrade.new(
 			"Rejuvinating Weave", Card.Affinity.WATER, Reward.Rarity.COMMON,
-			Effect.Heal.new(Effect.Target.PLAYER, Effect.Proc.INSTANT, 10),
+			[Effect.Heal.new(Effect.Target.PLAYER, Effect.Proc.END_TURN, 10, 1)],
 			Spell.get_from_id("weave")
 		),
 
 		"earth_weave": Upgrade.new(
 			"Protective Weave", Card.Affinity.EARTH, Reward.Rarity.COMMON,
-			Effect.Shield.new(Effect.Target.PLAYER, Effect.Proc.INSTANT, 20),
+			[Effect.Shield.new(Effect.Target.PLAYER, Effect.Proc.START_TURN, 10, 1)],
 			Spell.get_from_id("weave")
 		),
 
 		"arcana_weave": Upgrade.new(
-			"Flexi Weave", Card.Affinity.ARCANA, Reward.Rarity.COMMON,
-			Effect.Wild.new(Card.Affinity.ARCANA, 1),
+			"Flexi Weave", Card.Affinity.ARCANA, Reward.Rarity.UNCOMMON,
+			[Effect.Wild.new(Card.Affinity.ARCANA, 1, -1)],
 			Spell.get_from_id("weave")
 		)
 	}

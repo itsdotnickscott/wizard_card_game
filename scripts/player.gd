@@ -4,17 +4,18 @@ class_name Player extends Unit
 var card_scene = preload("res://scenes/card.tscn")
 
 
-var max_mana: int = 4
-var max_discards: int = 3
-var hand_limit: int = 7
-var select_limit: int = 4
+@export var max_mana: int = 4
+@export var max_discards: int = 3
+@export var hand_limit: int = 7
+@export var select_limit: int = 4
+
+@export var deck: Array[Card] = []
+@export var spellbook: Array[Spell] = []
 
 var mana: int = max_mana
 var discards_left: int = max_discards
 
-var deck: Array[Card] = []
-var max_deck_size: int = 0
-var spellbook: Array[Spell] = []
+var deck_size: int = 0
 
 var hand: Array[Card] = []
 var discard: Array[Card] = []
@@ -25,7 +26,7 @@ var discard: Array[Card] = []
 func battle_start() -> void:
 	mana = max_mana
 	discards_left = max_discards
-	shield = 0
+	shields = []
 
 	reset_deck()
 
@@ -93,11 +94,6 @@ func reset_deck() -> void:
 	deck.shuffle()
 
 
-func start_turn() -> void:
-	shield = 0
-	draw_to_limit()
-
-
 ## Returns a 30-card_scene [Deck], with three of each value (2-10), and a Face card (W)
 ## split up evenly among three different affinities (fire, water, earth).[br]
 ## Face cards that are worth 11 damage and can be used in runs before 2 and after 10.
@@ -132,6 +128,6 @@ func _create_base_spellbook() -> Array[Spell]:
 
 func initialize() -> void:
 	deck = _create_base_deck()
-	max_deck_size = deck.size()
+	deck_size = deck.size()
 	#spellbook = Spell.get_all_spells() 
 	spellbook = _create_base_spellbook()

@@ -43,6 +43,7 @@ func update_display(player: Player, enemy: Enemy) -> void:
 
 func update_player_stats(player: Player) -> void:
 	$PlayerStats/HPValue.text = "%d/%d" % [player.health, player.max_health]
+	$PlayerStats/ShieldValue.text = "%d" % [player.total_shield()]
 	$PlayerStats/ManaValue.text = "%d/%d" % [player.mana, player.max_mana]
 	$PlayerStats/DiscardValue.text = "%d/%d" % [player.discards_left, player.max_discards]
 	$PlayerStats/DeckValue.text = "%d/%d" % [player.deck.size(), deck_size]
@@ -78,12 +79,15 @@ func update_player_hand(hand: Array[Card]) -> void:
 			card.update_selected.connect(_on_card_update_selected)
 
 
-func update_enemy_stats(enemy: Enemy, new_dmg: float = -1, tot_dmg: float = -1) -> void:
+func update_enemy_stats(
+	enemy: Enemy, tot_dmg: float = -1, new_dmg: float = -1, spell_name: String = ""
+) -> void:
 	$EnemyStats/HPValue.text = "%d/%d" % [enemy.health, enemy.max_health]
-	if new_dmg != -1 and tot_dmg != -1:
-		$EnemyStats/TotDmgValue.text = "%d" % [tot_dmg]
-		$EnemyStats/LstSpellValue.text = "%d" % [new_dmg]
-
+	$EnemyStats/AtkValue.text = "%d" % [enemy.attack]
+	if new_dmg != -1:
+		$EnemyStats/LastSpellValue.text = "%d  (%s)" % [new_dmg, spell_name]
+	if tot_dmg != -1:
+		$EnemyStats/RoundTotValue.text = "%d" % [tot_dmg]
 
 
 func _on_card_update_selected(card: Card, selected: bool) -> void:

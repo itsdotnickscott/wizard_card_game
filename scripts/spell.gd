@@ -8,15 +8,15 @@ enum AffCombo { ANY, MATCH_ANY }
 static var _library = {}
 
 
-var name: String
-var tome_rarity: Reward.Rarity
-var rank_combo: Array[RankCombo]
-var aff_combo: Array[AffCombo]
-var card_amt: Array[int]
-var quantity: Array[int]
-var base: int
-var multi: float
-var upgrades: Array[Upgrade]
+@export var name: String
+@export var tome_rarity: Reward.Rarity
+@export var rank_combo: Array[RankCombo]
+@export var aff_combo: Array[AffCombo]
+@export var card_amt: Array[int]
+@export var quantity: Array[int]
+@export var base: int
+@export var multi: float
+@export var upgrades: Array[Upgrade]
 
 
 func _init(
@@ -27,7 +27,8 @@ func _init(
 	if not (
 		rank.size() == aff.size() and aff.size() == amt.size() and amt.size() == quant.size()
 	):
-		print("invalid spell makeup")
+		print("invalid spell - rank, aff, amt, and quant params all need to be the same size")
+		return
 
 	name = spell_name
 	rank_combo = rank

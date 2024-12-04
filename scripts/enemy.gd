@@ -1,6 +1,4 @@
 class_name Enemy extends Unit
 
 
-var attack: int = 0
-
-
+@export var attack: int = 0
