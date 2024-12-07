@@ -102,8 +102,9 @@ static func get_random_tome(rng: RandomNumberGenerator) -> Array:
 
 		_:
 			while tome.size() < size:
-				# Below line returns any upgrade for now
-				var upgrade = get_random_upgrade(rng) #get_random_upgrade(rng, choice - 1)
+				# Below line returns any upgrade for now, note that commented out line relies that
+				# Card.Affinity WILD = 0 and elements start at 1.
+				var upgrade = get_random_upgrade(rng) #get_random_upgrade(rng, choice)
 				if not (upgrade in tome):
 					tome.append(upgrade)
 

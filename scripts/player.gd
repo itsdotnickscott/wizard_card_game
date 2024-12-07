@@ -20,15 +20,30 @@ var deck_size: int = 0
 var hand: Array[Card] = []
 var discard: Array[Card] = []
 
+var spell_check_effects: Array[Effect] = []
+
 
 ## Resets [member Player.mana], [member Player.discards_left], and [member Player.deck] 
 ## to their default values.
 func battle_start() -> void:
+	super()
 	mana = max_mana
 	discards_left = max_discards
-	shields = []
+	
+	set_up_spell_checks()
 
 	reset_deck()
+
+
+## Sets the [member Player.spell_check_effects] to all active effects from spell upgrades.
+func set_up_spell_checks() -> void:
+	spell_check_effects = []
+
+	for spell in spellbook:
+		for upgrade in spell.upgrades:
+			for effect in upgrade.effects:
+				if effect.proc == Effect.Proc.SPELL_CHECK:
+					spell_check_effects.append(effect)
 
 
 ## Removes 1 [member Player.mana] and discards given [Card] objects from the [member Player.hand].
@@ -45,7 +60,7 @@ func cast_cards(selected_cards: Array[Card]) -> Spell:
 		hand.erase(card)
 		discard.append(card)
 
-	return Analysis.get_valid_spell(spellbook, selected_cards, true)
+	return Analysis.get_valid_spell(spellbook, selected_cards, true, spell_check_effects)
 
 
 ## Discards given [Card] objects from the [member Player.hand]. Returns [code]true[/code] if 
@@ -101,7 +116,7 @@ func _create_base_deck() -> Array[Card]:
 	var new_deck: Array[Card] = []
 
 	var val := 2
-	var aff := 0
+	var aff := 1
 
 	for i in range(10):
 		for j in range(4):
@@ -110,7 +125,7 @@ func _create_base_deck() -> Array[Card]:
 			new_deck.append(new_card)
 			aff += 1
 		val += 1
-		aff = 0
+		aff = 1
 
 	return new_deck
 

@@ -116,9 +116,10 @@ func apply_spell_upgrades(spell: Spell, hand: Array[Card]) -> void:
 	for upg in spell.upgrades:
 		if hand[0].affinity == upg.affinity:
 			for effect in upg.effects:
-				var instance := effect.new_instance()
-				var unit := get_target(effect)
-				unit.apply_effect(instance)
+				if effect.proc != Effect.Proc.SPELL_CHECK:
+					var instance := effect.new_instance()
+					var unit := get_target(effect)
+					unit.apply_effect(instance)
 
 
 func process_effects(unit: Unit, effects: Array[Effect]) -> void:
@@ -132,12 +133,13 @@ func process_effects(unit: Unit, effects: Array[Effect]) -> void:
 		elif effect is Effect.Shield:
 			shield_effect(effect)
 
-		effect.turns -= 1
+		if effect.turns != -1:
+			effect.turns -= 1
 
-		if effect.turns > 0:
-			print("%s - %s [%d turns remaining]" % [unit.name, effect.name, effect.turns])
-		else:
-			print("%s - %s [expired]" % [unit.name, effect.name])
+			if effect.turns > 0:
+				print("%s - %s [%d turns remaining]" % [unit.name, effect.name, effect.turns])
+			else:
+				print("%s - %s [expired]" % [unit.name, effect.name])
 
 	unit.clear_finished_effects()
 

@@ -5,7 +5,8 @@ signal update_selected(card, selected)
 
 
 enum Affinity {
-	WILD = -1,
+	NONE = -1,
+	WILD,
 	FIRE,
 	WATER,
 	EARTH,

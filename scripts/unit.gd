@@ -81,3 +81,9 @@ func sort_shields_by_turns() -> void:
 		return a.turns < b.turns
 
 	shields.sort_custom(sort)
+
+
+func battle_start() -> void:
+	shields = []
+	start_turn_effects = []
+	end_turn_effects = []
