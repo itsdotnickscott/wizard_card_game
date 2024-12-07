@@ -1,0 +1,75 @@
+[gd_scene load_steps=2 format=3 uid="uid://djq5yfcgvs60j"]
+
+[ext_resource type="Script" path="res://scripts/reward_ui.gd" id="1_obmo8"]
+
+[node name="RewardUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_obmo8")
+
+[node name="VictoryPanel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 327.0
+offset_top = 48.0
+offset_right = 858.0
+offset_bottom = 599.0
+
+[node name="Label" type="Label" parent="VictoryPanel"]
+layout_mode = 0
+offset_left = 108.0
+offset_top = 13.0
+offset_right = 414.0
+offset_bottom = 270.0
+text = "VICTORY!
+
+LOOT
+
+
+
+BATTLE REWARD
+
+
+Choose One:"
+horizontal_alignment = 1
+
+[node name="LootLabel" type="Label" parent="VictoryPanel"]
+layout_mode = 0
+offset_left = 179.0
+offset_top = 198.0
+offset_right = 342.0
+offset_bottom = 221.0
+text = "Spellbook"
+horizontal_alignment = 1
+
+[node name="RewardLabel" type="Label" parent="VictoryPanel"]
+layout_mode = 0
+offset_left = 179.0
+offset_top = 90.0
+offset_right = 342.0
+offset_bottom = 113.0
+text = "+ 10 Gold
++ 10 Dust"
+horizontal_alignment = 1
+
+[node name="Choices" type="VBoxContainer" parent="VictoryPanel"]
+layout_mode = 0
+offset_left = 53.0
+offset_top = 279.0
+offset_right = 474.0
+offset_bottom = 516.0
+
+[node name="Choice1" type="Button" parent="VictoryPanel/Choices"]
+layout_mode = 2
+text = "Choice 1"
+
+[node name="Choice2" type="Button" parent="VictoryPanel/Choices"]
+layout_mode = 2
+text = "Choice 2"
+
+[node name="Choice3" type="Button" parent="VictoryPanel/Choices"]
+layout_mode = 2
+text = "Choice 3"

@@ -1,10 +1,4 @@
-class_name Enemy extends Node2D
+class_name Enemy extends Unit
 
 
-var max_health: int = 100
-var health: int = max_health
-
-
-func take_dmg(val: float):
-	# Currently just rounding down and ignoring floating value
-	health -= int(val)
+@export var attack: int = 0

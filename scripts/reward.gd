@@ -59,85 +59,97 @@ trial
 """
 
 
+enum Rarity {
+	COMMON, UNCOMMON, RARE, EPIC, LEGENDARY
+}
+
 enum Type {
-	TOME,
+	NONE=-1, TOME,
+}
+
+enum Tome {
+	KNOWLEDGE, INFERNAL, FLOWING, TERRA, ANCIENT,
 }
 
 
-var type: Type
+static func get_random_reward(type: Type=Type.NONE) -> Dictionary:
+	var rng := RandomNumberGenerator.new()
 
-
-func _init(reward: Type) -> void:
-	type = reward
-
-
-func gain_reward() -> void:
-	pass
-
-	"""
-	SPELLBOOK
-		2-card
-
-		- *** Twin Bolt (1 Set of 2, Any)
-			Lvl 1: 15 x 1.0
-
-		3-card
-
-		- *** Elemental Weave (1 Run of 3, Match Any)
-			Lvl 1: 10 x 2.0
-
-		- *** Chromatic Blast (1 Set of 3, Any)
-			Lvl 1: 15 x 2.0
-
-		4-card
-
-		- *** Prismatic Orb (2 Sets of 2, Any)
-			Lvl 1: 30 x 1.0
-
-		- *** Organic Fissure (1 Run of 4, Match Any)
-			Lvl 1:
-
-		- *** Intense Rapture (1 Set of 4, Any)
-			Lvl 1:
-
-		5-card
-
-		- *** Unstable Thread (1 Run of 5, Any)
-			Lvl 1:
-
-		- Chaotic Purge (1 Set of 5, Any)
-			Lvl 1:
-
-		- *** Natural Takeover (1 Any of 5, Match Any)
-			Lvl 1:
-
-		- Brilliant Beam ()
-
-		6-card
-
-		- Rapid Rush (2 Runs of 3, Match Any)
-			Lvl 1: 20 x 2.0
-
-		- Spell Name (2 Sets of 3, Any)
-			Lvl 1: 20 x 2.0
+	if type == Type.NONE:
+		var choice = rng.randf_range(0.0, 100.0)
 		
-		- Spell Name (3 Sets of 2, Any)
-			Lvl 1: 20 x 2.0
-		
+		if choice < 100.0:
+			type = Type.TOME
 
-		
-	ARCANE TOME
-		 
-
-	FIRE TOME
-
-
-	WATER TOME
+	match type:
+		Type.TOME:
+			return { Type.TOME: get_random_tome(rng) }
+		_:
+			return { }
 
 
-	EARTH TOME
+static func get_random_tome(rng: RandomNumberGenerator) -> Array:
+	var tome := []
+	var choice := rng.randi_range(0, Tome.size() - 1)
+	var size := 3
+
+	match choice:
+		Tome.KNOWLEDGE:
+			while tome.size() < size:
+				var spell = get_random_spell(rng)
+				if not (spell in tome):
+					tome.append(spell)
+
+		_:
+			while tome.size() < size:
+				# Below line returns any upgrade for now, note that commented out line relies that
+				# Card.Affinity WILD = 0 and elements start at 1.
+				var upgrade = get_random_upgrade(rng) #get_random_upgrade(rng, choice)
+				if not (upgrade in tome):
+					tome.append(upgrade)
+
+	return tome
 
 
-	ANCIENT TOME
+static func get_random_spell(rng: RandomNumberGenerator) -> Spell:
+	var random := rng.randf_range(0.0, 100.0)
+	var spells := Spell.get_all_spells()
+	var choices := []
+	var rarity: Rarity
 
-	"""
+	if random < 70.0:
+		rarity = Rarity.COMMON
+	elif random < 90.0:
+		rarity = Rarity.UNCOMMON
+	elif random <= 100.0:
+		rarity = Rarity.RARE
+
+	for spell in spells:
+		if spell.tome_rarity == rarity:
+			choices.append(spell)
+
+	var choice := rng.randi_range(0, choices.size() - 1)
+	return choices[choice]
+
+
+static func get_random_upgrade(
+	rng: RandomNumberGenerator, aff: Card.Affinity = Card.Affinity.WILD
+) -> Upgrade:
+	var random := rng.randf_range(0.0, 100.0)
+	var upgrades := Upgrade.get_upgrades(aff)
+	var choices := []
+	var rarity: Rarity
+
+	if random <= 100.0:
+		rarity = Rarity.COMMON
+
+	if aff != Card.Affinity.WILD:
+		for upgrade in upgrades:
+			if upgrade.tome_rarity == rarity:
+				choices.append(upgrade)
+
+		var choice := rng.randi_range(0, choices.size() - 1)
+		return choices[choice]
+	else:
+		var choice := rng.randi_range(0, upgrades.size() - 1)
+		return upgrades[choice]

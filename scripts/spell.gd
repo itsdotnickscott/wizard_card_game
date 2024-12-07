@@ -2,35 +2,42 @@ class_name Spell extends Resource
 
 
 enum RankCombo { SET, RUN, ANY }
-enum ElemCombo { ANY, MATCH_ANY }
+enum AffCombo { ANY, MATCH_ANY }
 
 
-var name: String
-var rank_combo: Array[RankCombo]
-var elem_combo: Array[ElemCombo]
-var card_amt: Array[int]
-var quantity: Array[int]
-var base: int
-var multi: float
+static var _library = {}
+
+
+@export var name: String
+@export var tome_rarity: Reward.Rarity
+@export var rank_combo: Array[RankCombo]
+@export var aff_combo: Array[AffCombo]
+@export var card_amt: Array[int]
+@export var quantity: Array[int]
+@export var base: int
+@export var multi: float
+@export var upgrades: Array[Upgrade]
 
 
 func _init(
-	spell_name: String, 
-	rank: Array[RankCombo], elem: Array[ElemCombo], 
+	spell_name: String, rarity: Reward.Rarity,
+	rank: Array[RankCombo], aff: Array[AffCombo], 
 	amt: Array[int], quant: Array[int], base_dmg: int, mult: float
 ) -> void:
 	if not (
-		rank.size() == elem.size() and elem.size() == amt.size() and amt.size() == quant.size()
+		rank.size() == aff.size() and aff.size() == amt.size() and amt.size() == quant.size()
 	):
-		print("invalid spell makeup")
+		print("invalid spell - rank, aff, amt, and quant params all need to be the same size")
+		return
 
 	name = spell_name
 	rank_combo = rank
-	elem_combo = elem
+	aff_combo = aff
 	card_amt = amt
 	quantity = quant
 	base = base_dmg
 	multi = mult
+	tome_rarity = rarity
 
 
 func parts() -> int:
@@ -48,81 +55,88 @@ func _to_string() -> String:
 	return name
 
 
-static func get_spell_library() -> Dictionary:
-	return {
-		"spark": Spell.new(
-			"Spark", 
-			[Spell.RankCombo.SET], [Spell.ElemCombo.ANY], 
-			[2], [1], 10, 0.5
+func level_up() -> void:
+	multi += 0.5
+	base += 10
+
+
+func upgrade(new_upg: Upgrade) -> void:
+	upgrades.append(new_upg)
+
+
+static func initialize_library() -> void:
+	_library = {"spark": Spell.new(
+			"Spark", Reward.Rarity.COMMON,
+			[Spell.RankCombo.SET], [Spell.AffCombo.ANY], 
+			[2], [1], 15, 0.5
 		),
 
 		"bolt": Spell.new(
-			"Twin Bolt",
-			[Spell.RankCombo.SET], [Spell.ElemCombo.ANY], 
-			[2], [2], 20, 0.5
+			"Twin Bolt", Reward.Rarity.COMMON,
+			[Spell.RankCombo.SET], [Spell.AffCombo.ANY], 
+			[2], [2], 30, 0.5
 		),
 
 		"blast": Spell.new(
-			"Chromatic Blast", 
-			[Spell.RankCombo.SET], [Spell.ElemCombo.ANY],
+			"Chromatic Blast", Reward.Rarity.COMMON,
+			[Spell.RankCombo.SET], [Spell.AffCombo.ANY],
 			[3], [1], 30, 1.0
 		),
 		
 		"weave": Spell.new(
-			"Elemental Weave", 
-			[Spell.RankCombo.RUN], [Spell.ElemCombo.MATCH_ANY], 
-			[3], [1], 40, 1.0
+			"Elemental Weave", Reward.Rarity.COMMON,
+			[Spell.RankCombo.RUN], [Spell.AffCombo.MATCH_ANY], 
+			[3], [1], 35, 1.0
 		),
 
 		"thread": Spell.new(
-			"Unstable Thread", 
-			[Spell.RankCombo.RUN], [Spell.ElemCombo.ANY], 
+			"Unstable Thread", Reward.Rarity.COMMON,
+			[Spell.RankCombo.RUN], [Spell.AffCombo.ANY], 
 			[5], [1], 30, 1.0
 		),
 
 		"chaos": Spell.new(
-			"Ray of Chaos", 
-			[Spell.RankCombo.SET, Spell.RankCombo.SET], [Spell.ElemCombo.ANY, Spell.ElemCombo.ANY], 
+			"Ray of Chaos", Reward.Rarity.UNCOMMON,
+			[Spell.RankCombo.SET, Spell.RankCombo.SET], [Spell.AffCombo.ANY, Spell.AffCombo.ANY], 
 			[3, 2], [1, 1], 40, 1.5
 		),
 
 		"takeover": Spell.new(
-			"Natural Takeover", 
-			[Spell.RankCombo.ANY], [Spell.ElemCombo.MATCH_ANY], 
+			"Natural Takeover", Reward.Rarity.UNCOMMON,
+			[Spell.RankCombo.ANY], [Spell.AffCombo.MATCH_ANY], 
 			[5], [1], 50, 2.0
 		),
 
 		"fissure": Spell.new(
-			"Organic Fissure", 
-			[Spell.RankCombo.RUN], [Spell.ElemCombo.MATCH_ANY], 
+			"Organic Fissure", Reward.Rarity.UNCOMMON,
+			[Spell.RankCombo.RUN], [Spell.AffCombo.MATCH_ANY], 
 			[4], [1], 60, 2.5
 		),
 
 		"purge": Spell.new(
-			"Ultimate Purge", 
-			[Spell.RankCombo.SET], [Spell.ElemCombo.ANY], 
+			"Ultimate Purge", Reward.Rarity.RARE,
+			[Spell.RankCombo.SET], [Spell.AffCombo.ANY], 
 			[4], [1], 70, 3.0
 		),
 
 		"rapture": Spell.new(
-			"Intense Rapture", 
-			[Spell.RankCombo.RUN], [Spell.ElemCombo.MATCH_ANY], 
+			"Intense Rapture", Reward.Rarity.RARE,
+			[Spell.RankCombo.RUN], [Spell.AffCombo.MATCH_ANY], 
 			[5], [1], 80, 4.0
 		),
 	}
 
 
-static func get_all_spells() -> Array[Spell]:
-	var spells: Array[Spell] = []
-	for spell in get_spell_library().values():
-		spells.append(spell)
-	return spells
+static func get_spell_library() -> Dictionary:
+	return _library
+
+
+static func get_all_spells() -> Array:
+	return _library.values()
 
 
 static func get_from_id(id: String) -> Spell:
-	var lib = get_spell_library()
-
-	if lib.has(id):
-		return lib[id]
+	if _library.has(id):
+		return _library[id]
 	else:
 		return null
