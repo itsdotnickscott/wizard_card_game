@@ -43,7 +43,7 @@ func sample_probabilities(spell: Spell, hand_size: int) -> void:
 			hand.append(deck[j])
 
 		var TEST_WITH_EFFECTS : Array[Effect] = [
-			Effect.Wild.new(Card.Affinity.ARCANA, 1, -1)
+			#Effect.Wild.new(Card.Affinity.ARCANA, 1, -1)
 		]
 
 		if is_valid_spell(spell, hand, false, TEST_WITH_EFFECTS):
@@ -479,9 +479,10 @@ static func _get_valid_runs(
 
 
 ## This function will make sure that if there are any wilds in the run, that it doesn't exceed
-## the card limit.
-## Note: [param run] is assumed to already be a valid run makeup.
+## the card limit.[br]
+## Note: [param run] is assumed to already be a valid run makeup.[br]
 ## Warning: I expect this function to have unexpected results when mixing multiple wilds in a run.
+## Also will act weird if a Wild effect has a 0 card limit, which shouldn't happen anyway.
 static func _verify_wilds(run: Array, effects: Array[Effect], aff_combo: Spell.AffCombo) -> bool:
 	if aff_combo == Spell.AffCombo.MATCH_ANY:
 		if effects.is_empty():
