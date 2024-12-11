@@ -82,8 +82,9 @@ func update_player_hand(hand: Array[Card]) -> void:
 func update_enemy_stats(
 	enemy: Enemy, tot_dmg: float = -1, new_dmg: float = -1, spell_name: String = ""
 ) -> void:
+	$EnemyStats/NameValue.text = "❗  %s  ❗" % [enemy.name]
 	$EnemyStats/HPValue.text = "%d/%d" % [enemy.health, enemy.max_health]
-	$EnemyStats/AtkValue.text = "%d" % [enemy.attack]
+	$EnemyStats/AtkValue.text = "%d" % [enemy.attacks[0].damage]
 	if new_dmg != -1:
 		$EnemyStats/LastSpellValue.text = "%d  (%s)" % [new_dmg, spell_name]
 	if tot_dmg != -1:

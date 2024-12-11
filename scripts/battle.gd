@@ -13,33 +13,36 @@ enum State {
 @onready var reward_ui: Control = get_node("UserInterface/RewardUI")
 @onready var defeat_ui: Control = get_node("UserInterface/DefeatUI")
 @onready var escape_ui: Control = get_node("UserInterface/EscapeUI")
+@onready var map: Map = get_node("UserInterface/Map")
 
 
+var curr_location: Location
 var curr_state: State
 var total_dmg: float = 0.0
 
 
 ## Currently called in [method _ready].
 func start_battle() -> void:
+	map.visible = false
+	battle_ui.visible = true
 	total_dmg = 0.0
 	player.battle_start()
+	enemy.reset_enemy(curr_location.enemy)
+	battle_ui.update_display(player, enemy)
 	battle_ui.set_deck_size(player.deck.size())
 
 	# For now, only the player gets a turn
 	player_turn()
 
 
-func next_battle() -> void:
-	battle_ui.visible = true
+func next_location() -> void:
+	curr_state = State.MAP
+
 	reward_ui.visible = false
 	escape_ui.visible = false
 
-	# Basic enemy progression for now
-	enemy.max_health = int(enemy.max_health * 1.5)
-	enemy.health = enemy.max_health
-	enemy.attack += 10
-
-	start_battle()
+	map.update_location(curr_location)
+	map.visible = true
 	
 
 ## The [Player] draws to the [member Player.hand_limit] and sorts their [member Player.hand].
@@ -70,7 +73,7 @@ func enemy_turn() -> void:
 
 	print("Enemy - Basic Attack")
 
-	var dmg := enemy.attack
+	var dmg := enemy.attacks[0].damage
 	player.take_dmg(dmg)
 
 	battle_ui.update_player_stats(player)
@@ -198,6 +201,7 @@ func _ready() -> void:
 	Spell.initialize_library()
 	Upgrade.initialize_library()
 	player.initialize()
+	#enemy.reset_enemy(EnemyInfo.new("Test", Enemy.Tier.NORMAL, 100, [Attack.new("Test", 0)]))
 
 	#var analysis = Analysis.new(Spell.get_all_spells(), player.deck)
 	#var analysis = Analysis.new([Spell.get_from_id("bolt")], player.deck)
@@ -206,7 +210,12 @@ func _ready() -> void:
 
 	battle_ui.set_select_limit(player.select_limit)
 	battle_ui.reset_selected_cards()
-	battle_ui.update_display(player, enemy)
+	#battle_ui.update_display(player, enemy)
+
+	map.create_stage()
+	map.setup_ui()
+	curr_location = map.locations[0]
+	map.update_location(curr_location)
 
 	# For now, the battle starts immediately after ready
 	start_battle()
@@ -230,7 +239,7 @@ func _on_escape(dmg: int):
 		game_over()
 		return
 	
-	next_battle()
+	next_location()
 
 
 func _on_reward_level_up_spell(spell: Spell):
@@ -239,7 +248,7 @@ func _on_reward_level_up_spell(spell: Spell):
 	else:
 		player.spellbook.append(spell)
 
-	next_battle()
+	next_location()
 
 
 func _on_reward_upgrade_spell(upg: Upgrade):
@@ -248,4 +257,9 @@ func _on_reward_upgrade_spell(upg: Upgrade):
 	else:
 		upg.spell.upgrade(upg)
 
-	next_battle()
+	next_location()
+
+
+func _on_map_location_pressed(location: Location):
+	curr_location = location
+	start_battle()
