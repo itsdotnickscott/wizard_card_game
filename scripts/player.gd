@@ -1,7 +1,7 @@
 class_name Player extends Unit
 
 
-var card_scene = preload("res://scenes/card.tscn")
+@onready var card_scene = preload("res://scenes/card.tscn")
 
 
 @export var max_mana: int = 4

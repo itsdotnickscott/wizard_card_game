@@ -74,15 +74,22 @@ text = "30/30"
 [node name="EnemyStats" type="Label" parent="."]
 layout_mode = 0
 offset_left = 823.0
-offset_top = 22.0
+offset_top = 38.0
 offset_right = 1025.0
-offset_bottom = 152.0
+offset_bottom = 168.0
 text = "♥ HEALTH:
 ⚔ ATTACK:
 
 Last Spell:
 Round Total:"
 vertical_alignment = 2
+
+[node name="NameValue" type="Label" parent="EnemyStats"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = -23.0
+offset_right = 90.0
+text = "❗  ENEMY"
 
 [node name="HPValue" type="Label" parent="EnemyStats"]
 layout_mode = 0

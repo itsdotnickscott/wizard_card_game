@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://djq5yfcgvs60j"]
+[gd_scene load_steps=3 format=3 uid="uid://djq5yfcgvs60j"]
 
 [ext_resource type="Script" path="res://scripts/reward_ui.gd" id="1_obmo8"]
+[ext_resource type="PackedScene" uid="uid://bbdhec2d0jaoc" path="res://scenes/card.tscn" id="2_b8vkq"]
 
 [node name="RewardUI" type="Control"]
 layout_mode = 3
@@ -16,60 +17,81 @@ layout_mode = 0
 offset_left = 327.0
 offset_top = 48.0
 offset_right = 858.0
-offset_bottom = 599.0
+offset_bottom = 388.0
 
-[node name="Label" type="Label" parent="VictoryPanel"]
+[node name="Victory" type="Label" parent="VictoryPanel"]
 layout_mode = 0
 offset_left = 108.0
 offset_top = 13.0
 offset_right = 414.0
-offset_bottom = 270.0
-text = "VICTORY!
-
-LOOT
-
-
-
-BATTLE REWARD
-
-
-Choose One:"
+offset_bottom = 36.0
+text = "VICTORY!"
 horizontal_alignment = 1
 
-[node name="LootLabel" type="Label" parent="VictoryPanel"]
+[node name="Reward" type="Label" parent="VictoryPanel"]
 layout_mode = 0
-offset_left = 179.0
-offset_top = 198.0
-offset_right = 342.0
-offset_bottom = 221.0
+offset_left = 180.0
+offset_top = 56.0
+offset_right = 343.0
+offset_bottom = 107.0
+text = "REWARD:"
+horizontal_alignment = 1
+
+[node name="Type" type="Label" parent="VictoryPanel/Reward"]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 23.0
+offset_right = 164.0
+offset_bottom = 46.0
 text = "Spellbook"
 horizontal_alignment = 1
 
-[node name="RewardLabel" type="Label" parent="VictoryPanel"]
+[node name="Count" type="Label" parent="VictoryPanel/Reward"]
 layout_mode = 0
-offset_left = 179.0
-offset_top = 90.0
-offset_right = 342.0
-offset_bottom = 113.0
-text = "+ 10 Gold
-+ 10 Dust"
+offset_left = -4.0
+offset_top = 77.0
+offset_right = 159.0
+offset_bottom = 100.0
+text = "Choose 1:"
 horizontal_alignment = 1
 
-[node name="Choices" type="VBoxContainer" parent="VictoryPanel"]
+[node name="Tome" type="VBoxContainer" parent="VictoryPanel" groups=["choices"]]
 layout_mode = 0
-offset_left = 53.0
-offset_top = 279.0
-offset_right = 474.0
-offset_bottom = 516.0
+offset_left = 51.0
+offset_top = 171.0
+offset_right = 472.0
+offset_bottom = 408.0
 
-[node name="Choice1" type="Button" parent="VictoryPanel/Choices"]
+[node name="Choice1" type="Button" parent="VictoryPanel/Tome"]
 layout_mode = 2
 text = "Choice 1"
 
-[node name="Choice2" type="Button" parent="VictoryPanel/Choices"]
+[node name="Choice2" type="Button" parent="VictoryPanel/Tome"]
 layout_mode = 2
 text = "Choice 2"
 
-[node name="Choice3" type="Button" parent="VictoryPanel/Choices"]
+[node name="Choice3" type="Button" parent="VictoryPanel/Tome"]
 layout_mode = 2
 text = "Choice 3"
+
+[node name="CardPack" type="HBoxContainer" parent="VictoryPanel" groups=["choices"]]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 170.0
+offset_right = 524.0
+offset_bottom = 407.0
+
+[node name="Card" parent="VictoryPanel/CardPack" instance=ExtResource("2_b8vkq")]
+layout_mode = 2
+
+[node name="Card2" parent="VictoryPanel/CardPack" instance=ExtResource("2_b8vkq")]
+layout_mode = 2
+
+[node name="Card3" parent="VictoryPanel/CardPack" instance=ExtResource("2_b8vkq")]
+layout_mode = 2
+
+[node name="Card4" parent="VictoryPanel/CardPack" instance=ExtResource("2_b8vkq")]
+layout_mode = 2
+
+[node name="Card5" parent="VictoryPanel/CardPack" instance=ExtResource("2_b8vkq")]
+layout_mode = 2

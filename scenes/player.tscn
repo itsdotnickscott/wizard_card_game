@@ -5,12 +5,6 @@
 
 [node name="Player" type="Node2D"]
 script = ExtResource("1_o418q")
-max_mana = null
-max_discards = null
-hand_limit = null
-select_limit = null
-spellbook = null
-max_health = null
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(3, 3)

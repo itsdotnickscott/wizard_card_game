@@ -13,33 +13,36 @@ enum State {
 @onready var reward_ui: Control = get_node("UserInterface/RewardUI")
 @onready var defeat_ui: Control = get_node("UserInterface/DefeatUI")
 @onready var escape_ui: Control = get_node("UserInterface/EscapeUI")
+@onready var map: Map = get_node("UserInterface/Map")
 
 
+var curr_location: Location
 var curr_state: State
 var total_dmg: float = 0.0
 
 
 ## Currently called in [method _ready].
 func start_battle() -> void:
+	map.visible = false
+	battle_ui.visible = true
 	total_dmg = 0.0
 	player.battle_start()
+	enemy.reset_enemy(curr_location.info.enemy)
+	battle_ui.update_display(player, enemy)
 	battle_ui.set_deck_size(player.deck.size())
 
 	# For now, only the player gets a turn
 	player_turn()
 
 
-func next_battle() -> void:
-	battle_ui.visible = true
+func next_location() -> void:
+	curr_state = State.MAP
+
 	reward_ui.visible = false
 	escape_ui.visible = false
 
-	# Basic enemy progression for now
-	enemy.max_health = int(enemy.max_health * 1.5)
-	enemy.health = enemy.max_health
-	enemy.attack += 10
-
-	start_battle()
+	map.update_location(curr_location)
+	map.visible = true
 	
 
 ## The [Player] draws to the [member Player.hand_limit] and sorts their [member Player.hand].
@@ -68,9 +71,9 @@ func enemy_turn() -> void:
 
 	process_effects(enemy, enemy.start_turn_effects)
 
-	print("Enemy - Basic Attack")
+	print("%s - %s" % [enemy.name, enemy.attacks[0].name])
 
-	var dmg := enemy.attack
+	var dmg := enemy.attacks[0].damage
 	player.take_dmg(dmg)
 
 	battle_ui.update_player_stats(player)
@@ -176,14 +179,18 @@ func discard_action(selected_cards: Array[Card]) -> void:
 
 func battle_end():
 	curr_state = State.OUTCOME
-	reward_ui.set_rewards(Reward.get_random_reward())
+	reward_ui.set_reward(curr_location.info.reward)
 	reward_ui.visible = true
 	battle_ui.visible = false
 
 
+func gain_loot():
+	reward_ui.set_reward(Reward.CardPack.get_random())
+
+
 func out_of_mana():
 	curr_state = State.OUTCOME
-	escape_ui.set_escape_damage(enemy.attack * 3)
+	escape_ui.set_escape_damage(enemy.attacks[0].damage * 3)
 	escape_ui.visible = true
 	battle_ui.visible = false
 
@@ -206,7 +213,11 @@ func _ready() -> void:
 
 	battle_ui.set_select_limit(player.select_limit)
 	battle_ui.reset_selected_cards()
-	battle_ui.update_display(player, enemy)
+
+	map.create_stage()
+	map.setup_ui()
+	curr_location = map.locations[0]
+	map.update_location(curr_location)
 
 	# For now, the battle starts immediately after ready
 	start_battle()
@@ -217,12 +228,12 @@ func _on_battle_ui_sort_hand(by_value: bool) -> void:
 	battle_ui.update_player_hand(player.hand)
 
 
-func _on_insta_win_pressed():
+func _on_insta_win_pressed() -> void:
 	enemy.health = 0
 	battle_end()
 
 
-func _on_escape(dmg: int):
+func _on_escape(dmg: int) -> void:
 	print("Escape!")
 	player.take_dmg(dmg)
 
@@ -230,22 +241,33 @@ func _on_escape(dmg: int):
 		game_over()
 		return
 	
-	next_battle()
+	next_location()
 
 
-func _on_reward_level_up_spell(spell: Spell):
+func _on_reward_level_up_spell(spell: Spell) -> void:
 	if spell in player.spellbook:
 		spell.level_up()
 	else:
 		player.spellbook.append(spell)
 
-	next_battle()
+	next_location()
 
 
-func _on_reward_upgrade_spell(upg: Upgrade):
+func _on_reward_upgrade_spell(upg: Upgrade) -> void:
 	if upg in upg.spell.upgrades:
 		upg.level_up()
 	else:
 		upg.spell.upgrade(upg)
 
-	next_battle()
+	next_location()
+
+
+func _on_reward_gain_card(card: Card) -> void:
+	player.deck.append(card)
+
+	next_location()
+
+
+func _on_map_location_pressed(location: Location) -> void:
+	curr_location = location
+	start_battle()

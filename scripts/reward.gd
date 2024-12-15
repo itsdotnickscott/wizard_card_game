@@ -63,93 +63,104 @@ enum Rarity {
 	COMMON, UNCOMMON, RARE, EPIC, LEGENDARY
 }
 
-enum Type {
-	NONE=-1, TOME,
-}
 
-enum Tome {
-	KNOWLEDGE, INFERNAL, FLOWING, TERRA, ANCIENT,
-}
+@export var choices: Array
+@export var choice_amt: int
 
 
-static func get_random_reward(type: Type=Type.NONE) -> Dictionary:
-	var rng := RandomNumberGenerator.new()
-
-	if type == Type.NONE:
-		var choice = rng.randf_range(0.0, 100.0)
-		
-		if choice < 100.0:
-			type = Type.TOME
-
-	match type:
-		Type.TOME:
-			return { Type.TOME: get_random_tome(rng) }
-		_:
-			return { }
+func _init(rewards: Array, choose: int) -> void:
+	choices = rewards
+	choice_amt = choose
 
 
-static func get_random_tome(rng: RandomNumberGenerator) -> Array:
-	var tome := []
-	var choice := rng.randi_range(0, Tome.size() - 1)
-	var size := 3
-
-	match choice:
-		Tome.KNOWLEDGE:
-			while tome.size() < size:
-				var spell = get_random_spell(rng)
-				if not (spell in tome):
-					tome.append(spell)
-
-		_:
-			while tome.size() < size:
-				# Below line returns any upgrade for now, note that commented out line relies that
-				# Card.Affinity WILD = 0 and elements start at 1.
-				var upgrade = get_random_upgrade(rng) #get_random_upgrade(rng, choice)
-				if not (upgrade in tome):
-					tome.append(upgrade)
-
-	return tome
+class Tome extends Reward:
+	enum Type {
+		KNOWLEDGE, INFERNAL, FLOWING, TERRA, ANCIENT,
+	}
 
 
-static func get_random_spell(rng: RandomNumberGenerator) -> Spell:
-	var random := rng.randf_range(0.0, 100.0)
-	var spells := Spell.get_all_spells()
-	var choices := []
-	var rarity: Rarity
+	static func get_random() -> Tome:
+		var rng := RandomNumberGenerator.new()
+		var tome := []
+		var choice := rng.randi_range(0, Type.size() - 1)
+		var size := 3
 
-	if random < 70.0:
-		rarity = Rarity.COMMON
-	elif random < 90.0:
-		rarity = Rarity.UNCOMMON
-	elif random <= 100.0:
-		rarity = Rarity.RARE
+		match choice:
+			Type.KNOWLEDGE:
+				while tome.size() < size:
+					var spell = get_random_spell(rng)
+					if not (spell in tome):
+						tome.append(spell)
 
-	for spell in spells:
-		if spell.tome_rarity == rarity:
-			choices.append(spell)
+			_:
+				while tome.size() < size:
+					# Below line returns any upgrade for now, note that commented out line relies that
+					# Card.Affinity WILD = 0 and elements start at 1.
+					var upgrade = get_random_upgrade(rng) #get_random_upgrade(rng, choice)
+					if not (upgrade in tome):
+						tome.append(upgrade)
 
-	var choice := rng.randi_range(0, choices.size() - 1)
-	return choices[choice]
+		return Tome.new(tome, 1)
 
 
-static func get_random_upgrade(
-	rng: RandomNumberGenerator, aff: Card.Affinity = Card.Affinity.WILD
-) -> Upgrade:
-	var random := rng.randf_range(0.0, 100.0)
-	var upgrades := Upgrade.get_upgrades(aff)
-	var choices := []
-	var rarity: Rarity
+	static func get_random_spell(rng: RandomNumberGenerator) -> Spell:
+		var random := rng.randf_range(0.0, 100.0)
+		var all_spells := Spell.get_all_spells()
+		var spells := []
+		var rarity: Rarity
 
-	if random <= 100.0:
-		rarity = Rarity.COMMON
+		if random < 70.0:
+			rarity = Rarity.COMMON
+		elif random < 90.0:
+			rarity = Rarity.UNCOMMON
+		elif random <= 100.0:
+			rarity = Rarity.RARE
 
-	if aff != Card.Affinity.WILD:
-		for upgrade in upgrades:
-			if upgrade.tome_rarity == rarity:
-				choices.append(upgrade)
+		for spell in all_spells:
+			if spell.tome_rarity == rarity:
+				spells.append(spell)
 
-		var choice := rng.randi_range(0, choices.size() - 1)
-		return choices[choice]
-	else:
-		var choice := rng.randi_range(0, upgrades.size() - 1)
-		return upgrades[choice]
+		var choice := rng.randi_range(0, spells.size() - 1)
+		return spells[choice]
+
+
+	static func get_random_upgrade(
+		rng: RandomNumberGenerator, aff: Card.Affinity = Card.Affinity.WILD
+	) -> Upgrade:
+		var random := rng.randf_range(0.0, 100.0)
+		var all_upgs := Upgrade.get_upgrades(aff)
+		var upgs := []
+		var rarity: Rarity
+
+		if random <= 100.0:
+			rarity = Rarity.COMMON
+
+		if aff != Card.Affinity.WILD:
+			for upgrade in all_upgs:
+				if upgrade.tome_rarity == rarity:
+					upgs.append(upgrade)
+
+			var choice := rng.randi_range(0, upgs.size() - 1)
+			return upgs[choice]
+		else:
+			var choice := rng.randi_range(0, all_upgs.size() - 1)
+			return all_upgs[choice]
+
+
+class CardPack extends Reward:
+	static var card_scene = load("res://scenes/card.tscn")
+
+
+	static func get_random() -> CardPack:
+		var rng := RandomNumberGenerator.new()
+		var pack := []
+		var size := rng.randi_range(3, 5)
+
+		for i in range(size):
+			var val := rng.randi_range(2, 11)
+			var aff := rng.randi_range(1, 4)
+			var card: Card = card_scene.instantiate()
+			card.init(val, aff)
+			pack.append(card)
+
+		return CardPack.new(pack, 1)
