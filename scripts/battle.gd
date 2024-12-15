@@ -27,7 +27,7 @@ func start_battle() -> void:
 	battle_ui.visible = true
 	total_dmg = 0.0
 	player.battle_start()
-	enemy.reset_enemy(curr_location.enemy)
+	enemy.reset_enemy(curr_location.info.enemy)
 	battle_ui.update_display(player, enemy)
 	battle_ui.set_deck_size(player.deck.size())
 
@@ -71,7 +71,7 @@ func enemy_turn() -> void:
 
 	process_effects(enemy, enemy.start_turn_effects)
 
-	print("Enemy - Basic Attack")
+	print("%s - %s" % [enemy.name, enemy.attacks[0].name])
 
 	var dmg := enemy.attacks[0].damage
 	player.take_dmg(dmg)
@@ -179,14 +179,18 @@ func discard_action(selected_cards: Array[Card]) -> void:
 
 func battle_end():
 	curr_state = State.OUTCOME
-	reward_ui.set_rewards(Reward.get_random_reward())
+	reward_ui.set_reward(curr_location.info.reward)
 	reward_ui.visible = true
 	battle_ui.visible = false
 
 
+func gain_loot():
+	reward_ui.set_reward(Reward.CardPack.get_random())
+
+
 func out_of_mana():
 	curr_state = State.OUTCOME
-	escape_ui.set_escape_damage(enemy.attack * 3)
+	escape_ui.set_escape_damage(enemy.attacks[0].damage * 3)
 	escape_ui.visible = true
 	battle_ui.visible = false
 
@@ -201,7 +205,6 @@ func _ready() -> void:
 	Spell.initialize_library()
 	Upgrade.initialize_library()
 	player.initialize()
-	#enemy.reset_enemy(EnemyInfo.new("Test", Enemy.Tier.NORMAL, 100, [Attack.new("Test", 0)]))
 
 	#var analysis = Analysis.new(Spell.get_all_spells(), player.deck)
 	#var analysis = Analysis.new([Spell.get_from_id("bolt")], player.deck)
@@ -210,7 +213,6 @@ func _ready() -> void:
 
 	battle_ui.set_select_limit(player.select_limit)
 	battle_ui.reset_selected_cards()
-	#battle_ui.update_display(player, enemy)
 
 	map.create_stage()
 	map.setup_ui()
@@ -226,12 +228,12 @@ func _on_battle_ui_sort_hand(by_value: bool) -> void:
 	battle_ui.update_player_hand(player.hand)
 
 
-func _on_insta_win_pressed():
+func _on_insta_win_pressed() -> void:
 	enemy.health = 0
 	battle_end()
 
 
-func _on_escape(dmg: int):
+func _on_escape(dmg: int) -> void:
 	print("Escape!")
 	player.take_dmg(dmg)
 
@@ -242,7 +244,7 @@ func _on_escape(dmg: int):
 	next_location()
 
 
-func _on_reward_level_up_spell(spell: Spell):
+func _on_reward_level_up_spell(spell: Spell) -> void:
 	if spell in player.spellbook:
 		spell.level_up()
 	else:
@@ -251,7 +253,7 @@ func _on_reward_level_up_spell(spell: Spell):
 	next_location()
 
 
-func _on_reward_upgrade_spell(upg: Upgrade):
+func _on_reward_upgrade_spell(upg: Upgrade) -> void:
 	if upg in upg.spell.upgrades:
 		upg.level_up()
 	else:
@@ -260,6 +262,12 @@ func _on_reward_upgrade_spell(upg: Upgrade):
 	next_location()
 
 
-func _on_map_location_pressed(location: Location):
+func _on_reward_gain_card(card: Card) -> void:
+	player.deck.append(card)
+
+	next_location()
+
+
+func _on_map_location_pressed(location: Location) -> void:
 	curr_location = location
 	start_battle()

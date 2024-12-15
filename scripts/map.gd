@@ -4,7 +4,7 @@ class_name Map extends Control
 signal location_pressed(location: Location)
 
 
-@onready var location_button = preload("res://scenes/location_button.tscn")
+@onready var location_scene := preload("res://scenes/location.tscn")
 
 
 var locations: Array[Location] = []
@@ -12,48 +12,49 @@ var stage: int = 1
 
 
 func create_stage() -> void:
-	var start := Location.Battle.new(
-		EnemyInfo.new("Practice Dummy", Enemy.Tier.NORMAL, 100, [Attack.new("Stay Still", 0)]), 
-		Reward.get_random_reward()
-	)
-	var choice1 := Location.Battle.new(
-		EnemyInfo.new("Wild Deer", Enemy.Tier.NORMAL, 175, [Attack.new("Prance", 5)]), 
-		Reward.get_random_reward()
-	)
-	var choice2 := Location.Battle.new(
-		EnemyInfo.new("Wild Skunk", Enemy.Tier.NORMAL, 150, [Attack.new("Spray", 10)]), 
-		Reward.get_random_reward()
-	) 
-	var choice1a := Location.Battle.new(
-		EnemyInfo.new("Wild Bear", Enemy.Tier.NORMAL, 250, [Attack.new("Claw", 15)]), 
-		Reward.get_random_reward()
-	) 
-	var choice1b := Location.Battle.new(
-		EnemyInfo.new("Wild Wolf", Enemy.Tier.NORMAL, 225, [Attack.new("Pounce", 20)]), 
-		Reward.get_random_reward()
-	) 
-	var choice2a := Location.Battle.new(
-		EnemyInfo.new("Wild Crocodile", Enemy.Tier.NORMAL, 250, [Attack.new("Crunch", 15)]),
-		Reward.get_random_reward()
-	) 
-	var choice2b := Location.Battle.new(
-		EnemyInfo.new("Wild Snake", Enemy.Tier.NORMAL, 225, [Attack.new("Bite", 20)]), 
-		Reward.get_random_reward()
-	) 
-	var shop := Location.Market.new()
-	var boss := Location.Battle.new(
-		EnemyInfo.new("Metal Guard", Enemy.Tier.BOSS, 300, [Attack.new("Sword and Shield", 30)]),
-		Reward.get_random_reward()
-	)
+	var start: Location = location_scene.instantiate()
+	var choice1: Location = location_scene.instantiate()
+	var choice2: Location = location_scene.instantiate()
+	var choice1a: Location = location_scene.instantiate()
+	var choice1b: Location = location_scene.instantiate()
+	var choice2a: Location = location_scene.instantiate()
+	var choice2b: Location = location_scene.instantiate()
+	var shop: Location = location_scene.instantiate()
+	var boss: Location = location_scene.instantiate()
 
-	start.set_links([choice1, choice2])
-	choice1.set_links([choice1a, choice1b])
-	choice2.set_links([choice2a, choice2b])
-	choice1a.set_links([shop])
-	choice1b.set_links([shop])
-	choice2a.set_links([shop])
-	choice2b.set_links([shop])
-	shop.set_links([boss])
+	start.init_as_fight(
+		EnemyInfo.new("Practice Dummy", Enemy.Tier.NORMAL, 100, [Attack.new("Stay Still", 0)]), 
+		Reward.CardPack.get_random(), [choice1, choice2]
+	)
+	choice1.init_as_fight(
+		EnemyInfo.new("Wild Deer", Enemy.Tier.NORMAL, 175, [Attack.new("Prance", 5)]), 
+		Reward.Tome.get_random(), [choice1a, choice1b]
+	)
+	choice2.init_as_fight(
+		EnemyInfo.new("Wild Skunk", Enemy.Tier.NORMAL, 150, [Attack.new("Spray", 10)]), 
+		Reward.Tome.get_random(), [choice2a, choice2b]
+	) 
+	choice1a.init_as_fight(
+		EnemyInfo.new("Wild Bear", Enemy.Tier.NORMAL, 250, [Attack.new("Claw", 15)]), 
+		Reward.Tome.get_random(), [shop]
+	) 
+	choice1b.init_as_fight(
+		EnemyInfo.new("Wild Wolf", Enemy.Tier.NORMAL, 225, [Attack.new("Pounce", 20)]), 
+		Reward.Tome.get_random(), [shop]
+	) 
+	choice2a.init_as_fight(
+		EnemyInfo.new("Wild Crocodile", Enemy.Tier.NORMAL, 250, [Attack.new("Crunch", 15)]),
+		Reward.Tome.get_random(), [shop]
+	) 
+	choice2b.init_as_fight(
+		EnemyInfo.new("Wild Snake", Enemy.Tier.NORMAL, 225, [Attack.new("Bite", 20)]), 
+		Reward.Tome.get_random(), [shop]
+	) 
+	shop.init_as_market([boss])
+	boss.init_as_fight(
+		EnemyInfo.new("Metal Guard", Enemy.Tier.BOSS, 300, [Attack.new("Sword and Shield", 30)]),
+		Reward.Tome.get_random(), []
+	)
 
 	locations = [start, choice1, choice2, choice1a, choice1b, choice2a, choice2b, shop, boss]
 
@@ -102,29 +103,27 @@ func setup_ui() -> void:
 
 
 func add_location(location: Location, hbox: HBoxContainer) -> void:
-	var button = location_button.instantiate()
-	button.location = location
-	hbox.add_child(button)
-	button.pressed.connect(_on_location_pressed.bind(location))
+	hbox.add_child(location)
+	location.get_node("Button").pressed.connect(_on_location_pressed.bind(location))
 
 
 func update_location(current: Location) -> void:
 	for hbox in get_node("Panel/VBoxContainer").get_children():
-		for button in hbox.get_children():
-			if button.location == current:
-				button.reveal_location_name()
-				button.disabled = true
-				button.set_current(true)
+		for location in hbox.get_children():
+			if location == current:
+				location.reveal_name()
+				location.set_disabled(true)
+				location.set_current(true)
 
-			elif button.location in current.links:
-				button.reveal_location_name()
-				button.disabled = false
-				button.set_current(false)
+			elif location in current.links:
+				location.reveal_name()
+				location.set_disabled(false)
+				location.set_current(false)
 
 			else:
-				button.disabled = true
-				button.set_current(false)
+				location.set_disabled(true)
+				location.set_current(false)
 
 
-func _on_location_pressed(location: Location):
+func _on_location_pressed(location: Location) -> void:
 	location_pressed.emit(location)

@@ -25,7 +25,7 @@ var selected: bool = false
 var ui_ready: bool = false
 
 
-func select_card(to_select: bool = true):
+func select_card(to_select: bool = true) -> void:
 	selected = to_select
 	selected_panel.visible = selected
 
