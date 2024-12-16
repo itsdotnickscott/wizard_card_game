@@ -11,6 +11,7 @@ class_name Player extends Unit
 
 @export var deck: Array[Card] = []
 @export var spellbook: Array[Spell] = []
+@export var tarots: Array[Tarot] = []
 
 var mana: int = max_mana
 var discards_left: int = max_discards

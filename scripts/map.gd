@@ -24,7 +24,7 @@ func create_stage() -> void:
 
 	start.init_as_fight(
 		EnemyInfo.new("Practice Dummy", Enemy.Tier.NORMAL, 100, [Attack.new("Stay Still", 0)]), 
-		Reward.CardPack.get_random(), [choice1, choice2]
+		Reward.TarotPack.get_random(), [choice1, choice2]
 	)
 	choice1.init_as_fight(
 		EnemyInfo.new("Wild Deer", Enemy.Tier.NORMAL, 175, [Attack.new("Prance", 5)]), 

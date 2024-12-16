@@ -4,6 +4,7 @@ extends Control
 signal level_up_spell(spell: Spell)
 signal upgrade_spell(upgrade: Upgrade)
 signal gain_card(card: Card)
+signal gain_tarot(tarot: Tarot)
 
 
 @onready var tome_ui: VBoxContainer = get_node("VictoryPanel/Tome")
@@ -27,13 +28,15 @@ func set_reward(reward: Reward) -> void:
 		text = "Tome"
 	elif reward is Reward.CardPack:
 		text = "Card Pack"
+	elif reward is Reward.TarotPack:
+		text = "Tarot Card Pack"
 
 	$VictoryPanel/Reward/Type.text = text 
 	$VictoryPanel/Reward/Count.text = "Choose %d:" % [reward.choice_amt] 
 
 	# Create new labels for each spell
 	for choice in reward.choices:
-		if choice is Spell or choice is Upgrade:
+		if choice is Spell or choice is Upgrade or choice is Tarot:
 			var button := Button.new()
 			button.text = choice.name
 			tome_ui.add_child(button)
@@ -63,8 +66,13 @@ func _hide_choices() -> void:
 func _on_reward_chosen(choice: Variant) -> void:
 	if choice is Spell:
 		level_up_spell.emit(choice)
+
 	elif choice is Upgrade:
 		upgrade_spell.emit(choice)
+
 	elif choice is Card:
 		_reset_card(choice)
 		gain_card.emit(choice)
+		
+	elif choice is Tarot:
+		gain_tarot.emit(choice)

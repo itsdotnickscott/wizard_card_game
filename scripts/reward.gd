@@ -164,3 +164,18 @@ class CardPack extends Reward:
 			pack.append(card)
 
 		return CardPack.new(pack, 1)
+
+
+class TarotPack extends Reward:
+	static func get_random() -> TarotPack:
+		var rng := RandomNumberGenerator.new()
+		var all_tarots := Tarot.get_all_tarots()
+		var pack := []
+		var size := 3
+
+		while pack.size() < size:
+			var choice = rng.randi_range(0, all_tarots.size() - 1)
+			if not all_tarots[choice] in pack:
+				pack.append(all_tarots[choice])
+
+		return TarotPack.new(pack, 1)

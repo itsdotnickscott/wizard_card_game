@@ -204,6 +204,8 @@ func game_over() -> void:
 func _ready() -> void:
 	Spell.initialize_library()
 	Upgrade.initialize_library()
+	Tarot.initialize_library()
+	
 	player.initialize()
 
 	#var analysis = Analysis.new(Spell.get_all_spells(), player.deck)
@@ -264,6 +266,12 @@ func _on_reward_upgrade_spell(upg: Upgrade) -> void:
 
 func _on_reward_gain_card(card: Card) -> void:
 	player.deck.append(card)
+
+	next_location()
+
+
+func _on_reward_gain_tarot(tarot: Tarot) -> void:
+	player.tarots.append(tarot)
 
 	next_location()
 
