@@ -278,6 +278,7 @@ func gain_reward(choice: Variant) -> void:
 			player.spellbook.append(choice)
 
 	elif choice is Card:
+		reward_ui.reset_card(choice)
 		player.deck.append(choice)
 
 	elif choice is Tarot:

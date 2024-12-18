@@ -116,17 +116,34 @@ func reset_deck() -> void:
 func _create_base_deck() -> Array[Card]:
 	var new_deck: Array[Card] = []
 
-	var val := 2
+	var val := 1
 	var aff := 1
 
-	for i in range(10):
-		for j in range(4):
+	for t in range(3):
+		val = 1
+		for i in range(9):
+			for j in range(3):
+				var new_card: Card = card_scene.instantiate()
+				new_card.init(val, aff)
+				new_deck.append(new_card)
+				aff += 1
+			val += 1
+			aff = 1
+
+	for i in range(3):
+		var new_card: Card = card_scene.instantiate()
+		new_card.init_dragon(aff)
+		new_deck.append(new_card)
+		aff += 1
+
+	var wind := 1
+	for i in range(4):
+		for j in range(3):
 			var new_card: Card = card_scene.instantiate()
-			new_card.init(val, aff)
+			new_card.init_wind(wind)
 			new_deck.append(new_card)
-			aff += 1
-		val += 1
-		aff = 1
+			wind += 1
+		wind = 1
 
 	return new_deck
 
@@ -135,8 +152,8 @@ func _create_base_deck() -> Array[Card]:
 ## (Run, 3 Cards, Match Any), and Elemental Blast (Set, 3 Cards, Any)).
 func _create_base_spellbook() -> Array[Spell]:
 	return [
-		Spell.get_from_id("spark"), 
-		Spell.get_from_id("bolt"),  
+		Spell.get_from_id("spark"),
+		Spell.get_from_id("bolt"),
 		Spell.get_from_id("blast"), 
 		Spell.get_from_id("weave"), 
 	]

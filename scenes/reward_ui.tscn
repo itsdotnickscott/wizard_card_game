@@ -72,6 +72,12 @@ offset_right = 527.0
 offset_bottom = 310.0
 text = "NEXT >>"
 
+[node name="CoverPanel" type="Panel" parent="RewardsPanel"]
+visible = false
+layout_mode = 0
+offset_right = 531.0
+offset_bottom = 316.0
+
 [node name="ChoicePanel" type="Panel" parent="."]
 layout_mode = 0
 offset_left = 328.0
@@ -130,6 +136,7 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="SkipButton" type="Button" parent="ChoicePanel"]
+layout_mode = 0
 offset_left = 355.0
 offset_top = 206.0
 offset_right = 524.0

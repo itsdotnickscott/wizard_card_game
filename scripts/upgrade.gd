@@ -48,11 +48,11 @@ static func initialize_library() -> void:
 			Spell.get_from_id("weave")
 		),
 
-		"arcana_weave": Upgrade.new(
-			"Flexi Weave", Card.Affinity.ARCANA, Reward.Rarity.UNCOMMON,
-			[Effect.Wild.new(Card.Affinity.ARCANA, 2, -1)],
-			Spell.get_from_id("weave")
-		)
+		#"arcana_weave": Upgrade.new(
+			#"Flexi Weave", Card.Affinity.ARCANA, Reward.Rarity.UNCOMMON,
+			#[Effect.Wild.new(Card.Affinity.ARCANA, 2, -1)],
+			#Spell.get_from_id("weave")
+		#)
 	}
 
 

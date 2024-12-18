@@ -165,11 +165,22 @@ class CardPack extends Reward:
 		var size := rng.randi_range(3, 5)
 
 		for i in range(size):
-			var val := rng.randi_range(2, 11)
-			var aff := rng.randi_range(1, 4)
+			var chance := rng.randf_range(0.0, 100.0)
 			var card: Card = card_scene.instantiate()
-			card.init(val, aff)
-			pack.append(card)
+
+			if chance < 5.0: # Dragon Card
+				var aff := rng.randi_range(1, 3)
+				card.init_dragon(aff)
+				pack.append(card)
+			elif chance < 25.0: # Wind Card
+				var dir := rng.randi_range(1, 4)
+				card.init_wind(dir)
+				pack.append(card)
+			else:
+				var val := rng.randi_range(Card.MIN_RANK, Card.BRIDGE_RANK - 1)
+				var aff := rng.randi_range(1, 3)
+				card.init(val, aff)
+				pack.append(card)
 
 		return CardPack.new(pack, 1)
 

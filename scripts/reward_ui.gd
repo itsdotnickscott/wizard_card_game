@@ -12,6 +12,7 @@ signal next_location()
 @onready var skip_reward_button: Button = get_node("RewardsPanel/SkipButton")
 @onready var skip_choice_button: Button = get_node("ChoicePanel/SkipButton")
 @onready var next_button: Button = get_node("RewardsPanel/NextButton")
+@onready var cover_panel: Panel = get_node("RewardsPanel/CoverPanel")
 
 
 func set_rewards(location_info: Location) -> void:
@@ -44,7 +45,7 @@ func set_rewards(location_info: Location) -> void:
 
 
 func next_reward() -> void:
-	skip_reward_button.disabled = false
+	cover_panel.visible = false
 	choices_panel.visible = false
 
 	for button in rewards_list.get_children():
@@ -57,7 +58,7 @@ func next_reward() -> void:
 
 func _set_choices(reward: Reward, btn: Button) -> void:
 	btn.disabled = true
-	skip_reward_button.disabled = true
+	cover_panel.visible = true
 
 	_reset_choices()
 
@@ -81,7 +82,7 @@ func _set_choices(reward: Reward, btn: Button) -> void:
 	choices_panel.visible = true
 
 
-func _reset_card(card: Card) -> void:
+func reset_card(card: Card) -> void:
 	card.ui_ready = false
 	card.select_card(false)
 	card.get_node("Button").pressed.disconnect(_on_reward_chosen)

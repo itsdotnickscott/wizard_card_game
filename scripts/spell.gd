@@ -56,8 +56,8 @@ func _to_string() -> String:
 
 
 func level_up() -> void:
-	multi += 0.5
-	base += 10
+	multi += 0.25
+	base += 5
 
 
 func upgrade(new_upg: Upgrade) -> void:
@@ -68,25 +68,25 @@ static func initialize_library() -> void:
 	_library = {"spark": Spell.new(
 			"Spark", Reward.Rarity.COMMON,
 			[Spell.RankCombo.SET], [Spell.AffCombo.ANY], 
-			[2], [1], 15, 0.5
+			[2], [1], 5, 0.5
 		),
 
 		"bolt": Spell.new(
 			"Twin Bolt", Reward.Rarity.COMMON,
 			[Spell.RankCombo.SET], [Spell.AffCombo.ANY], 
-			[2], [2], 30, 0.5
+			[2], [2], 10, 1.0
 		),
 
 		"blast": Spell.new(
 			"Chromatic Blast", Reward.Rarity.COMMON,
 			[Spell.RankCombo.SET], [Spell.AffCombo.ANY],
-			[3], [1], 30, 1.0
+			[3], [1], 20, 2.0
 		),
 		
 		"weave": Spell.new(
 			"Elemental Weave", Reward.Rarity.COMMON,
 			[Spell.RankCombo.RUN], [Spell.AffCombo.MATCH_ANY], 
-			[3], [1], 35, 1.0
+			[3], [1], 30, 2.0
 		),
 
 		"thread": Spell.new(

@@ -288,7 +288,7 @@ static func _count_affs(hand: Array[Card]) -> Dictionary:
 static func _get_run_combinations(cards: Array, size: int) -> Array:
 	var combinations := []
 
-	if cards[0].rank == 2 and cards[-1].rank == Card.FACE_RANK:
+	if cards[0].rank == Card.MIN_RANK and cards[-1].rank == Card.BRIDGE_RANK:
 		cards.push_front(cards.pop_back())
 
 	for i in range(cards.size() - size + 1):
@@ -421,12 +421,19 @@ static func _get_valid_combinations(spell: Spell, part: int, hands: Array) -> Ar
 static func _get_valid_sets(hand: Array[Card], spell: Spell, part: int) -> Array:
 	var by_rank := {}
 	for card in hand:
-		if by_rank.has(card.rank):
-			by_rank[card.rank].append(card)
+		if card.rank != Card.WIND_RANK:
+			if by_rank.has(card.rank):
+				by_rank[card.rank].append(card)
+			else:
+				by_rank[card.rank] = [card]
 		else:
-			by_rank[card.rank] = [card]
+			if by_rank.has(card.get_direction_str()):
+				by_rank[card.get_direction_str()].append(card)
+			else:
+				by_rank[card.get_direction_str()] = [card]
 
 	var sets := []
+
 	for cards in by_rank.values():
 		if cards.size() >= spell.card_amt[part]:
 			sets.append(cards)
@@ -453,7 +460,8 @@ static func _get_valid_runs(
 				# Card is next rank in set
 				(card.rank == r[-1].rank + 1) or   
 				# Card is a W (Face card) and is bridging a 2 3 run
-				(card.rank == Card.FACE_RANK and r[0].rank == 2 and r[-1].rank != Card.FACE_RANK)
+				(card.rank == Card.BRIDGE_RANK and r[0].rank == Card.MIN_RANK 
+				and r[-1].rank != Card.BRIDGE_RANK)
 			):
 				# Card is matching affinity combo
 				if _check_aff_combo(spell.aff_combo[part], r[-1], card):
