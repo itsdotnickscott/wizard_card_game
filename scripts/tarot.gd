@@ -50,11 +50,11 @@ func _init(new_name: String, eff: Effect) -> void:
 
 static func initialize_library() -> void:
 	_library = {
-		"magician": Tarot.new("The Magician", Effect.ChangeAff.new(Card.Affinity.ARCANA, 2)),
-		"empress": Tarot.new("The Empress", Effect.ChangeAff.new(Card.Affinity.WATER, 2)),
-		"sun": Tarot.new("The Sun", Effect.ChangeAff.new(Card.Affinity.FIRE, 2)),
-		"world": Tarot.new("The World", Effect.ChangeAff.new(Card.Affinity.EARTH, 2)),
-		"strength": Tarot.new("Strength", Effect.ChangeRank.new(1, 2))
+		"magician": Tarot.new("The Magician", Effect.ChangeAff.new(Card.Affinity.ARCANA, 1)),
+		"empress": Tarot.new("The Empress", Effect.ChangeAff.new(Card.Affinity.WATER, 1)),
+		"sun": Tarot.new("The Sun", Effect.ChangeAff.new(Card.Affinity.FIRE, 1)),
+		"world": Tarot.new("The World", Effect.ChangeAff.new(Card.Affinity.EARTH, 1)),
+		"strength": Tarot.new("Strength", Effect.ChangeRank.new(1, 1))
 	}
 
 

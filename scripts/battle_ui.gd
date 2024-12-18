@@ -4,10 +4,12 @@ extends Control
 signal cast(selected_cards: Array[Card])
 signal discard(selected_cards: Array[Card])
 signal sort_hand(by_value: bool)
+signal use_tarot(tarot: Tarot, selected_cards: Array[Card])
 
 
 @onready var player_hand_ui: HBoxContainer = get_node("Hand")
 @onready var player_spell_ui: VBoxContainer = get_node("Spells")
+@onready var tarots_ui: VBoxContainer = get_node("Tarots")
 @onready var sort_toggle: CheckButton = get_node("SortToggle")
 
 
@@ -35,9 +37,18 @@ func reset_selected_cards() -> void:
 
 ## Refreshes the Battle UI using the information from the [Player].
 func update_display(player: Player, enemy: Enemy) -> void:
+	update_player(player)
+	update_enemy(enemy)
+
+
+func update_player(player: Player):
 	update_player_hand(player.hand)
 	update_player_spells(player.spellbook)
+	update_player_tarots(player.tarots)
 	update_player_stats(player)
+
+
+func update_enemy(enemy: Enemy):
 	update_enemy_stats(enemy)
 
 
@@ -79,6 +90,27 @@ func update_player_hand(hand: Array[Card]) -> void:
 			card.update_selected.connect(_on_card_update_selected)
 
 
+func update_player_tarots(tarots: Array[Tarot]) -> void:
+	if tarots.is_empty():
+		$TarotButton.disabled = true
+		return
+	else:
+		$TarotButton.disabled = false
+
+	# TODO: Optimize a way to only update new/removed tarots
+
+	# Delete current buttons
+	for child in tarots_ui.get_children():
+		tarots_ui.remove_child(child)
+
+	# Create new buttons based on player tarots
+	for tarot in tarots:
+		var button := Button.new()
+		button.text = tarot.name
+		tarots_ui.add_child(button)
+		button.pressed.connect(_on_tarot_card_pressed.bind(tarot))
+
+
 func update_enemy_stats(
 	enemy: Enemy, tot_dmg: float = -1, new_dmg: float = -1, spell_name: String = ""
 ) -> void:
@@ -113,8 +145,22 @@ func _on_sort_button_toggled(toggled_on: bool) -> void:
 
 
 func _on_discard_button_pressed() -> void:
+	for card in selected_cards:
+		card.select_card(false)
+
 	discard.emit(selected_cards)
 
 
 func _on_cast_button_pressed() -> void:
+	for card in selected_cards:
+		card.select_card(false)
+		
 	cast.emit(selected_cards)
+
+
+func _on_tarot_card_pressed(tarot: Tarot) -> void:
+	use_tarot.emit(tarot, selected_cards)
+
+
+func _on_tarot_button_pressed() -> void:
+	tarots_ui.visible = not tarots_ui.visible

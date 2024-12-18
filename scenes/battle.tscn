@@ -16,7 +16,7 @@ script = ExtResource("1_3jwy8")
 position = Vector2(380, 270)
 
 [node name="Enemy" parent="." instance=ExtResource("3_b0wen")]
-position = Vector2(840, 270)
+position = Vector2(803, 270)
 
 [node name="UserInterface" type="Control" parent="."]
 layout_mode = 3
@@ -54,8 +54,10 @@ layout_mode = 1
 [connection signal="cast" from="UserInterface/BattleUI" to="." method="cast_action"]
 [connection signal="discard" from="UserInterface/BattleUI" to="." method="discard_action"]
 [connection signal="sort_hand" from="UserInterface/BattleUI" to="." method="_on_battle_ui_sort_hand"]
+[connection signal="use_tarot" from="UserInterface/BattleUI" to="." method="use_tarot"]
 [connection signal="escape" from="UserInterface/EscapeUI" to="." method="_on_escape"]
 [connection signal="gain_card" from="UserInterface/RewardUI" to="." method="_on_reward_gain_card"]
+[connection signal="gain_tarot" from="UserInterface/RewardUI" to="." method="_on_reward_gain_tarot"]
 [connection signal="level_up_spell" from="UserInterface/RewardUI" to="." method="_on_reward_level_up_spell"]
 [connection signal="upgrade_spell" from="UserInterface/RewardUI" to="." method="_on_reward_upgrade_spell"]
 [connection signal="pressed" from="UserInterface/InstaWin" to="." method="_on_insta_win_pressed"]

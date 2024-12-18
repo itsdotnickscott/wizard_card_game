@@ -115,6 +115,30 @@ func cast_action(selected_cards: Array[Card]) -> void:
 	enemy_turn()
 
 
+func use_tarot(tarot: Tarot, selected_cards: Array[Card]) -> void:
+	if tarot.effect is Effect.ChangeAff:
+		if tarot.effect.num_cards != selected_cards.size():
+			print("Invalid number of cards to use this tarot")
+			return
+
+		for card in selected_cards:
+			card.change_aff(tarot.effect.affinity)
+			card.select_card(false)
+
+	elif tarot.effect is Effect.ChangeRank:
+		if tarot.effect.num_cards != selected_cards.size():
+			print("Invalid number of cards to use this tarot")
+			return
+
+		for card in selected_cards:
+			card.change_rank(tarot.effect.change)
+			card.select_card(false)
+
+	player.tarots.erase(tarot)
+	battle_ui.update_player(player)
+	battle_ui.tarots_ui.visible = false
+
+
 func apply_spell_upgrades(spell: Spell, hand: Array[Card]) -> void:
 	for upg in spell.upgrades:
 		if hand[0].affinity == upg.affinity:

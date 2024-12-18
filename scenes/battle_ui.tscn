@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://ds5bf8cdlryeg"]
+[gd_scene load_steps=3 format=3 uid="uid://ds5bf8cdlryeg"]
 
 [ext_resource type="Script" path="res://scripts/battle_ui.gd" id="1_bixgw"]
+[ext_resource type="PackedScene" uid="uid://bbdhec2d0jaoc" path="res://scenes/card.tscn" id="2_j8uyp"]
 
 [node name="BattleUI" type="Control"]
 layout_mode = 3
@@ -19,6 +20,27 @@ offset_top = 446.0
 offset_right = 938.0
 offset_bottom = 596.0
 alignment = 1
+
+[node name="Card" parent="Hand" instance=ExtResource("2_j8uyp")]
+layout_mode = 2
+
+[node name="Card2" parent="Hand" instance=ExtResource("2_j8uyp")]
+layout_mode = 2
+
+[node name="Card3" parent="Hand" instance=ExtResource("2_j8uyp")]
+layout_mode = 2
+
+[node name="Card4" parent="Hand" instance=ExtResource("2_j8uyp")]
+layout_mode = 2
+
+[node name="Card5" parent="Hand" instance=ExtResource("2_j8uyp")]
+layout_mode = 2
+
+[node name="Card6" parent="Hand" instance=ExtResource("2_j8uyp")]
+layout_mode = 2
+
+[node name="Card7" parent="Hand" instance=ExtResource("2_j8uyp")]
+layout_mode = 2
 
 [node name="PlayerStats" type="Label" parent="."]
 layout_mode = 0
@@ -73,9 +95,9 @@ text = "30/30"
 
 [node name="EnemyStats" type="Label" parent="."]
 layout_mode = 0
-offset_left = 823.0
+offset_left = 784.0
 offset_top = 38.0
-offset_right = 1025.0
+offset_right = 986.0
 offset_bottom = 168.0
 text = "♥ HEALTH:
 ⚔ ATTACK:
@@ -142,6 +164,34 @@ text = "❔  CHROMATIC BLAST        [  3   3   3  ]      10  x  2.0"
 layout_mode = 2
 text = "❓  ELEMENTAL WEAVE       [  2   3   4  ]      15  x  2.0"
 
+[node name="Tarots" type="VBoxContainer" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 950.0
+offset_top = 274.0
+offset_right = 1139.0
+offset_bottom = 375.0
+
+[node name="Button" type="Button" parent="Tarots"]
+layout_mode = 2
+text = "The Sun"
+
+[node name="Button2" type="Button" parent="Tarots"]
+layout_mode = 2
+text = "The Moon"
+
+[node name="Button3" type="Button" parent="Tarots"]
+layout_mode = 2
+text = "The World"
+
+[node name="TarotButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 994.0
+offset_top = 389.0
+offset_right = 1133.0
+offset_bottom = 434.0
+text = "🎴  TAROT"
+
 [node name="CastButton" type="Button" parent="."]
 layout_mode = 0
 offset_left = 947.0
@@ -189,6 +239,7 @@ offset_bottom = 634.0
 text = "0/3"
 horizontal_alignment = 1
 
+[connection signal="pressed" from="TarotButton" to="." method="_on_tarot_button_pressed"]
 [connection signal="pressed" from="CastButton" to="." method="_on_cast_button_pressed"]
 [connection signal="pressed" from="DiscardButton" to="." method="_on_discard_button_pressed"]
 [connection signal="toggled" from="SortToggle" to="." method="_on_sort_button_toggled"]

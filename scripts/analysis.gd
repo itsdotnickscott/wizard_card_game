@@ -288,7 +288,7 @@ static func _count_affs(hand: Array[Card]) -> Dictionary:
 static func _get_run_combinations(cards: Array, size: int) -> Array:
 	var combinations := []
 
-	if cards[0].rank == 2 and cards[-1].rank == 11:
+	if cards[0].rank == 2 and cards[-1].rank == Card.FACE_RANK:
 		cards.push_front(cards.pop_back())
 
 	for i in range(cards.size() - size + 1):
@@ -453,7 +453,7 @@ static func _get_valid_runs(
 				# Card is next rank in set
 				(card.rank == r[-1].rank + 1) or   
 				# Card is a W (Face card) and is bridging a 2 3 run
-				(card.rank == 11 and r[0].rank == 2 and r[-1].rank != 11)   # Card 
+				(card.rank == Card.FACE_RANK and r[0].rank == 2 and r[-1].rank != Card.FACE_RANK)
 			):
 				# Card is matching affinity combo
 				if _check_aff_combo(spell.aff_combo[part], r[-1], card):

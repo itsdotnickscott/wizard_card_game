@@ -23,31 +23,31 @@ func create_stage() -> void:
 	var boss: Location = location_scene.instantiate()
 
 	start.init_as_fight(
-		EnemyInfo.new("Practice Dummy", Enemy.Tier.NORMAL, 100, [Attack.new("Stay Still", 0)]), 
-		Reward.TarotPack.get_random(), [choice1, choice2]
+		EnemyInfo.new("Practice Dummy", Enemy.Tier.NORMAL, 75, [Attack.new("Stay Still", 0)]), 
+		Reward.Tome.get_random(), [choice1, choice2]
 	)
 	choice1.init_as_fight(
-		EnemyInfo.new("Wild Deer", Enemy.Tier.NORMAL, 175, [Attack.new("Prance", 5)]), 
-		Reward.Tome.get_random(), [choice1a, choice1b]
+		EnemyInfo.new("Wild Deer", Enemy.Tier.NORMAL, 125, [Attack.new("Prance", 5)]), 
+		Reward.TarotPack.get_random(), [choice1a, choice1b]
 	)
 	choice2.init_as_fight(
-		EnemyInfo.new("Wild Skunk", Enemy.Tier.NORMAL, 150, [Attack.new("Spray", 10)]), 
-		Reward.Tome.get_random(), [choice2a, choice2b]
+		EnemyInfo.new("Wild Skunk", Enemy.Tier.NORMAL, 100, [Attack.new("Spray", 10)]), 
+		Reward.TarotPack.get_random(), [choice2a, choice2b]
 	) 
 	choice1a.init_as_fight(
-		EnemyInfo.new("Wild Bear", Enemy.Tier.NORMAL, 250, [Attack.new("Claw", 15)]), 
+		EnemyInfo.new("Wild Bear", Enemy.Tier.NORMAL, 175, [Attack.new("Claw", 15)]), 
 		Reward.Tome.get_random(), [shop]
 	) 
 	choice1b.init_as_fight(
-		EnemyInfo.new("Wild Wolf", Enemy.Tier.NORMAL, 225, [Attack.new("Pounce", 20)]), 
+		EnemyInfo.new("Wild Wolf", Enemy.Tier.NORMAL, 150, [Attack.new("Pounce", 20)]), 
 		Reward.Tome.get_random(), [shop]
 	) 
 	choice2a.init_as_fight(
-		EnemyInfo.new("Wild Crocodile", Enemy.Tier.NORMAL, 250, [Attack.new("Crunch", 15)]),
+		EnemyInfo.new("Wild Crocodile", Enemy.Tier.NORMAL, 175, [Attack.new("Crunch", 15)]),
 		Reward.Tome.get_random(), [shop]
 	) 
 	choice2b.init_as_fight(
-		EnemyInfo.new("Wild Snake", Enemy.Tier.NORMAL, 225, [Attack.new("Bite", 20)]), 
+		EnemyInfo.new("Wild Snake", Enemy.Tier.NORMAL, 150, [Attack.new("Bite", 20)]), 
 		Reward.Tome.get_random(), [shop]
 	) 
 	shop.init_as_market([boss])

@@ -4,6 +4,10 @@ class_name Card extends Control
 signal update_selected(card, selected)
 
 
+const MIN_RANK = 2
+const FACE_RANK = 11
+
+
 enum Affinity {
 	NONE = -1,
 	WILD,
@@ -28,6 +32,17 @@ var ui_ready: bool = false
 func select_card(to_select: bool = true) -> void:
 	selected = to_select
 	selected_panel.visible = selected
+
+
+func change_aff(to: Affinity) -> void:
+	affinity = to
+	_set_display()
+
+
+func change_rank(by: int) -> void:
+	rank = (rank + by) % FACE_RANK
+	if rank < MIN_RANK: rank = MIN_RANK
+	_set_display()
 
 
 ## Edits the button display and sets up UI for button signals. Should be called after being
