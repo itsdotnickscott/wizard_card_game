@@ -8,8 +8,8 @@ class_name Location extends Control
 @export var links: Array[Location] = []
 
 
-func init_as_fight(enemy_info: EnemyInfo, win: Reward, locations: Array[Location]) -> void:
-	info = Fight.new(enemy_info, win)
+func init_as_fight(enemy_info: EnemyInfo, loot: Array[Reward], locations: Array[Location]) -> void:
+	info = Fight.new(enemy_info, loot)
 	links = locations
 
 
@@ -48,12 +48,18 @@ func reveal_name() -> void:
 
 class Fight extends Location:
 	@export var enemy: EnemyInfo = null
-	@export var reward: Reward = null
+	@export var rewards: Array[Reward] = []
+	@export var gold: int = 0
+	@export var dust: int = 0
 
 
-	func _init(enemy_info: EnemyInfo, win: Reward) -> void:
+	func _init(
+		enemy_info: EnemyInfo, loot: Array[Reward], drop_gold: int = 10, drop_dust: int = 10
+	) -> void:
 		enemy = enemy_info
-		reward = win
+		rewards = loot
+		gold = drop_gold
+		dust = drop_dust
 
 
 class Incident extends Location:

@@ -79,6 +79,10 @@ class Tome extends Reward:
 	}
 
 
+	static func name() -> String:
+		return "Tome"
+
+
 	static func get_random() -> Tome:
 		var rng := RandomNumberGenerator.new()
 		var tome := []
@@ -151,6 +155,10 @@ class CardPack extends Reward:
 	static var card_scene = load("res://scenes/card.tscn")
 
 
+	static func name() -> String:
+		return "Card Pack"
+
+
 	static func get_random() -> CardPack:
 		var rng := RandomNumberGenerator.new()
 		var pack := []
@@ -167,6 +175,10 @@ class CardPack extends Reward:
 
 
 class TarotPack extends Reward:
+	static func name() -> String:
+		return "Tarot Card Pack"
+
+
 	static func get_random() -> TarotPack:
 		var rng := RandomNumberGenerator.new()
 		var all_tarots := Tarot.get_all_tarots()

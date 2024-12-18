@@ -1,40 +1,69 @@
 extends Control
 
 
-signal level_up_spell(spell: Spell)
-signal upgrade_spell(upgrade: Upgrade)
-signal gain_card(card: Card)
-signal gain_tarot(tarot: Tarot)
+signal gain_reward(choice: Variant)
+signal next_location()
 
 
-@onready var tome_ui: VBoxContainer = get_node("VictoryPanel/Tome")
-@onready var card_pack_ui: HBoxContainer = get_node("VictoryPanel/CardPack")
+@onready var rewards_list: VBoxContainer = get_node("RewardsPanel/VBoxContainer")
+@onready var choices_panel: Panel = get_node("ChoicePanel")
+@onready var tome_ui: VBoxContainer = get_node("ChoicePanel/Tome")
+@onready var card_pack_ui: HBoxContainer = get_node("ChoicePanel/CardPack")
+@onready var skip_reward_button: Button = get_node("RewardsPanel/SkipButton")
+@onready var skip_choice_button: Button = get_node("ChoicePanel/SkipButton")
+@onready var next_button: Button = get_node("RewardsPanel/NextButton")
 
 
-var choices: Dictionary
+func set_rewards(location_info: Location) -> void:
+	choices_panel.visible = false
+
+	for child in rewards_list.get_children():
+		child.queue_free()
+
+	if location_info.gold > 0:
+		var button := Button.new()
+		button.text = "%d Gold" % location_info.gold
+		button.disabled = true
+		rewards_list.add_child(button)
+
+	if location_info.dust > 0:
+		var button := Button.new()
+		button.text = "%d Magic Dust" % location_info.dust
+		button.disabled = true
+		rewards_list.add_child(button)
+
+	if not location_info.rewards.is_empty():
+		skip_reward_button.visible = true
+		next_button.visible = false
+
+		for reward in location_info.rewards:
+			var button := Button.new()
+			button.text = reward.name()
+			rewards_list.add_child(button)
+			button.pressed.connect(_set_choices.bind(reward, button))
 
 
-func set_reward(reward: Reward) -> void:
-	_hide_choices()
+func next_reward() -> void:
+	skip_reward_button.disabled = false
+	choices_panel.visible = false
 
-	# Delete current labels
-	for container in get_tree().get_nodes_in_group("choices"):
-		for child in container.get_children():
-			container.remove_child(child)
+	for button in rewards_list.get_children():
+		if button.disabled == false:
+			return
 
-	# Set reward name
-	var text: String
-	if reward is Reward.Tome:
-		text = "Tome"
-	elif reward is Reward.CardPack:
-		text = "Card Pack"
-	elif reward is Reward.TarotPack:
-		text = "Tarot Card Pack"
+	skip_reward_button.visible = false
+	next_button.visible = true
 
-	$VictoryPanel/Reward/Type.text = text 
-	$VictoryPanel/Reward/Count.text = "Choose %d:" % [reward.choice_amt] 
 
-	# Create new labels for each spell
+func _set_choices(reward: Reward, btn: Button) -> void:
+	btn.disabled = true
+	skip_reward_button.disabled = true
+
+	_reset_choices()
+
+	$ChoicePanel/Count.text = "Choose %d:" % [reward.choice_amt] 
+
+	# Create new labels for each choice
 	for choice in reward.choices:
 		if choice is Spell or choice is Upgrade or choice is Tarot:
 			var button := Button.new()
@@ -49,6 +78,8 @@ func set_reward(reward: Reward) -> void:
 			choice.get_node("Button").pressed.connect(_on_reward_chosen.bind(choice))
 			card_pack_ui.visible = true
 
+	choices_panel.visible = true
+
 
 func _reset_card(card: Card) -> void:
 	card.ui_ready = false
@@ -58,21 +89,20 @@ func _reset_card(card: Card) -> void:
 		card_pack_ui.remove_child(child)
 
 
-func _hide_choices() -> void:
+func _reset_choices() -> void:
 	for container in get_tree().get_nodes_in_group("choices"):
 		container.visible = false
+		for child in container.get_children():
+			container.remove_child(child)
 
 
 func _on_reward_chosen(choice: Variant) -> void:
-	if choice is Spell:
-		level_up_spell.emit(choice)
+	gain_reward.emit(choice)
 
-	elif choice is Upgrade:
-		upgrade_spell.emit(choice)
 
-	elif choice is Card:
-		_reset_card(choice)
-		gain_card.emit(choice)
-		
-	elif choice is Tarot:
-		gain_tarot.emit(choice)
+func _on_next_button_pressed() -> void:
+	next_location.emit()
+
+
+func _on_skip_choice_button_pressed() -> void:
+	next_reward()

@@ -66,7 +66,8 @@ func update_player_spells(spells: Array[Spell]) -> void:
 
 	# Delete current labels
 	for child in player_spell_ui.get_children():
-		player_spell_ui.remove_child(child)
+		# Can be queue freed because spell is represented as a label
+		child.queue_free()
 
 	# Create new labels for each spell
 	for spell in spells:
@@ -80,6 +81,7 @@ func update_player_hand(hand: Array[Card]) -> void:
 
 	# Delete current buttons
 	for child in player_hand_ui.get_children():
+		# remove_child is used instead of queue_free because Cards need to stay alive in player hand
 		player_hand_ui.remove_child(child)
 
 	# Create new buttons based on player hand
@@ -101,7 +103,8 @@ func update_player_tarots(tarots: Array[Tarot]) -> void:
 
 	# Delete current buttons
 	for child in tarots_ui.get_children():
-		tarots_ui.remove_child(child)
+		# Can be queue freed because tarot is represented as a button
+		child.queue_free()
 
 	# Create new buttons based on player tarots
 	for tarot in tarots:
@@ -154,7 +157,7 @@ func _on_discard_button_pressed() -> void:
 func _on_cast_button_pressed() -> void:
 	for card in selected_cards:
 		card.select_card(false)
-		
+
 	cast.emit(selected_cards)
 
 

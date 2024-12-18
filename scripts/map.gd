@@ -24,36 +24,36 @@ func create_stage() -> void:
 
 	start.init_as_fight(
 		EnemyInfo.new("Practice Dummy", Enemy.Tier.NORMAL, 75, [Attack.new("Stay Still", 0)]), 
-		Reward.Tome.get_random(), [choice1, choice2]
+		[Reward.Tome.get_random(), Reward.CardPack.get_random()], [choice1, choice2]
 	)
 	choice1.init_as_fight(
 		EnemyInfo.new("Wild Deer", Enemy.Tier.NORMAL, 125, [Attack.new("Prance", 5)]), 
-		Reward.TarotPack.get_random(), [choice1a, choice1b]
+		[Reward.TarotPack.get_random(), Reward.CardPack.get_random()], [choice1a, choice1b]
 	)
 	choice2.init_as_fight(
 		EnemyInfo.new("Wild Skunk", Enemy.Tier.NORMAL, 100, [Attack.new("Spray", 10)]), 
-		Reward.TarotPack.get_random(), [choice2a, choice2b]
+		[Reward.TarotPack.get_random(), Reward.CardPack.get_random()], [choice2a, choice2b]
 	) 
 	choice1a.init_as_fight(
 		EnemyInfo.new("Wild Bear", Enemy.Tier.NORMAL, 175, [Attack.new("Claw", 15)]), 
-		Reward.Tome.get_random(), [shop]
+		[Reward.Tome.get_random(), Reward.CardPack.get_random()], [shop]
 	) 
 	choice1b.init_as_fight(
 		EnemyInfo.new("Wild Wolf", Enemy.Tier.NORMAL, 150, [Attack.new("Pounce", 20)]), 
-		Reward.Tome.get_random(), [shop]
+		[Reward.Tome.get_random(), Reward.CardPack.get_random()], [shop]
 	) 
 	choice2a.init_as_fight(
 		EnemyInfo.new("Wild Crocodile", Enemy.Tier.NORMAL, 175, [Attack.new("Crunch", 15)]),
-		Reward.Tome.get_random(), [shop]
+		[Reward.Tome.get_random(), Reward.CardPack.get_random()], [shop]
 	) 
 	choice2b.init_as_fight(
 		EnemyInfo.new("Wild Snake", Enemy.Tier.NORMAL, 150, [Attack.new("Bite", 20)]), 
-		Reward.Tome.get_random(), [shop]
+		[Reward.Tome.get_random(), Reward.CardPack.get_random()], [shop]
 	) 
 	shop.init_as_market([boss])
 	boss.init_as_fight(
 		EnemyInfo.new("Metal Guard", Enemy.Tier.BOSS, 300, [Attack.new("Sword and Shield", 30)]),
-		Reward.Tome.get_random(), []
+		[Reward.Tome.get_random(), Reward.CardPack.get_random()], []
 	)
 
 	locations = [start, choice1, choice2, choice1a, choice1b, choice2a, choice2b, shop, boss]
@@ -78,12 +78,14 @@ func setup_ui() -> void:
 			add_location(location, hbox)
 			placed.append(location)
 		
+		# Creates the next tier of locations if finished with current level
 		if location == next:
 			curr_lvl += 1
 			hbox = vbox.get_children()[curr_lvl]
 			hbox.alignment = BoxContainer.ALIGNMENT_CENTER
 			next = null
 
+		# Establishes links onto the board, one level up
 		if location.links.size() > 0:
 			var new_hbox: HBoxContainer = null
 
@@ -98,6 +100,7 @@ func setup_ui() -> void:
 					add_location(link, new_hbox)
 					placed.append(link)
 
+					# Signifies when we are moving up a level
 					if next == null:
 						next = link
 

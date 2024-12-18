@@ -203,7 +203,7 @@ func discard_action(selected_cards: Array[Card]) -> void:
 
 func battle_end():
 	curr_state = State.OUTCOME
-	reward_ui.set_reward(curr_location.info.reward)
+	reward_ui.set_rewards(curr_location.info)
 	reward_ui.visible = true
 	battle_ui.visible = false
 
@@ -270,34 +270,20 @@ func _on_escape(dmg: int) -> void:
 	next_location()
 
 
-func _on_reward_level_up_spell(spell: Spell) -> void:
-	if spell in player.spellbook:
-		spell.level_up()
-	else:
-		player.spellbook.append(spell)
+func gain_reward(choice: Variant) -> void:
+	if choice is Spell:
+		if choice in player.spellbook:
+			choice.level_up()
+		else:
+			player.spellbook.append(choice)
 
-	next_location()
+	elif choice is Card:
+		player.deck.append(choice)
 
+	elif choice is Tarot:
+		player.tarots.append(choice)
 
-func _on_reward_upgrade_spell(upg: Upgrade) -> void:
-	if upg in upg.spell.upgrades:
-		upg.level_up()
-	else:
-		upg.spell.upgrade(upg)
-
-	next_location()
-
-
-func _on_reward_gain_card(card: Card) -> void:
-	player.deck.append(card)
-
-	next_location()
-
-
-func _on_reward_gain_tarot(tarot: Tarot) -> void:
-	player.tarots.append(tarot)
-
-	next_location()
+	reward_ui.next_reward()
 
 
 func _on_map_location_pressed(location: Location) -> void:
