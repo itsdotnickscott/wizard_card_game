@@ -16,7 +16,7 @@ static var _library = {}
 @export var quantity: Array[int]
 @export var base: int
 @export var multi: float
-@export var upgrades: Array[Upgrade]
+#@export var upgrades: Array[_Upgrade]
 
 
 func _init(
@@ -60,11 +60,11 @@ func level_up() -> void:
 	base += 5
 
 
-func upgrade(new_upg: Upgrade) -> void:
-	upgrades.append(new_upg)
+#func upgrade(new_upg: _Upgrade) -> void:
+	#upgrades.append(new_upg)
 
 
-static func initialize_library() -> void:
+static func init_library() -> void:
 	_library = {"spark": Spell.new(
 			"Spark", Reward.Rarity.COMMON,
 			[Spell.RankCombo.SET], [Spell.AffCombo.ANY], 

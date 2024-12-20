@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://djq5yfcgvs60j"]
 
 [ext_resource type="Script" path="res://scripts/reward_ui.gd" id="1_obmo8"]
-[ext_resource type="PackedScene" uid="uid://bbdhec2d0jaoc" path="res://scenes/card.tscn" id="2_b8vkq"]
+[ext_resource type="PackedScene" uid="uid://bbdhec2d0jaoc" path="res://scenes/card_ui.tscn" id="2_b8vkq"]
 
 [node name="RewardUI" type="Control"]
 layout_mode = 3
@@ -119,6 +119,7 @@ offset_left = 7.0
 offset_top = 43.0
 offset_right = 523.0
 offset_bottom = 207.0
+alignment = 1
 
 [node name="Card" parent="ChoicePanel/CardPack" instance=ExtResource("2_b8vkq")]
 layout_mode = 2

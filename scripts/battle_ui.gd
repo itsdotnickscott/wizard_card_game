@@ -7,6 +7,8 @@ signal sort_hand(by_value: bool)
 signal use_tarot(tarot: Tarot, selected_cards: Array[Card])
 
 
+@onready var card_ui := preload("res://scenes/card_ui.tscn")
+
 @onready var player_hand_ui: HBoxContainer = get_node("Hand")
 @onready var player_spell_ui: VBoxContainer = get_node("Spells")
 @onready var tarots_ui: VBoxContainer = get_node("Tarots")
@@ -14,7 +16,7 @@ signal use_tarot(tarot: Tarot, selected_cards: Array[Card])
 
 
 var deck_size: int
-var selected_cards: Array[Card] = []
+var selected_cards: Array[Node] = []
 var select_limit: int
 
 
@@ -82,14 +84,14 @@ func update_player_hand(hand: Array[Card]) -> void:
 	# Delete current buttons
 	for child in player_hand_ui.get_children():
 		# remove_child is used instead of queue_free because Cards need to stay alive in player hand
-		player_hand_ui.remove_child(child)
+		child.queue_free()
 
 	# Create new buttons based on player hand
 	for card in hand:
-		player_hand_ui.add_child(card)
-		if not card.ui_ready:
-			card.setup_card_for_ui()
-			card.update_selected.connect(_on_card_update_selected)
+		var new_card := card_ui.instantiate()
+		player_hand_ui.add_child(new_card)
+		new_card.set_display(card)
+		new_card.update_selected.connect(_on_card_update_selected)
 
 
 func update_player_tarots(tarots: Array[Tarot]) -> void:
@@ -126,7 +128,7 @@ func update_enemy_stats(
 		$EnemyStats/RoundTotValue.text = "%d" % [tot_dmg]
 
 
-func _on_card_update_selected(card: Card, selected: bool) -> void:
+func _on_card_update_selected(card: Node, selected: bool) -> void:
 	if selected:
 		# Undo select if max number of cards already selected
 		if selected_cards.size() == select_limit:
@@ -148,21 +150,26 @@ func _on_sort_button_toggled(toggled_on: bool) -> void:
 
 
 func _on_discard_button_pressed() -> void:
-	for card in selected_cards:
-		card.select_card(false)
-
-	discard.emit(selected_cards)
+	discard.emit(_gather_selected_card_info())
 
 
 func _on_cast_button_pressed() -> void:
-	for card in selected_cards:
-		card.select_card(false)
-
-	cast.emit(selected_cards)
+	cast.emit(_gather_selected_card_info())
 
 
 func _on_tarot_card_pressed(tarot: Tarot) -> void:
-	use_tarot.emit(tarot, selected_cards)
+	use_tarot.emit(tarot, _gather_selected_card_info())
+
+
+## This function returns the Card object from each CardUI Node. It also unselects each card.
+func _gather_selected_card_info() -> Array[Card]:
+	var cards: Array[Card] = []
+
+	for card in selected_cards:
+		card.select_card(false)
+		cards.append(card.info)
+
+	return cards
 
 
 func _on_tarot_button_pressed() -> void:

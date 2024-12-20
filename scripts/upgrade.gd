@@ -1,4 +1,7 @@
-class_name Upgrade extends Resource
+# DEPRECATED:
+
+
+class_name _Upgrade extends Resource
 
 
 static var _library: Dictionary = {}
@@ -24,31 +27,31 @@ func _init(
 
 
 func level_up() -> void:
-	print("Upgrade level up not implemented")
+	print("_Upgrade level up not implemented")
 	pass
 
 
-static func initialize_library() -> void:
+static func init_library() -> void:
 	_library = {
-		"fire_weave": Upgrade.new(
+		"fire_weave": _Upgrade.new(
 			"Flame Weave", Card.Affinity.FIRE, Reward.Rarity.COMMON,
 			[Effect.Burn.new(Effect.Target.ENEMY, Effect.Proc.START_TURN, 10, 3)],
 			Spell.get_from_id("weave")
 		),
 
-		"water_weave": Upgrade.new(
+		"water_weave": _Upgrade.new(
 			"Rejuvinating Weave", Card.Affinity.WATER, Reward.Rarity.COMMON,
 			[Effect.Heal.new(Effect.Target.PLAYER, Effect.Proc.END_TURN, 10, 1)],
 			Spell.get_from_id("weave")
 		),
 
-		"earth_weave": Upgrade.new(
+		"earth_weave": _Upgrade.new(
 			"Protective Weave", Card.Affinity.EARTH, Reward.Rarity.COMMON,
 			[Effect.Shield.new(Effect.Target.PLAYER, Effect.Proc.START_TURN, 10, 1)],
 			Spell.get_from_id("weave")
 		),
 
-		#"arcana_weave": Upgrade.new(
+		#"arcana_weave": _Upgrade.new(
 			#"Flexi Weave", Card.Affinity.ARCANA, Reward.Rarity.UNCOMMON,
 			#[Effect.Wild.new(Card.Affinity.ARCANA, 2, -1)],
 			#Spell.get_from_id("weave")
@@ -60,10 +63,10 @@ func _to_string() -> String:
 	return name
 
 
-static func get_upgrades(aff: Card.Affinity = Card.Affinity.WILD) -> Array[Upgrade]:
-	var upgrades: Array[Upgrade] = []
+static func get_upgrades(aff: Card.Affinity = Card.Affinity.NONE) -> Array[_Upgrade]:
+	var upgrades: Array[_Upgrade] = []
 	for upgrade in _library.values():
-		if upgrade.affinity == aff or aff == Card.Affinity.WILD:
+		if upgrade.affinity == aff or aff == Card.Affinity.NONE:
 			upgrades.append(upgrade)
 	return upgrades
 		

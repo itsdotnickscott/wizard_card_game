@@ -87,10 +87,13 @@ static func calc_dmg(hand: Array, spell: Spell) -> float:
 ## Otherwise, it sorts it by [member Card.affinity]. Modifies the existing [Array].
 static func sort_cards(cards: Array[Card], by_rank: bool) -> void:
 	var asc_value := func(a: Card, b: Card) -> int:
-		if by_rank:
-			return a.rank < b.rank
-		else:
+		if not by_rank or (a.type == Card.Type.DRAGON and b.type == Card.Type.DRAGON):
 			return a.affinity < b.affinity
+		else:
+			if a.type == Card.Type.WIND and b.type == Card.Type.WIND:
+				return a.wind < b.wind
+			else:
+				return a.rank < b.rank
 
 	cards.sort_custom(asc_value)
 
@@ -420,17 +423,20 @@ static func _get_valid_combinations(spell: Spell, part: int, hands: Array) -> Ar
 ## It must match the quantity set by the [param spell].
 static func _get_valid_sets(hand: Array[Card], spell: Spell, part: int) -> Array:
 	var by_rank := {}
+
 	for card in hand:
-		if card.rank != Card.WIND_RANK:
-			if by_rank.has(card.rank):
-				by_rank[card.rank].append(card)
-			else:
-				by_rank[card.rank] = [card]
+		var check := ""
+		if card.rank == Card.WIND_RANK:
+			check = card.get_wind_str()
+		elif card.rank == Card.DRAGON_RANK:
+			check = card.get_affinity_str()
 		else:
-			if by_rank.has(card.get_direction_str()):
-				by_rank[card.get_direction_str()].append(card)
-			else:
-				by_rank[card.get_direction_str()] = [card]
+			check = str(card.rank)
+
+		if by_rank.has(check):
+			by_rank[check].append(card)
+		else:
+			by_rank[check] = [card]
 
 	var sets := []
 

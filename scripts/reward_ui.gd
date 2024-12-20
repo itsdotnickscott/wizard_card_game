@@ -5,6 +5,9 @@ signal gain_reward(choice: Variant)
 signal next_location()
 
 
+@onready var card_ui := preload("res://scenes/card_ui.tscn")
+
+
 @onready var rewards_list: VBoxContainer = get_node("RewardsPanel/VBoxContainer")
 @onready var choices_panel: Panel = get_node("ChoicePanel")
 @onready var tome_ui: VBoxContainer = get_node("ChoicePanel/Tome")
@@ -66,7 +69,7 @@ func _set_choices(reward: Reward, btn: Button) -> void:
 
 	# Create new labels for each choice
 	for choice in reward.choices:
-		if choice is Spell or choice is Upgrade or choice is Tarot:
+		if choice is Spell or choice is Tarot or choice is Idol:
 			var button := Button.new()
 			button.text = choice.name
 			tome_ui.add_child(button)
@@ -74,27 +77,20 @@ func _set_choices(reward: Reward, btn: Button) -> void:
 			tome_ui.visible = true
 
 		elif choice is Card:
-			card_pack_ui.add_child(choice)
-			choice.setup_card_for_ui()
-			choice.get_node("Button").pressed.connect(_on_reward_chosen.bind(choice))
+			var card := card_ui.instantiate()
+			card_pack_ui.add_child(card)
+			card.set_display(choice)
+			card.get_node("Button").pressed.connect(_on_reward_chosen.bind(card.info))
 			card_pack_ui.visible = true
 
 	choices_panel.visible = true
-
-
-func reset_card(card: Card) -> void:
-	card.ui_ready = false
-	card.select_card(false)
-	card.get_node("Button").pressed.disconnect(_on_reward_chosen)
-	for child in card_pack_ui.get_children():
-		card_pack_ui.remove_child(child)
 
 
 func _reset_choices() -> void:
 	for container in get_tree().get_nodes_in_group("choices"):
 		container.visible = false
 		for child in container.get_children():
-			container.remove_child(child)
+			child.queue_free()
 
 
 func _on_reward_chosen(choice: Variant) -> void:

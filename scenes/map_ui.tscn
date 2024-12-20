@@ -1,0 +1,47 @@
+[gd_scene load_steps=2 format=3 uid="uid://vcq0ef7hvpk1"]
+
+[ext_resource type="Script" path="res://scripts/map_ui.gd" id="1_i3vg2"]
+
+[node name="MapUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_i3vg2")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 327.0
+offset_top = 44.0
+offset_right = 858.0
+offset_bottom = 611.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 0
+offset_left = 101.0
+offset_top = 207.0
+offset_right = 441.0
+offset_bottom = 378.0
+alignment = 1
+
+[node name="Button5" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2
+text = "Boss"
+
+[node name="Button4" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2
+text = "Market"
+
+[node name="Button3" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2
+text = "Reward"
+
+[node name="Button2" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2
+text = "Reward"
+
+[node name="Button" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2
+text = "Reward"

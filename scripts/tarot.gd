@@ -48,7 +48,7 @@ func _init(new_name: String, eff: Effect) -> void:
 	effect = eff
 
 
-static func initialize_library() -> void:
+static func init_library() -> void:
 	_library = {
 		#"magician": Tarot.new("The Magician", Effect.ChangeAff.new(Card.Affinity.ARCANA, 2)),
 		"empress": Tarot.new("The Empress", Effect.ChangeAff.new(Card.Affinity.WATER, 2)),

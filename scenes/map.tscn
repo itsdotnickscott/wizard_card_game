@@ -1,47 +1,32 @@
-[gd_scene load_steps=2 format=3 uid="uid://vcq0ef7hvpk1"]
+[gd_scene load_steps=7 format=3 uid="uid://bygda81sf4w6x"]
 
 [ext_resource type="Script" path="res://scripts/map.gd" id="1_7r28i"]
+[ext_resource type="PackedScene" uid="uid://co63ppggsddeu" path="res://scenes/battle.tscn" id="1_vsmam"]
+[ext_resource type="PackedScene" uid="uid://boqhagawdgoqv" path="res://scenes/player.tscn" id="2_h517x"]
+[ext_resource type="PackedScene" uid="uid://vcq0ef7hvpk1" path="res://scenes/map_ui.tscn" id="2_ldr0k"]
+[ext_resource type="PackedScene" uid="uid://djq5yfcgvs60j" path="res://scenes/reward_ui.tscn" id="5_w34hp"]
+[ext_resource type="PackedScene" uid="uid://ms7b7vewq484" path="res://scenes/defeat_ui.tscn" id="6_ylwqa"]
 
-[node name="Map" type="Control"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Map" type="Node2D"]
 script = ExtResource("1_7r28i")
 
-[node name="Panel" type="Panel" parent="."]
-layout_mode = 0
-offset_left = 327.0
-offset_top = 44.0
-offset_right = 858.0
-offset_bottom = 611.0
+[node name="Player" parent="." instance=ExtResource("2_h517x")]
+position = Vector2(380, 270)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
-layout_mode = 0
-offset_left = 101.0
-offset_top = 207.0
-offset_right = 441.0
-offset_bottom = 378.0
-alignment = 1
+[node name="Battle" parent="." instance=ExtResource("1_vsmam")]
 
-[node name="Button5" type="Button" parent="Panel/VBoxContainer"]
-layout_mode = 2
-text = "Boss"
+[node name="MapUI" parent="." instance=ExtResource("2_ldr0k")]
+visible = false
 
-[node name="Button4" type="Button" parent="Panel/VBoxContainer"]
-layout_mode = 2
-text = "Market"
+[node name="RewardUI" parent="." instance=ExtResource("5_w34hp")]
+visible = false
 
-[node name="Button3" type="Button" parent="Panel/VBoxContainer"]
-layout_mode = 2
-text = "Reward"
+[node name="DefeatUI" parent="." instance=ExtResource("6_ylwqa")]
+visible = false
 
-[node name="Button2" type="Button" parent="Panel/VBoxContainer"]
-layout_mode = 2
-text = "Reward"
-
-[node name="Button" type="Button" parent="Panel/VBoxContainer"]
-layout_mode = 2
-text = "Reward"
+[connection signal="player_escape" from="Battle" to="." method="_on_next_location"]
+[connection signal="player_lose" from="Battle" to="." method="_on_battle_player_lose"]
+[connection signal="player_win" from="Battle" to="." method="_on_battle_player_win"]
+[connection signal="location_pressed" from="MapUI" to="." method="_on_location_pressed"]
+[connection signal="gain_reward" from="RewardUI" to="." method="_on_gain_reward"]
+[connection signal="next_location" from="RewardUI" to="." method="_on_next_location"]

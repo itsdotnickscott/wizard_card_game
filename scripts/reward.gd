@@ -74,11 +74,6 @@ func _init(rewards: Array, choose: int) -> void:
 
 
 class Tome extends Reward:
-	enum Type {
-		KNOWLEDGE, INFERNAL, FLOWING, TERRA, ANCIENT,
-	}
-
-
 	static func name() -> String:
 		return "Tome"
 
@@ -86,23 +81,12 @@ class Tome extends Reward:
 	static func get_random() -> Tome:
 		var rng := RandomNumberGenerator.new()
 		var tome := []
-		var choice := rng.randi_range(0, Type.size() - 1)
 		var size := 3
 
-		match choice:
-			Type.KNOWLEDGE:
-				while tome.size() < size:
-					var spell = get_random_spell(rng)
-					if not (spell in tome):
-						tome.append(spell)
-
-			_:
-				while tome.size() < size:
-					# Below line returns any upgrade for now, note that commented out line relies that
-					# Card.Affinity WILD = 0 and elements start at 1.
-					var upgrade = get_random_upgrade(rng) #get_random_upgrade(rng, choice)
-					if not (upgrade in tome):
-						tome.append(upgrade)
+		while tome.size() < size:
+			var spell = get_random_spell(rng)
+			if not (spell in tome):
+				tome.append(spell)
 
 		return Tome.new(tome, 1)
 
@@ -128,27 +112,23 @@ class Tome extends Reward:
 		return spells[choice]
 
 
-	static func get_random_upgrade(
-		rng: RandomNumberGenerator, aff: Card.Affinity = Card.Affinity.WILD
-	) -> Upgrade:
-		var random := rng.randf_range(0.0, 100.0)
-		var all_upgs := Upgrade.get_upgrades(aff)
-		var upgs := []
-		var rarity: Rarity
+class ChooseIdol extends Reward:
+	static func name() -> String:
+		return "Choose Idol"
 
-		if random <= 100.0:
-			rarity = Rarity.COMMON
 
-		if aff != Card.Affinity.WILD:
-			for upgrade in all_upgs:
-				if upgrade.tome_rarity == rarity:
-					upgs.append(upgrade)
+	static func get_random() -> ChooseIdol:
+		var rng := RandomNumberGenerator.new()
+		var all_idols := Idol.get_all_idols()
+		var pack := []
+		var size := 2
 
-			var choice := rng.randi_range(0, upgs.size() - 1)
-			return upgs[choice]
-		else:
-			var choice := rng.randi_range(0, all_upgs.size() - 1)
-			return all_upgs[choice]
+		while pack.size() < size:
+			var choice = rng.randi_range(0, all_idols.size() - 1)
+			if not all_idols[choice] in pack:
+				pack.append(all_idols[choice])
+
+		return ChooseIdol.new(pack, 1)
 
 
 class CardPack extends Reward:
@@ -159,28 +139,28 @@ class CardPack extends Reward:
 		return "Card Pack"
 
 
-	static func get_random() -> CardPack:
+	static func get_random(player: Player) -> CardPack:
 		var rng := RandomNumberGenerator.new()
 		var pack := []
 		var size := rng.randi_range(3, 5)
 
 		for i in range(size):
 			var chance := rng.randf_range(0.0, 100.0)
-			var card: Card = card_scene.instantiate()
+			var card: Card = null
 
 			if chance < 5.0: # Dragon Card
-				var aff := rng.randi_range(1, 3)
-				card.init_dragon(aff)
-				pack.append(card)
+				var aff: Card.Affinity = player.get_curr_drags().pick_random()
+				card = Card.new(Card.Type.DRAGON, aff)
+				
 			elif chance < 25.0: # Wind Card
 				var dir := rng.randi_range(1, 4)
-				card.init_wind(dir)
-				pack.append(card)
+				card = Card.new(Card.Type.WIND, dir)
 			else:
 				var val := rng.randi_range(Card.MIN_RANK, Card.BRIDGE_RANK - 1)
-				var aff := rng.randi_range(1, 3)
-				card.init(val, aff)
-				pack.append(card)
+				var aff: Card.Affinity = player.get_curr_affs().pick_random()
+				card = Card.new(Card.Type.NUMBER, aff, val)
+
+			pack.append(card)
 
 		return CardPack.new(pack, 1)
 
