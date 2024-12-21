@@ -1,14 +1,93 @@
-[gd_scene load_steps=4 format=3 uid="uid://ds5bf8cdlryeg"]
+[gd_scene load_steps=12 format=3 uid="uid://ds5bf8cdlryeg"]
 
 [ext_resource type="Script" path="res://scripts/battle_ui.gd" id="1_bixgw"]
 [ext_resource type="PackedScene" uid="uid://bbdhec2d0jaoc" path="res://scenes/card_ui.tscn" id="2_j8uyp"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pjitt"]
-bg_color = Color(0.157274, 0.157274, 0.157274, 1)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
+bg_color = Color(0.197937, 0.197937, 0.197937, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cbmt3"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_y6dgb"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4rskj"]
+bg_color = Color(0.439276, 0.323401, 0.649058, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.664043, 0.476597, 0.798361, 1)
+border_blend = true
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_m0m8l"]
+bg_color = Color(0.224952, 0.15242, 0.351464, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.137255, 0.0666667, 0.184314, 1)
+border_blend = true
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ja7rt"]
+bg_color = Color(0.329412, 0.231373, 0.501961, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.26814, 0.155801, 0.348471, 1)
+border_blend = true
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bbar1"]
+bg_color = Color(0.440353, 6.55781e-07, 4.81308e-08, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.999868, 0.252206, 0.296817, 1)
+border_blend = true
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_polue"]
+bg_color = Color(0.103744, 0.103744, 0.103744, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.0901961, 0.0901961, 0.0901961, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pgk48"]
+bg_color = Color(0.142858, 0.142858, 0.142858, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.0911215, 0.0911214, 0.0911214, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [node name="BattleUI" type="Control"]
 layout_mode = 3
@@ -161,12 +240,13 @@ offset_bottom = 69.0
 
 [node name="Idol1" type="PanelContainer" parent="Idols"]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 50.0
+offset_bottom = 50.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_pjitt")
 
 [node name="Label" type="Label" parent="Idols/Idol1" groups=["idol_labels"]]
 layout_mode = 2
+theme_override_font_sizes/font_size = 20
 text = "🔥"
 horizontal_alignment = 1
 vertical_alignment = 2
@@ -174,12 +254,13 @@ vertical_alignment = 2
 [node name="Idol2" type="PanelContainer" parent="Idols"]
 layout_mode = 0
 offset_left = 55.0
-offset_right = 95.0
-offset_bottom = 40.0
+offset_right = 105.0
+offset_bottom = 50.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_pjitt")
 
 [node name="Label" type="Label" parent="Idols/Idol2" groups=["idol_labels"]]
 layout_mode = 2
+theme_override_font_sizes/font_size = 20
 text = "🔥"
 horizontal_alignment = 1
 vertical_alignment = 2
@@ -187,12 +268,13 @@ vertical_alignment = 2
 [node name="Idol3" type="PanelContainer" parent="Idols"]
 layout_mode = 0
 offset_left = 111.0
-offset_right = 151.0
-offset_bottom = 40.0
+offset_right = 161.0
+offset_bottom = 50.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_pjitt")
 
 [node name="Label" type="Label" parent="Idols/Idol3" groups=["idol_labels"]]
 layout_mode = 2
+theme_override_font_sizes/font_size = 20
 text = "🔥"
 horizontal_alignment = 1
 vertical_alignment = 2
@@ -242,14 +324,20 @@ offset_left = 994.0
 offset_top = 389.0
 offset_right = 1133.0
 offset_bottom = 434.0
+theme_override_styles/focus = SubResource("StyleBoxEmpty_cbmt3")
 text = "🎴  TAROT"
 
 [node name="CastButton" type="Button" parent="."]
 layout_mode = 0
 offset_left = 947.0
 offset_top = 445.0
-offset_right = 1102.0
+offset_right = 1115.0
 offset_bottom = 572.0
+theme_override_font_sizes/font_size = 25
+theme_override_styles/focus = SubResource("StyleBoxEmpty_y6dgb")
+theme_override_styles/hover = SubResource("StyleBoxFlat_4rskj")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_m0m8l")
+theme_override_styles/normal = SubResource("StyleBoxFlat_ja7rt")
 text = "🔮 CAST"
 
 [node name="DiscardButton" type="Button" parent="."]
@@ -258,6 +346,9 @@ offset_left = 994.0
 offset_top = 582.0
 offset_right = 1133.0
 offset_bottom = 627.0
+theme_override_styles/hover = SubResource("StyleBoxFlat_bbar1")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_polue")
+theme_override_styles/normal = SubResource("StyleBoxFlat_pgk48")
 text = "✖ DISCARD"
 
 [node name="SortToggle" type="CheckButton" parent="."]

@@ -172,13 +172,13 @@ func _create_base_deck() -> Array[Card]:
 			val += 1
 			aff = 0
 
-	aff = 3
+	aff = 8
 	for i in range(3):
 		for j in range(3):
 			var new_card := Card.new(Card.Type.DRAGON, aff)
 			new_deck.append(new_card)
 			aff += 1
-		aff = 3
+		aff = 8
 
 	var wind := 1
 	for i in range(3):

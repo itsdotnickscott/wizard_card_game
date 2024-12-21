@@ -4,7 +4,7 @@ extends Control
 signal escape(val: int)
 
 
-@onready var escape_label = get_node("PanelContainer/Escape")
+@onready var escape_label = get_node("EscapePanel/Escape")
 
 
 var damage: int

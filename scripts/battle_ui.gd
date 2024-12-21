@@ -135,6 +135,11 @@ func update_enemy_stats(
 		$EnemyStats/RoundTotValue.text = "%d" % [tot_dmg]
 
 
+func reset_round_damage() -> void:
+	$EnemyStats/LastSpellValue.text = "--"
+	$EnemyStats/RoundTotValue.text = "0" 
+
+
 func _on_card_update_selected(card: Node, selected: bool) -> void:
 	if selected:
 		# Undo select if max number of cards already selected
@@ -145,11 +150,29 @@ func _on_card_update_selected(card: Node, selected: bool) -> void:
 		# Otherwise add card to selected cards list
 		selected_cards.append(card)
 
+		if selected_cards.size() == select_limit:
+			_disable_unselected_cards()
+
 	else:
+		if selected_cards.size() == select_limit:
+			_enable_all_cards()
+
 		# Remove card from selected cards list
 		selected_cards.erase(card)
 
+
 	$SelectLabel.text = "%d/%d" % [selected_cards.size(), select_limit]
+
+
+func _disable_unselected_cards() -> void:
+	for card in player_hand_ui.get_children():
+		if not card.selected:
+			card.button.disabled = true
+
+
+func _enable_all_cards() -> void:
+	for card in player_hand_ui.get_children():
+		card.button.disabled = false
 
 
 func _on_sort_button_toggled(toggled_on: bool) -> void:

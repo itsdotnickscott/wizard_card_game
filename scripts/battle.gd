@@ -24,6 +24,7 @@ var total_dmg: float = 0.0
 
 func start(enemy_info: EnemyInfo) -> void:
 	total_dmg = 0.0
+	battle_ui.reset_round_damage()
 	player.battle_start()
 	enemy.reset_enemy(enemy_info)
 	battle_ui.update_display(player, enemy)

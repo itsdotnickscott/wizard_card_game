@@ -1,13 +1,58 @@
-[gd_scene load_steps=3 format=3 uid="uid://bbdhec2d0jaoc"]
+[gd_scene load_steps=7 format=3 uid="uid://bbdhec2d0jaoc"]
 
 [ext_resource type="Script" path="res://scripts/card_ui.gd" id="1_obmbc"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0j5ra"]
-bg_color = Color(0.841309, 0.823926, 0.667196, 0.792157)
+bg_color = Color(0.94, 0.921513, 0.9212, 0.584314)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_sbj34"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ghf1b"]
+bg_color = Color(0.633171, 0.594949, 0.44337, 1)
+border_width_left = 5
+border_width_top = 10
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.270479, 0.267822, 0.158831, 1)
+border_blend = true
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xge0b"]
+bg_color = Color(0.947591, 0.936826, 0.892119, 1)
+border_width_left = 5
+border_width_top = 10
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.556863, 0.552941, 0.368627, 1)
+border_blend = true
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 5
+shadow_offset = Vector2(0, 7)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j56dn"]
+bg_color = Color(0.869624, 0.842049, 0.738809, 1)
+border_width_left = 5
+border_width_top = 10
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.557998, 0.551859, 0.369364, 1)
+border_blend = true
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 5
+shadow_offset = Vector2(0, 5)
 
 [node name="CardUI" type="Control"]
 custom_minimum_size = Vector2(75, 96)
@@ -21,10 +66,10 @@ script = ExtResource("1_obmbc")
 visible = false
 z_index = -1
 layout_mode = 0
-offset_left = 7.0
-offset_top = 8.0
-offset_right = 68.0
-offset_bottom = 91.0
+offset_left = -4.0
+offset_top = -3.0
+offset_right = 77.0
+offset_bottom = 106.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_0j5ra")
 
 [node name="Button" type="Button" parent="."]
@@ -32,7 +77,34 @@ custom_minimum_size = Vector2(72, 96)
 layout_mode = 0
 offset_right = 72.0
 offset_bottom = 96.0
-text = "1
-🔥"
+theme_override_colors/font_color = Color(0.12103, 0.12103, 0.12103, 1)
+theme_override_styles/focus = SubResource("StyleBoxEmpty_sbj34")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_ghf1b")
+theme_override_styles/hover = SubResource("StyleBoxFlat_xge0b")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ghf1b")
+theme_override_styles/normal = SubResource("StyleBoxFlat_j56dn")
+
+[node name="Rank" type="Label" parent="Button"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 9.0
+offset_right = 56.0
+offset_bottom = 38.0
+theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+theme_override_font_sizes/font_size = 20
+text = "1"
+
+[node name="Affinity" type="Label" parent="Button"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 45.0
+offset_right = 56.0
+offset_bottom = 68.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 30
+text = "🔥"
+horizontal_alignment = 1
 
 [connection signal="pressed" from="Button" to="." method="_on_card_pressed"]
