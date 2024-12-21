@@ -16,7 +16,6 @@ static var _library = {}
 @export var quantity: Array[int]
 @export var base: int
 @export var multi: float
-#@export var upgrades: Array[_Upgrade]
 
 
 func _init(
@@ -58,10 +57,6 @@ func _to_string() -> String:
 func level_up() -> void:
 	multi += 0.25
 	base += 5
-
-
-#func upgrade(new_upg: _Upgrade) -> void:
-	#upgrades.append(new_upg)
 
 
 static func init_library() -> void:

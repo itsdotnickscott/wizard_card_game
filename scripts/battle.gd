@@ -93,14 +93,29 @@ func cast_action(selected_cards: Array[Card]) -> void:
 			player_win.emit()
 			return
 
-		#if spell.upgrades.size() > 0:
-			#apply_spell_upgrades(spell, selected_cards)
+		idol_synergies(selected_cards)
 
 		battle_ui.update_enemy_stats(enemy, total_dmg, dmg, spell.name)
 
 	process_effects(player, player.end_turn_effects)
 	
 	enemy_turn()
+
+
+func idol_synergies(selected_cards: Array[Card]) -> void:
+	if player.idols.is_empty():
+		return
+
+	var aff := selected_cards[0].affinity
+	for card in selected_cards.slice(1):
+		if card.affinity != aff:
+			return
+
+	for idol in player.idols:
+		if aff == idol.affinity:
+			print("Player - " + idol.name)
+			add_effect(idol.effect)
+			return
 
 
 func use_tarot(tarot: Tarot, selected_cards: Array[Card]) -> void:
@@ -128,14 +143,11 @@ func use_tarot(tarot: Tarot, selected_cards: Array[Card]) -> void:
 	battle_ui.tarots_ui.visible = false
 
 
-#func apply_spell_upgrades(spell: Spell, hand: Array[Card]) -> void:
-	#for upg in spell.upgrades:
-		#if hand[0].affinity == upg.affinity:
-			#for effect in upg.effects:
-				#if effect.proc != Effect.Proc.SPELL_CHECK:
-					#var instance := effect.new_instance()
-					#var unit := get_target(effect)
-					#unit.apply_effect(instance)
+func add_effect(effect: Effect) -> void:
+	if effect.proc != Effect.Proc.SPELL_CHECK:
+		var instance := effect.new_instance()
+		var unit := get_target(effect)
+		unit.apply_effect(instance)
 
 
 func process_effects(unit: Unit, effects: Array[Effect]) -> void:

@@ -59,6 +59,11 @@ trial
 """
 
 
+enum Type {
+	TOME, CHOOSE_IDOL, CARD_PACK, TAROT_PACK
+}
+
+
 enum Rarity {
 	COMMON, UNCOMMON, RARE, EPIC, LEGENDARY
 }
@@ -68,17 +73,41 @@ enum Rarity {
 @export var choice_amt: int
 
 
+static func get_random(type: Type, player: Player) -> Reward:
+	match type:
+		Type.TOME:
+			return Tome.random()
+		Type.CHOOSE_IDOL:
+			return ChooseIdol.random()
+		Type.CARD_PACK:
+			return CardPack.random(player)
+		Type.TAROT_PACK:
+			return TarotPack.random()
+		_:
+			return null
+
+
+static func to_str(type: Type) -> String:
+	match type:
+		Type.TOME:
+			return "Tome"
+		Type.CHOOSE_IDOL:
+			return "Choose Idol"
+		Type.CARD_PACK:
+			return "Card Pack"
+		Type.TAROT_PACK:
+			return "Tarot Pack"
+		_:
+			return "_"
+
+
 func _init(rewards: Array, choose: int) -> void:
 	choices = rewards
 	choice_amt = choose
 
 
 class Tome extends Reward:
-	static func name() -> String:
-		return "Tome"
-
-
-	static func get_random() -> Tome:
+	static func random() -> Tome:
 		var rng := RandomNumberGenerator.new()
 		var tome := []
 		var size := 3
@@ -92,16 +121,16 @@ class Tome extends Reward:
 
 
 	static func get_random_spell(rng: RandomNumberGenerator) -> Spell:
-		var random := rng.randf_range(0.0, 100.0)
+		var rand := rng.randf_range(0.0, 100.0)
 		var all_spells := Spell.get_all_spells()
 		var spells := []
 		var rarity: Rarity
 
-		if random < 70.0:
+		if rand < 70.0:
 			rarity = Rarity.COMMON
-		elif random < 90.0:
+		elif rand < 90.0:
 			rarity = Rarity.UNCOMMON
-		elif random <= 100.0:
+		elif rand <= 100.0:
 			rarity = Rarity.RARE
 
 		for spell in all_spells:
@@ -113,11 +142,7 @@ class Tome extends Reward:
 
 
 class ChooseIdol extends Reward:
-	static func name() -> String:
-		return "Choose Idol"
-
-
-	static func get_random() -> ChooseIdol:
+	static func random() -> ChooseIdol:
 		var rng := RandomNumberGenerator.new()
 		var all_idols := Idol.get_all_idols()
 		var pack := []
@@ -132,14 +157,7 @@ class ChooseIdol extends Reward:
 
 
 class CardPack extends Reward:
-	static var card_scene = load("res://scenes/card.tscn")
-
-
-	static func name() -> String:
-		return "Card Pack"
-
-
-	static func get_random(player: Player) -> CardPack:
+	static func random(player: Player) -> CardPack:
 		var rng := RandomNumberGenerator.new()
 		var pack := []
 		var size := rng.randi_range(3, 5)
@@ -166,11 +184,7 @@ class CardPack extends Reward:
 
 
 class TarotPack extends Reward:
-	static func name() -> String:
-		return "Tarot Card Pack"
-
-
-	static func get_random() -> TarotPack:
+	static func random() -> TarotPack:
 		var rng := RandomNumberGenerator.new()
 		var all_tarots := Tarot.get_all_tarots()
 		var pack := []

@@ -48,6 +48,7 @@ func update_player(player: Player):
 	update_player_spells(player.spellbook)
 	update_player_tarots(player.tarots)
 	update_player_stats(player)
+	update_player_idols(player.get_curr_affs())
 
 
 func update_enemy(enemy: Enemy):
@@ -61,6 +62,12 @@ func update_player_stats(player: Player) -> void:
 	$PlayerStats/DiscardValue.text = "%d/%d" % [player.discards_left, player.max_discards]
 	$PlayerStats/DeckValue.text = "%d/%d" % [player.deck.size(), deck_size]
 	$SelectLabel.text = "%d/%d" % [selected_cards.size(), select_limit]
+
+
+func update_player_idols(affs: Array[Card.Affinity]) -> void:
+	var labels := get_tree().get_nodes_in_group("idol_labels")
+	for i in range(Player.IDOL_LIMIT):
+		labels[i].text = Card.get_affinity_str_from(affs[i])
 
 
 func update_player_spells(spells: Array[Spell]) -> void:

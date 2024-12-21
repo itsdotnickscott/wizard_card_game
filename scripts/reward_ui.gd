@@ -8,43 +8,44 @@ signal next_location()
 @onready var card_ui := preload("res://scenes/card_ui.tscn")
 
 
-@onready var rewards_list: VBoxContainer = get_node("RewardsPanel/VBoxContainer")
-@onready var choices_panel: Panel = get_node("ChoicePanel")
-@onready var tome_ui: VBoxContainer = get_node("ChoicePanel/Tome")
-@onready var card_pack_ui: HBoxContainer = get_node("ChoicePanel/CardPack")
-@onready var skip_reward_button: Button = get_node("RewardsPanel/SkipButton")
-@onready var skip_choice_button: Button = get_node("ChoicePanel/SkipButton")
-@onready var next_button: Button = get_node("RewardsPanel/NextButton")
-@onready var cover_panel: Panel = get_node("RewardsPanel/CoverPanel")
+@onready var rewards_list: VBoxContainer = get_node("Rewards/VBoxContainer")
+@onready var skip_reward_button: Button = get_node("Rewards/SkipButton")
+@onready var next_button: Button = get_node("Rewards/NextButton")
+@onready var cover_panel: Panel = get_node("Rewards/CoverPanel")
+@onready var choices_panel: Panel = get_node("Choices")
+@onready var count_label: Label = get_node("Choices/Count")
+@onready var tome_ui: VBoxContainer = get_node("Choices/Tome")
+@onready var card_pack_ui: HBoxContainer = get_node("Choices/CardPack")
+@onready var skip_choice_button: Button = get_node("Choices/SkipButton")
 
 
-func set_rewards(location_info: Location) -> void:
+func set_rewards(location: Location, player: Player) -> void:
 	choices_panel.visible = false
 
 	for child in rewards_list.get_children():
 		child.queue_free()
 
-	if location_info.gold > 0:
+	if location.gold > 0:
 		var button := Button.new()
-		button.text = "%d Gold" % location_info.gold
+		button.text = "%d Gold" % location.gold
 		button.disabled = true
 		rewards_list.add_child(button)
 
-	if location_info.dust > 0:
+	if location.dust > 0:
 		var button := Button.new()
-		button.text = "%d Magic Dust" % location_info.dust
+		button.text = "%d Magic Dust" % location.dust
 		button.disabled = true
 		rewards_list.add_child(button)
 
-	if not location_info.rewards.is_empty():
+	if not location.rewards.is_empty():
 		skip_reward_button.visible = true
 		next_button.visible = false
 
-		for reward in location_info.rewards:
+		for reward in location.rewards:
 			var button := Button.new()
-			button.text = reward.name()
+			button.text = Reward.to_str(reward)
 			rewards_list.add_child(button)
-			button.pressed.connect(_set_choices.bind(reward, button))
+			button.pressed.connect(_set_choices.bind(reward, button, player))
 
 
 func next_reward() -> void:
@@ -59,13 +60,15 @@ func next_reward() -> void:
 	next_button.visible = true
 
 
-func _set_choices(reward: Reward, btn: Button) -> void:
+func _set_choices(rew_type: Reward.Type, btn: Button, player: Player) -> void:
 	btn.disabled = true
 	cover_panel.visible = true
 
 	_reset_choices()
 
-	$ChoicePanel/Count.text = "Choose %d:" % [reward.choice_amt] 
+	var reward = Reward.get_random(rew_type, player)
+
+	count_label.text = "Choose %d:" % [reward.choice_amt] 
 
 	# Create new labels for each choice
 	for choice in reward.choices:

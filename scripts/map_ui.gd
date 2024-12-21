@@ -4,10 +4,14 @@ extends Control
 signal location_pressed(location: Location)
 
 
+@onready var location_ui := preload("res://scenes/location_ui.tscn")
+
+@onready var vbox := get_node("Panel/VBoxContainer")
+
+
 func setup_ui(locations: Array[Location]) -> void:
 	var placed := []
 	var curr_lvl := -1
-	var vbox := get_node("Panel/VBoxContainer")
 
 	for child in vbox.get_children():
 		vbox.remove_child(child)
@@ -51,19 +55,21 @@ func setup_ui(locations: Array[Location]) -> void:
 
 
 func add_location(location: Location, hbox: HBoxContainer) -> void:
-	hbox.add_child(location)
-	location.get_node("Button").pressed.connect(_on_location_pressed.bind(location))
+	var button := location_ui.instantiate()
+	hbox.add_child(button)
+	button.set_location(location)
+	button.location_pressed.connect(_on_location_pressed)
 
 
 func update_location(current: Location) -> void:
 	for hbox in get_node("Panel/VBoxContainer").get_children():
 		for location in hbox.get_children():
-			if location == current:
+			if location.info == current:
 				location.reveal_name()
 				location.set_disabled(true)
 				location.set_current(true)
 
-			elif location in current.links:
+			elif location.info in current.links:
 				location.reveal_name()
 				location.set_disabled(false)
 				location.set_current(false)

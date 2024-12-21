@@ -65,16 +65,48 @@ func _init(card_type: Card.Type, aff: int, val: int = -1) -> void:
 			affinity = aff as Card.Affinity
 
 
-func get_affinity_str() -> String:
-	match affinity:
-		Affinity.RED_DRAGON:
-			return "Red Dragon"
-		Affinity.GREEN_DRAGON:
-			return "Green Dragon"
-		Affinity.WHITE_DRAGON:
-			return "White Dragon"
+func get_rank_str() -> String:
+	match type:
+		Type.NUMBER:
+			return str(rank)
+		Type.WIND:
+			return get_wind_str()
+		Type.DRAGON:
+			return "🐉"
 		_:
-			return "-"
+			return "_"
+
+
+func get_affinity_str() -> String:
+	return get_affinity_str_from(affinity)
+
+
+static func get_affinity_str_from(aff: Affinity) -> String:
+	match aff:
+		Affinity.DOT:
+			return "🧿"
+		Affinity.BAMBOO:
+			return "🎋"
+		Affinity.CHARACTER:
+			return "🈺"
+		Affinity.RED_DRAGON:
+			return "🔴"
+		Affinity.GREEN_DRAGON:
+			return "🟢"
+		Affinity.WHITE_DRAGON:
+			return "⚪"
+		Affinity.FIRE:
+			return "🔥"
+		Affinity.WATER:
+			return "💧"
+		Affinity.EARTH:
+			return "🍃"
+		Affinity.WIND:
+			return "🌫️"
+		Affinity.ARCANA:
+			return "🎆"
+		_:
+			return "_"
 
 
 func get_wind_str() -> String:
@@ -88,7 +120,7 @@ func get_wind_str() -> String:
 		Wind.NORTH:
 			return "N"
 		_:
-			return "-"
+			return "_"
 
 
 func _to_string() -> String:

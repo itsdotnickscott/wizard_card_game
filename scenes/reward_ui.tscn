@@ -12,14 +12,14 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_obmo8")
 
-[node name="RewardsPanel" type="Panel" parent="."]
+[node name="Rewards" type="Panel" parent="."]
 layout_mode = 0
 offset_left = 327.0
 offset_top = 34.0
 offset_right = 858.0
 offset_bottom = 350.0
 
-[node name="Text" type="Label" parent="RewardsPanel"]
+[node name="Text" type="Label" parent="Rewards"]
 layout_mode = 0
 offset_left = 114.0
 offset_top = 13.0
@@ -30,32 +30,32 @@ text = "VICTORY!
 LOOT:"
 horizontal_alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="RewardsPanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Rewards"]
 layout_mode = 0
 offset_left = 125.0
 offset_top = 106.0
 offset_right = 407.0
 offset_bottom = 292.0
 
-[node name="Button" type="Button" parent="RewardsPanel/VBoxContainer"]
+[node name="Button" type="Button" parent="Rewards/VBoxContainer"]
 layout_mode = 2
 disabled = true
 text = "10 Gold"
 
-[node name="Button2" type="Button" parent="RewardsPanel/VBoxContainer"]
+[node name="Button2" type="Button" parent="Rewards/VBoxContainer"]
 layout_mode = 2
 disabled = true
 text = "10 Magic Dust"
 
-[node name="Button3" type="Button" parent="RewardsPanel/VBoxContainer"]
+[node name="Button3" type="Button" parent="Rewards/VBoxContainer"]
 layout_mode = 2
 text = "Tome"
 
-[node name="Button4" type="Button" parent="RewardsPanel/VBoxContainer"]
+[node name="Button4" type="Button" parent="Rewards/VBoxContainer"]
 layout_mode = 2
 text = "Card Pack"
 
-[node name="SkipButton" type="Button" parent="RewardsPanel"]
+[node name="SkipButton" type="Button" parent="Rewards"]
 layout_mode = 0
 offset_left = 358.0
 offset_top = 278.0
@@ -63,7 +63,7 @@ offset_right = 527.0
 offset_bottom = 310.0
 text = "SKIP REWARDS >>"
 
-[node name="NextButton" type="Button" parent="RewardsPanel"]
+[node name="NextButton" type="Button" parent="Rewards"]
 visible = false
 layout_mode = 0
 offset_left = 442.0
@@ -72,20 +72,20 @@ offset_right = 527.0
 offset_bottom = 310.0
 text = "NEXT >>"
 
-[node name="CoverPanel" type="Panel" parent="RewardsPanel"]
+[node name="CoverPanel" type="Panel" parent="Rewards"]
 visible = false
 layout_mode = 0
 offset_right = 531.0
 offset_bottom = 316.0
 
-[node name="ChoicePanel" type="Panel" parent="."]
+[node name="Choices" type="Panel" parent="."]
 layout_mode = 0
 offset_left = 328.0
 offset_top = 364.0
 offset_right = 859.0
 offset_bottom = 608.0
 
-[node name="Count" type="Label" parent="ChoicePanel"]
+[node name="Count" type="Label" parent="Choices"]
 layout_mode = 0
 offset_left = 180.0
 offset_top = 9.0
@@ -94,26 +94,26 @@ offset_bottom = 32.0
 text = "Choose 1:"
 horizontal_alignment = 1
 
-[node name="Tome" type="VBoxContainer" parent="ChoicePanel" groups=["choices"]]
+[node name="Tome" type="VBoxContainer" parent="Choices" groups=["choices"]]
 layout_mode = 0
 offset_left = 50.0
 offset_top = 44.0
 offset_right = 471.0
 offset_bottom = 217.0
 
-[node name="Choice1" type="Button" parent="ChoicePanel/Tome"]
+[node name="Choice1" type="Button" parent="Choices/Tome"]
 layout_mode = 2
 text = "Choice 1"
 
-[node name="Choice2" type="Button" parent="ChoicePanel/Tome"]
+[node name="Choice2" type="Button" parent="Choices/Tome"]
 layout_mode = 2
 text = "Choice 2"
 
-[node name="Choice3" type="Button" parent="ChoicePanel/Tome"]
+[node name="Choice3" type="Button" parent="Choices/Tome"]
 layout_mode = 2
 text = "Choice 3"
 
-[node name="CardPack" type="HBoxContainer" parent="ChoicePanel" groups=["choices"]]
+[node name="CardPack" type="HBoxContainer" parent="Choices" groups=["choices"]]
 layout_mode = 0
 offset_left = 7.0
 offset_top = 43.0
@@ -121,22 +121,22 @@ offset_right = 523.0
 offset_bottom = 207.0
 alignment = 1
 
-[node name="Card" parent="ChoicePanel/CardPack" instance=ExtResource("2_b8vkq")]
+[node name="Card" parent="Choices/CardPack" instance=ExtResource("2_b8vkq")]
 layout_mode = 2
 
-[node name="Card2" parent="ChoicePanel/CardPack" instance=ExtResource("2_b8vkq")]
+[node name="Card2" parent="Choices/CardPack" instance=ExtResource("2_b8vkq")]
 layout_mode = 2
 
-[node name="Card3" parent="ChoicePanel/CardPack" instance=ExtResource("2_b8vkq")]
+[node name="Card3" parent="Choices/CardPack" instance=ExtResource("2_b8vkq")]
 layout_mode = 2
 
-[node name="Card4" parent="ChoicePanel/CardPack" instance=ExtResource("2_b8vkq")]
+[node name="Card4" parent="Choices/CardPack" instance=ExtResource("2_b8vkq")]
 layout_mode = 2
 
-[node name="Card5" parent="ChoicePanel/CardPack" instance=ExtResource("2_b8vkq")]
+[node name="Card5" parent="Choices/CardPack" instance=ExtResource("2_b8vkq")]
 layout_mode = 2
 
-[node name="SkipButton" type="Button" parent="ChoicePanel"]
+[node name="SkipButton" type="Button" parent="Choices"]
 layout_mode = 0
 offset_left = 355.0
 offset_top = 206.0
@@ -144,6 +144,6 @@ offset_right = 524.0
 offset_bottom = 238.0
 text = "SKIP REWARD >>"
 
-[connection signal="pressed" from="RewardsPanel/SkipButton" to="." method="_on_next_button_pressed"]
-[connection signal="pressed" from="RewardsPanel/NextButton" to="." method="_on_next_button_pressed"]
-[connection signal="pressed" from="ChoicePanel/SkipButton" to="." method="_on_skip_choice_button_pressed"]
+[connection signal="pressed" from="Rewards/SkipButton" to="." method="_on_next_button_pressed"]
+[connection signal="pressed" from="Rewards/NextButton" to="." method="_on_next_button_pressed"]
+[connection signal="pressed" from="Choices/SkipButton" to="." method="_on_skip_choice_button_pressed"]
