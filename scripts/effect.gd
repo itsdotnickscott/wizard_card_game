@@ -6,6 +6,7 @@ enum Target {
 }
 
 enum Proc {
+	INSTANT,
 	START_TURN,
 	SPELL_CHECK, 
 	END_TURN
@@ -89,3 +90,29 @@ class Wild extends Effect:
 
 	func new_instance() -> Effect.Wild:
 		return Effect.Wild.new(affinity, card_limit, turns)
+
+
+# Change Affinity will permanently change the affinity of a card.
+class ChangeAff extends Effect:
+	@export var affinity: Card.Affinity
+	@export var num_cards: int
+
+
+	func _init(aff: Card.Affinity, count: int) -> void:
+		super("Change Affinity", Target.PLAYER, Proc.INSTANT, -1)
+
+		affinity = aff
+		num_cards = count
+
+
+# Change Rank will permanently change the rank of a card by a certain amount.
+class ChangeRank extends Effect:
+	@export var change: int
+	@export var num_cards: int
+
+
+	func _init(add: int, count: int) -> void:
+		super("Change Rank", Target.PLAYER, Proc.INSTANT, -1)
+
+		change = add
+		num_cards = count

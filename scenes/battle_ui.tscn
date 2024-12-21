@@ -1,6 +1,14 @@
-[gd_scene load_steps=2 format=3 uid="uid://ds5bf8cdlryeg"]
+[gd_scene load_steps=4 format=3 uid="uid://ds5bf8cdlryeg"]
 
 [ext_resource type="Script" path="res://scripts/battle_ui.gd" id="1_bixgw"]
+[ext_resource type="PackedScene" uid="uid://bbdhec2d0jaoc" path="res://scenes/card_ui.tscn" id="2_j8uyp"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pjitt"]
+bg_color = Color(0.157274, 0.157274, 0.157274, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
 
 [node name="BattleUI" type="Control"]
 layout_mode = 3
@@ -15,17 +23,38 @@ metadata/_edit_lock_ = true
 [node name="Hand" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 13.0
-offset_top = 446.0
+offset_top = 490.0
 offset_right = 938.0
 offset_bottom = 596.0
 alignment = 1
 
+[node name="Card" parent="Hand" instance=ExtResource("2_j8uyp")]
+layout_mode = 2
+
+[node name="Card2" parent="Hand" instance=ExtResource("2_j8uyp")]
+layout_mode = 2
+
+[node name="Card3" parent="Hand" instance=ExtResource("2_j8uyp")]
+layout_mode = 2
+
+[node name="Card4" parent="Hand" instance=ExtResource("2_j8uyp")]
+layout_mode = 2
+
+[node name="Card5" parent="Hand" instance=ExtResource("2_j8uyp")]
+layout_mode = 2
+
+[node name="Card6" parent="Hand" instance=ExtResource("2_j8uyp")]
+layout_mode = 2
+
+[node name="Card7" parent="Hand" instance=ExtResource("2_j8uyp")]
+layout_mode = 2
+
 [node name="PlayerStats" type="Label" parent="."]
 layout_mode = 0
 offset_left = 20.0
-offset_top = 302.0
+offset_top = 345.0
 offset_right = 230.0
-offset_bottom = 429.0
+offset_bottom = 472.0
 text = "♥ HEALTH:
 🛡  SHIELD:
 🔮 MANA:
@@ -73,9 +102,9 @@ text = "30/30"
 
 [node name="EnemyStats" type="Label" parent="."]
 layout_mode = 0
-offset_left = 823.0
+offset_left = 784.0
 offset_top = 38.0
-offset_right = 1025.0
+offset_right = 986.0
 offset_bottom = 168.0
 text = "♥ HEALTH:
 ⚔ ATTACK:
@@ -123,6 +152,51 @@ offset_right = 193.0
 offset_bottom = 105.0
 text = "0"
 
+[node name="Idols" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 531.0
+offset_top = 22.0
+offset_right = 692.0
+offset_bottom = 69.0
+
+[node name="Idol1" type="PanelContainer" parent="Idols"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_pjitt")
+
+[node name="Label" type="Label" parent="Idols/Idol1" groups=["idol_labels"]]
+layout_mode = 2
+text = "🔥"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="Idol2" type="PanelContainer" parent="Idols"]
+layout_mode = 0
+offset_left = 55.0
+offset_right = 95.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_pjitt")
+
+[node name="Label" type="Label" parent="Idols/Idol2" groups=["idol_labels"]]
+layout_mode = 2
+text = "🔥"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="Idol3" type="PanelContainer" parent="Idols"]
+layout_mode = 0
+offset_left = 111.0
+offset_right = 151.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_pjitt")
+
+[node name="Label" type="Label" parent="Idols/Idol3" groups=["idol_labels"]]
+layout_mode = 2
+text = "🔥"
+horizontal_alignment = 1
+vertical_alignment = 2
+
 [node name="Spells" type="VBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 20.0
@@ -141,6 +215,34 @@ text = "❔  CHROMATIC BLAST        [  3   3   3  ]      10  x  2.0"
 [node name="Weave" type="Label" parent="Spells"]
 layout_mode = 2
 text = "❓  ELEMENTAL WEAVE       [  2   3   4  ]      15  x  2.0"
+
+[node name="Tarots" type="VBoxContainer" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 950.0
+offset_top = 274.0
+offset_right = 1139.0
+offset_bottom = 375.0
+
+[node name="Button" type="Button" parent="Tarots"]
+layout_mode = 2
+text = "The Sun"
+
+[node name="Button2" type="Button" parent="Tarots"]
+layout_mode = 2
+text = "The Moon"
+
+[node name="Button3" type="Button" parent="Tarots"]
+layout_mode = 2
+text = "The World"
+
+[node name="TarotButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 994.0
+offset_top = 389.0
+offset_right = 1133.0
+offset_bottom = 434.0
+text = "🎴  TAROT"
 
 [node name="CastButton" type="Button" parent="."]
 layout_mode = 0
@@ -168,10 +270,10 @@ button_pressed = true
 
 [node name="ElementLabel" type="Label" parent="SortToggle"]
 layout_mode = 0
-offset_left = -67.0
-offset_right = -3.0
+offset_left = -62.0
+offset_right = 2.0
 offset_bottom = 23.0
-text = "Element"
+text = "Affinity"
 
 [node name="ValueLabel" type="Label" parent="SortToggle"]
 layout_mode = 0
@@ -189,6 +291,7 @@ offset_bottom = 634.0
 text = "0/3"
 horizontal_alignment = 1
 
+[connection signal="pressed" from="TarotButton" to="." method="_on_tarot_button_pressed"]
 [connection signal="pressed" from="CastButton" to="." method="_on_cast_button_pressed"]
 [connection signal="pressed" from="DiscardButton" to="." method="_on_discard_button_pressed"]
 [connection signal="toggled" from="SortToggle" to="." method="_on_sort_button_toggled"]

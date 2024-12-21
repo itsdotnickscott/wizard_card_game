@@ -87,10 +87,13 @@ static func calc_dmg(hand: Array, spell: Spell) -> float:
 ## Otherwise, it sorts it by [member Card.affinity]. Modifies the existing [Array].
 static func sort_cards(cards: Array[Card], by_rank: bool) -> void:
 	var asc_value := func(a: Card, b: Card) -> int:
-		if by_rank:
-			return a.rank < b.rank
-		else:
+		if not by_rank or (a.type == Card.Type.DRAGON and b.type == Card.Type.DRAGON):
 			return a.affinity < b.affinity
+		else:
+			if a.type == Card.Type.WIND and b.type == Card.Type.WIND:
+				return a.wind < b.wind
+			else:
+				return a.rank < b.rank
 
 	cards.sort_custom(asc_value)
 
@@ -288,7 +291,7 @@ static func _count_affs(hand: Array[Card]) -> Dictionary:
 static func _get_run_combinations(cards: Array, size: int) -> Array:
 	var combinations := []
 
-	if cards[0].rank == 2 and cards[-1].rank == 11:
+	if cards[0].rank == Card.MIN_RANK and cards[-1].rank == Card.BRIDGE_RANK:
 		cards.push_front(cards.pop_back())
 
 	for i in range(cards.size() - size + 1):
@@ -420,13 +423,23 @@ static func _get_valid_combinations(spell: Spell, part: int, hands: Array) -> Ar
 ## It must match the quantity set by the [param spell].
 static func _get_valid_sets(hand: Array[Card], spell: Spell, part: int) -> Array:
 	var by_rank := {}
+
 	for card in hand:
-		if by_rank.has(card.rank):
-			by_rank[card.rank].append(card)
+		var check := ""
+		if card.rank == Card.WIND_RANK:
+			check = card.get_wind_str()
+		elif card.rank == Card.DRAGON_RANK:
+			check = card.get_affinity_str()
 		else:
-			by_rank[card.rank] = [card]
+			check = str(card.rank)
+
+		if by_rank.has(check):
+			by_rank[check].append(card)
+		else:
+			by_rank[check] = [card]
 
 	var sets := []
+
 	for cards in by_rank.values():
 		if cards.size() >= spell.card_amt[part]:
 			sets.append(cards)
@@ -453,7 +466,8 @@ static func _get_valid_runs(
 				# Card is next rank in set
 				(card.rank == r[-1].rank + 1) or   
 				# Card is a W (Face card) and is bridging a 2 3 run
-				(card.rank == 11 and r[0].rank == 2 and r[-1].rank != 11)   # Card 
+				(card.rank == Card.BRIDGE_RANK and r[0].rank == Card.MIN_RANK 
+				and r[-1].rank != Card.BRIDGE_RANK)
 			):
 				# Card is matching affinity combo
 				if _check_aff_combo(spell.aff_combo[part], r[-1], card):

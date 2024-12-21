@@ -1,16 +1,19 @@
 [gd_scene load_steps=2 format=3 uid="uid://bbnksj70okplw"]
 
-[ext_resource type="Script" path="res://scripts/location.gd" id="1_18m2m"]
+[ext_resource type="Script" path="res://scripts/location_ui.gd" id="1_ivj7l"]
 
-[node name="Location" type="Control"]
+[node name="LocationUI" type="Control"]
 custom_minimum_size = Vector2(75, 31)
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
-script = ExtResource("1_18m2m")
+script = ExtResource("1_ivj7l")
 
 [node name="Button" type="Button" parent="."]
+layout_mode = 0
 offset_right = 8.0
 offset_bottom = 8.0
 text = "?"
+
+[connection signal="pressed" from="Button" to="." method="_on_location_pressed"]

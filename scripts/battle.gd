@@ -1,48 +1,36 @@
-extends Node2D
+class_name Battle extends Node2D
+
+
+signal player_win()
+signal player_escape()
+signal player_lose()
 
 
 enum State {
-	PLAYER_CHOOSE, PLAYER_ANIMATION, ENEMY_ATTACK, OUTCOME, MAP
+	PLAYER_CHOOSE, PLAYER_ANIMATION, ENEMY_ATTACK
 }
 
-
-@onready var player: Player = get_node("Player")
 @onready var enemy: Enemy = get_node("Enemy")
 
 @onready var battle_ui: Control = get_node("UserInterface/BattleUI")
-@onready var reward_ui: Control = get_node("UserInterface/RewardUI")
-@onready var defeat_ui: Control = get_node("UserInterface/DefeatUI")
 @onready var escape_ui: Control = get_node("UserInterface/EscapeUI")
-@onready var map: Map = get_node("UserInterface/Map")
 
 
-var curr_location: Location
+var player: Player = null
+
 var curr_state: State
 var total_dmg: float = 0.0
 
 
-## Currently called in [method _ready].
-func start_battle() -> void:
-	map.visible = false
-	battle_ui.visible = true
+func start(enemy_info: EnemyInfo) -> void:
 	total_dmg = 0.0
 	player.battle_start()
-	enemy.reset_enemy(curr_location.info.enemy)
+	enemy.reset_enemy(enemy_info)
 	battle_ui.update_display(player, enemy)
 	battle_ui.set_deck_size(player.deck.size())
 
 	# For now, only the player gets a turn
 	player_turn()
-
-
-func next_location() -> void:
-	curr_state = State.MAP
-
-	reward_ui.visible = false
-	escape_ui.visible = false
-
-	map.update_location(curr_location)
-	map.visible = true
 	
 
 ## The [Player] draws to the [member Player.hand_limit] and sorts their [member Player.hand].
@@ -79,7 +67,7 @@ func enemy_turn() -> void:
 	battle_ui.update_player_stats(player)
 
 	if player.health <= 0:
-		game_over()
+		player_lose.emit()
 		return
 
 	process_effects(enemy, enemy.end_turn_effects)
@@ -102,11 +90,10 @@ func cast_action(selected_cards: Array[Card]) -> void:
 		total_dmg += dmg
 
 		if enemy.health <= 0:
-			battle_end()
+			player_win.emit()
 			return
 
-		if spell.upgrades.size() > 0:
-			apply_spell_upgrades(spell, selected_cards)
+		idol_synergies(selected_cards)
 
 		battle_ui.update_enemy_stats(enemy, total_dmg, dmg, spell.name)
 
@@ -115,14 +102,52 @@ func cast_action(selected_cards: Array[Card]) -> void:
 	enemy_turn()
 
 
-func apply_spell_upgrades(spell: Spell, hand: Array[Card]) -> void:
-	for upg in spell.upgrades:
-		if hand[0].affinity == upg.affinity:
-			for effect in upg.effects:
-				if effect.proc != Effect.Proc.SPELL_CHECK:
-					var instance := effect.new_instance()
-					var unit := get_target(effect)
-					unit.apply_effect(instance)
+func idol_synergies(selected_cards: Array[Card]) -> void:
+	if player.idols.is_empty():
+		return
+
+	var aff := selected_cards[0].affinity
+	for card in selected_cards.slice(1):
+		if card.affinity != aff:
+			return
+
+	for idol in player.idols:
+		if aff == idol.affinity:
+			print("Player - " + idol.name)
+			add_effect(idol.effect)
+			return
+
+
+func use_tarot(tarot: Tarot, selected_cards: Array[Card]) -> void:
+	if tarot.effect is Effect.ChangeAff:
+		if tarot.effect.num_cards != selected_cards.size():
+			print("Invalid number of cards to use this tarot")
+			return
+
+		for card in selected_cards:
+			card.change_aff(tarot.effect.affinity)
+			card.select_card(false)
+
+	elif tarot.effect is Effect.ChangeRank:
+		if tarot.effect.num_cards != selected_cards.size():
+			print("Invalid number of cards to use this tarot")
+			return
+
+		for card in selected_cards:
+			card.change_rank(tarot.effect.change)
+			card.select_card(false)
+
+	player.tarots.erase(tarot)
+	battle_ui.reset_selected_cards()
+	battle_ui.update_player(player)
+	battle_ui.tarots_ui.visible = false
+
+
+func add_effect(effect: Effect) -> void:
+	if effect.proc != Effect.Proc.SPELL_CHECK:
+		var instance := effect.new_instance()
+		var unit := get_target(effect)
+		unit.apply_effect(instance)
 
 
 func process_effects(unit: Unit, effects: Array[Effect]) -> void:
@@ -177,50 +202,16 @@ func discard_action(selected_cards: Array[Card]) -> void:
 	player_turn()
 
 
-func battle_end():
-	curr_state = State.OUTCOME
-	reward_ui.set_reward(curr_location.info.reward)
-	reward_ui.visible = true
-	battle_ui.visible = false
-
-
-func gain_loot():
-	reward_ui.set_reward(Reward.CardPack.get_random())
-
-
 func out_of_mana():
-	curr_state = State.OUTCOME
 	escape_ui.set_escape_damage(enemy.attacks[0].damage * 3)
 	escape_ui.visible = true
 	battle_ui.visible = false
 
 
-func game_over() -> void:
-	curr_state = State.OUTCOME
-	defeat_ui.visible = true
-	battle_ui.visible = false
-
-
-func _ready() -> void:
-	Spell.initialize_library()
-	Upgrade.initialize_library()
-	player.initialize()
-
-	#var analysis = Analysis.new(Spell.get_all_spells(), player.deck)
-	#var analysis = Analysis.new([Spell.get_from_id("bolt")], player.deck)
-	var analysis = Analysis.new(player.spellbook, player.deck)
-	analysis.analyze_spells(player.hand_limit)
-
+func init(p: Player):
+	player = p
 	battle_ui.set_select_limit(player.select_limit)
 	battle_ui.reset_selected_cards()
-
-	map.create_stage()
-	map.setup_ui()
-	curr_location = map.locations[0]
-	map.update_location(curr_location)
-
-	# For now, the battle starts immediately after ready
-	start_battle()
 
 
 func _on_battle_ui_sort_hand(by_value: bool) -> void:
@@ -230,7 +221,7 @@ func _on_battle_ui_sort_hand(by_value: bool) -> void:
 
 func _on_insta_win_pressed() -> void:
 	enemy.health = 0
-	battle_end()
+	player_win.emit()
 
 
 func _on_escape(dmg: int) -> void:
@@ -238,36 +229,10 @@ func _on_escape(dmg: int) -> void:
 	player.take_dmg(dmg)
 
 	if player.health <= 0:
-		game_over()
+		player_lose.emit()
 		return
 	
-	next_location()
+	player_escape.emit()
 
-
-func _on_reward_level_up_spell(spell: Spell) -> void:
-	if spell in player.spellbook:
-		spell.level_up()
-	else:
-		player.spellbook.append(spell)
-
-	next_location()
-
-
-func _on_reward_upgrade_spell(upg: Upgrade) -> void:
-	if upg in upg.spell.upgrades:
-		upg.level_up()
-	else:
-		upg.spell.upgrade(upg)
-
-	next_location()
-
-
-func _on_reward_gain_card(card: Card) -> void:
-	player.deck.append(card)
-
-	next_location()
-
-
-func _on_map_location_pressed(location: Location) -> void:
-	curr_location = location
-	start_battle()
+	escape_ui.visible = false
+	battle_ui.visible = true
