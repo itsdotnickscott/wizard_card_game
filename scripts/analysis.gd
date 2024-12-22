@@ -86,8 +86,8 @@ static func calc_dmg(hand: Array, spell: Spell) -> float:
 ## Sorts [member Player.hand] by [member Card.rank] if [param by_rank] is [code]true[/code].
 ## Otherwise, it sorts it by [member Card.affinity]. Modifies the existing [Array].
 static func sort_cards(cards: Array[Card], by_rank: bool) -> void:
-	var asc_value := func(a: Card, b: Card) -> int:
-		if not by_rank or (a.type == Card.Type.DRAGON and b.type == Card.Type.DRAGON):
+	var asc_rank := func(a: Card, b: Card) -> int:
+		if a.type == Card.Type.DRAGON and b.type == Card.Type.DRAGON:
 			return a.affinity < b.affinity
 		else:
 			if a.type == Card.Type.WIND and b.type == Card.Type.WIND:
@@ -95,7 +95,14 @@ static func sort_cards(cards: Array[Card], by_rank: bool) -> void:
 			else:
 				return a.rank < b.rank
 
-	cards.sort_custom(asc_value)
+	var asc_aff := func(a: Card, b: Card) -> int:
+		return a.affinity < b.affinity
+
+	cards.sort_custom(asc_rank)
+
+	if not by_rank:
+		cards.sort_custom(asc_aff)
+	
 
 
 ## Prints various important info of a [param spell] onto the console.

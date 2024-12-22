@@ -90,6 +90,7 @@ func update_player_hand(hand: Array[Card]) -> void:
 
 	# Delete current buttons
 	for child in player_hand_ui.get_children():
+		_on_card_update_selected(child, false)
 		# remove_child is used instead of queue_free because Cards need to stay alive in player hand
 		child.queue_free()
 

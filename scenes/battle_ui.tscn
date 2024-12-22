@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://ds5bf8cdlryeg"]
+[gd_scene load_steps=13 format=3 uid="uid://ds5bf8cdlryeg"]
 
 [ext_resource type="Script" path="res://scripts/battle_ui.gd" id="1_bixgw"]
 [ext_resource type="PackedScene" uid="uid://bbdhec2d0jaoc" path="res://scenes/card_ui.tscn" id="2_j8uyp"]
@@ -46,12 +46,14 @@ border_width_left = 5
 border_width_top = 5
 border_width_right = 5
 border_width_bottom = 5
-border_color = Color(0.26814, 0.155801, 0.348471, 1)
+border_color = Color(0.137255, 0.0666667, 0.184314, 1)
 border_blend = true
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qbp5u"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bbar1"]
 bg_color = Color(0.440353, 6.55781e-07, 4.81308e-08, 1)
@@ -131,9 +133,9 @@ layout_mode = 2
 [node name="PlayerStats" type="Label" parent="."]
 layout_mode = 0
 offset_left = 20.0
-offset_top = 345.0
+offset_top = 335.0
 offset_right = 230.0
-offset_bottom = 472.0
+offset_bottom = 462.0
 text = "♥ HEALTH:
 🛡  SHIELD:
 🔮 MANA:
@@ -346,6 +348,7 @@ offset_left = 994.0
 offset_top = 582.0
 offset_right = 1133.0
 offset_bottom = 627.0
+theme_override_styles/focus = SubResource("StyleBoxEmpty_qbp5u")
 theme_override_styles/hover = SubResource("StyleBoxFlat_bbar1")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_polue")
 theme_override_styles/normal = SubResource("StyleBoxFlat_pgk48")
