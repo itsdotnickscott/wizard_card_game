@@ -1,8 +1,7 @@
 class_name Spell extends Resource
 
 
-enum RankCombo { SET, RUN, ANY }
-enum AffCombo { ANY, MATCH_ANY }
+enum Meld { PAIR, RUN, SET }
 
 
 static var _library = {}
@@ -10,9 +9,7 @@ static var _library = {}
 
 @export var name: String
 @export var tome_rarity: Reward.Rarity
-@export var rank_combo: Array[RankCombo]
-@export var aff_combo: Array[AffCombo]
-@export var card_amt: Array[int]
+@export var melds: Array[Meld]
 @export var quantity: Array[int]
 @export var base: int
 @export var multi: float
@@ -20,19 +17,14 @@ static var _library = {}
 
 func _init(
 	spell_name: String, rarity: Reward.Rarity,
-	rank: Array[RankCombo], aff: Array[AffCombo], 
-	amt: Array[int], quant: Array[int], base_dmg: int, mult: float
+	combo: Array[Meld], quant: Array[int], base_dmg: int, mult: float
 ) -> void:
-	if not (
-		rank.size() == aff.size() and aff.size() == amt.size() and amt.size() == quant.size()
-	):
-		print("invalid spell - rank, aff, amt, and quant params all need to be the same size")
+	if combo.size() != quant.size():
+		print("invalid spell - combo and quant params need to be the same size")
 		return
 
 	name = spell_name
-	rank_combo = rank
-	aff_combo = aff
-	card_amt = amt
+	melds = combo
 	quantity = quant
 	base = base_dmg
 	multi = mult
@@ -40,13 +32,17 @@ func _init(
 
 
 func parts() -> int:
-	return rank_combo.size()
+	return melds.size()
+
+
+func get_meld_size(part: int):
+	return 2 if melds[part] == Meld.PAIR else 3
 
 
 func size() -> int:
 	var val = 0
 	for i in range(parts()):
-		val += card_amt[i] * quantity[i]
+		val += get_meld_size(i) * quantity[i]
 	return val
 
 
@@ -55,70 +51,47 @@ func _to_string() -> String:
 
 
 func level_up() -> void:
-	multi += 0.25
-	base += 5
+	multi += 1
+	base += 10
 
 
 static func init_library() -> void:
-	_library = {"spark": Spell.new(
+	_library = {
+		"spark": Spell.new(
 			"Spark", Reward.Rarity.COMMON,
-			[Spell.RankCombo.SET], [Spell.AffCombo.ANY], 
-			[2], [1], 5, 0.5
-		),
-
-		"bolt": Spell.new(
-			"Twin Bolt", Reward.Rarity.COMMON,
-			[Spell.RankCombo.SET], [Spell.AffCombo.ANY], 
-			[2], [2], 10, 1.0
-		),
-
-		"blast": Spell.new(
-			"Chromatic Blast", Reward.Rarity.COMMON,
-			[Spell.RankCombo.SET], [Spell.AffCombo.ANY],
-			[3], [1], 20, 2.0
+			[Spell.Meld.PAIR], [1], 
+			10, 1.0
 		),
 		
 		"weave": Spell.new(
-			"Elemental Weave", Reward.Rarity.COMMON,
-			[Spell.RankCombo.RUN], [Spell.AffCombo.MATCH_ANY], 
-			[3], [1], 30, 2.0
+			"Weave", Reward.Rarity.COMMON,
+			[Spell.Meld.RUN], [1],
+			20, 2.0
+		),
+
+		"blast": Spell.new(
+			"Blast", Reward.Rarity.COMMON,
+			[Spell.Meld.SET], [1],
+			30, 3.0
+		),
+
+		"flare": Spell.new(
+			"Flare", Reward.Rarity.COMMON,
+			[Spell.Meld.PAIR], [2],
+			20, 2.0
 		),
 
 		"thread": Spell.new(
-			"Unstable Thread", Reward.Rarity.COMMON,
-			[Spell.RankCombo.RUN], [Spell.AffCombo.ANY], 
-			[5], [1], 30, 1.0
-		),
-
-		"chaos": Spell.new(
-			"Ray of Chaos", Reward.Rarity.UNCOMMON,
-			[Spell.RankCombo.SET, Spell.RankCombo.SET], [Spell.AffCombo.ANY, Spell.AffCombo.ANY], 
-			[3, 2], [1, 1], 40, 1.5
-		),
-
-		"takeover": Spell.new(
-			"Natural Takeover", Reward.Rarity.UNCOMMON,
-			[Spell.RankCombo.ANY], [Spell.AffCombo.MATCH_ANY], 
-			[5], [1], 50, 2.0
-		),
-
-		"fissure": Spell.new(
-			"Organic Fissure", Reward.Rarity.UNCOMMON,
-			[Spell.RankCombo.RUN], [Spell.AffCombo.MATCH_ANY], 
-			[4], [1], 60, 2.5
-		),
-
-		"purge": Spell.new(
-			"Ultimate Purge", Reward.Rarity.RARE,
-			[Spell.RankCombo.SET], [Spell.AffCombo.ANY], 
-			[4], [1], 70, 3.0
+			"Thread", Reward.Rarity.COMMON,
+			[Spell.Meld.RUN, Spell.Meld.PAIR], [1, 1],
+			25, 3.0
 		),
 
 		"rapture": Spell.new(
-			"Intense Rapture", Reward.Rarity.RARE,
-			[Spell.RankCombo.RUN], [Spell.AffCombo.MATCH_ANY], 
-			[5], [1], 80, 4.0
-		),
+			"Rapture", Reward.Rarity.COMMON,
+			[Spell.Meld.SET, Spell.Meld.PAIR], [1, 1],
+			50, 5.0
+		)
 	}
 
 

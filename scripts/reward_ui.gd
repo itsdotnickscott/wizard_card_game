@@ -74,7 +74,10 @@ func _set_choices(rew_type: Reward.Type, btn: Button, player: Player) -> void:
 	for choice in reward.choices:
 		if choice is Spell or choice is Tarot or choice is Idol:
 			var button := Button.new()
-			button.text = choice.name
+			if choice is Spell:
+				button.text = Analysis.get_spell_info(choice)
+			else:
+				button.text = choice.name
 			tome_ui.add_child(button)
 			button.pressed.connect(_on_reward_chosen.bind(choice))
 			tome_ui.visible = true
@@ -85,6 +88,7 @@ func _set_choices(rew_type: Reward.Type, btn: Button, player: Player) -> void:
 			card.set_display(choice)
 			card.get_node("Button").pressed.connect(_on_reward_chosen.bind(card.info))
 			card_pack_ui.visible = true
+
 
 	choices_panel.visible = true
 

@@ -16,7 +16,7 @@ var stage: int = 1
 func create_stage() -> void:
 	var start := Location.Fight.new(
 		EnemyInfo.new("Practice Dummy", Enemy.Tier.NORMAL, 100, [Attack.new("Stay Still", 0)]), 
-		[Reward.Type.CHOOSE_IDOL, Reward.Type.CARD_PACK], 
+		[Reward.Type.TOME, Reward.Type.CARD_PACK], 
 	)
 	var choice1 := Location.Fight.new(
 		EnemyInfo.new("Wild Deer", Enemy.Tier.NORMAL, 175, [Attack.new("Prance", 10)]), 
@@ -68,9 +68,9 @@ func _ready() -> void:
 	player.init()
 	battle.init(player)
 
-	#var analysis = Analysis.new(Spell.get_all_spells(), player.deck)
+	var analysis = Analysis.new(Spell.get_all_spells(), player.deck)
 	#var analysis = Analysis.new([Spell.get_from_id("bolt")], player.deck)
-	var analysis = Analysis.new(player.spellbook, player.deck)
+	#var analysis = Analysis.new(player.spellbook, player.deck)
 	analysis.analyze_spells(player.hand_limit)
 
 	create_stage()

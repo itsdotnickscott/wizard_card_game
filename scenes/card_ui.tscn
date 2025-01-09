@@ -88,22 +88,23 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_j56dn")
 
 [node name="Rank" type="Label" parent="Button"]
 layout_mode = 0
-offset_left = 10.0
-offset_top = 9.0
-offset_right = 56.0
-offset_bottom = 38.0
+offset_left = 43.0
+offset_top = 8.0
+offset_right = 61.0
+offset_bottom = 37.0
 theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 1
 theme_override_font_sizes/font_size = 20
 text = "1"
+horizontal_alignment = 2
 
 [node name="Affinity" type="Label" parent="Button"]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 45.0
 offset_right = 56.0
-offset_bottom = 68.0
+offset_bottom = 87.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 30
 text = "🔥"

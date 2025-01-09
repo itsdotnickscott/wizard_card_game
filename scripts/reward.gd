@@ -126,11 +126,11 @@ class Tome extends Reward:
 		var spells := []
 		var rarity: Rarity
 
-		if rand < 70.0:
+		if rand < 1000.0:
 			rarity = Rarity.COMMON
 		elif rand < 90.0:
 			rarity = Rarity.UNCOMMON
-		elif rand <= 100.0:
+		elif rand <= 99.0:
 			rarity = Rarity.RARE
 
 		for spell in all_spells:

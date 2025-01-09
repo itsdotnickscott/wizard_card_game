@@ -4,10 +4,10 @@ class_name Player extends Unit
 const IDOL_LIMIT = 3
 
 
-@export var max_mana: int = 4
-@export var max_discards: int = 3
-@export var hand_limit: int = 7
-@export var select_limit: int = 4
+@export var max_mana: int = 3
+@export var max_discards: int = 4
+@export var hand_limit: int = 8
+@export var select_limit: int = 5
 
 @export var deck: Array[Card] = []
 @export var spellbook: Array[Spell] = []
@@ -67,7 +67,7 @@ func cast_cards(selected_cards: Array[Card]) -> Spell:
 		hand.erase(card)
 		discard.append(card)
 
-	return Analysis.get_valid_spell(spellbook, selected_cards, true, spell_check_effects)
+	return Analysis.get_valid_spell(spellbook, selected_cards, true)
 
 
 ## Discards given [Card] objects from the [member Player.hand]. Returns [code]true[/code] if 
@@ -162,7 +162,7 @@ func _create_base_deck() -> Array[Card]:
 	var val := 1
 	var aff := 0
 
-	for t in range(3):
+	for t in range(4):
 		val = 1
 		for i in range(9):
 			for j in range(3):
@@ -173,7 +173,7 @@ func _create_base_deck() -> Array[Card]:
 			aff = 0
 
 	aff = 8
-	for i in range(3):
+	for i in range(4):
 		for j in range(3):
 			var new_card := Card.new(Card.Type.DRAGON, aff)
 			new_deck.append(new_card)
@@ -181,7 +181,7 @@ func _create_base_deck() -> Array[Card]:
 		aff = 8
 
 	var wind := 1
-	for i in range(3):
+	for i in range(4):
 		for j in range(4):
 			var new_card := Card.new(Card.Type.WIND, wind)
 			new_deck.append(new_card)
@@ -196,9 +196,8 @@ func _create_base_deck() -> Array[Card]:
 func _create_base_spellbook() -> Array[Spell]:
 	return [
 		Spell.get_from_id("spark"),
-		Spell.get_from_id("bolt"),
-		Spell.get_from_id("blast"), 
 		Spell.get_from_id("weave"), 
+		Spell.get_from_id("blast"), 
 	]
 
 

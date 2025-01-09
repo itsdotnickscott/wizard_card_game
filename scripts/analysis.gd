@@ -1,14 +1,14 @@
 class_name Analysis extends Resource
 
 
-var spellbook: Array[Spell]
+var spellbook: Array
 var deck: Array[Card]
 
 
 ## =====  CONSTRUCTOR  ===== ##
 
 
-func _init(spells: Array[Spell], cards: Array[Card]) -> void:
+func _init(spells: Array, cards: Array[Card]) -> void:
 	spellbook = spells
 	deck = cards
 
@@ -42,13 +42,9 @@ func sample_probabilities(spell: Spell, hand_size: int) -> void:
 		for j in range(hand_size):
 			hand.append(deck[j])
 
-		var TEST_WITH_EFFECTS : Array[Effect] = [
-			#Effect.Wild.new(Card.Affinity.ARCANA, 1, -1)
-		]
-
-		if is_valid_spell(spell, hand, false, TEST_WITH_EFFECTS):
+		if is_valid_spell(spell, hand, false):
 			result += 1
-			var cards = _get_hand_from_spell(spell, hand, TEST_WITH_EFFECTS)
+			var cards = _get_hand_from_spell(spell, hand)
 			var dmg = calc_dmg(cards, spell)
 
 			if dmg < min_dmg:
@@ -112,25 +108,17 @@ static func get_spell_info(spell: Spell) -> String:
 	for i in range(spell.parts()):
 		subtitle += str(spell.quantity[i]) + "x "
 
-		match spell.rank_combo[i]:
-			Spell.RankCombo.SET:
-				subtitle += "SET"
-			Spell.RankCombo.RUN:
+		match spell.melds[i]:
+			Spell.Meld.PAIR:
+				subtitle += "PAIR"
+			Spell.Meld.RUN:
 				subtitle += "RUN"
-			Spell.RankCombo.ANY:
-				subtitle += "ANY"
-
-		subtitle += " of %d, " % [spell.card_amt[i]]
-
-		match spell.aff_combo[i]:
-			Spell.AffCombo.ANY:
-				subtitle += "ANY"
-			Spell.AffCombo.MATCH_ANY:
-				subtitle += "MATCH ANY"
+			Spell.Meld.SET:
+				subtitle += "SET"
 
 		subtitle += " | "
 
-	subtitle += "[%d x %0.2f]" % [spell.base, spell.multi]
+	subtitle += "%d x %0.2f" % [spell.base, spell.multi]
 
 	return spell.name + " | " + subtitle
 
@@ -140,22 +128,20 @@ static func get_spell_info(spell: Spell) -> String:
 
 ## Returns the first [Spell] that can be case from the given [param hand].
 ## If [param exact] is [code]true[/code], then the [param hand] must match the spell exactly.
-static func get_valid_spell(
-	spells: Array[Spell], hand: Array[Card], exact: bool, effects: Array[Effect] = []
-) -> Spell:
+static func get_valid_spell(spells: Array[Spell], hand: Array[Card], exact: bool) -> Spell:
 	var valid := []
 	for spell in spells:
-		if is_valid_spell(spell, hand, exact, effects):
+		if is_valid_spell(spell, hand, exact):
 			valid.append(spell)
 	
 	if valid.is_empty():
 		return null
 	elif valid.size() > 1:
 		var best: Spell = valid[0]
-		var high: float = calc_dmg(_get_hand_from_spell(valid[0], hand, effects), valid[0])
+		var high: float = calc_dmg(_get_hand_from_spell(valid[0], hand), valid[0])
 
 		for spell in valid.slice(1):
-			var scoring_hand := _get_hand_from_spell(spell, hand, effects)
+			var scoring_hand := _get_hand_from_spell(spell, hand)
 			var dmg := calc_dmg(scoring_hand, spell)
 
 			if dmg > high:
@@ -169,26 +155,22 @@ static func get_valid_spell(
 
 ## Returns [code]true[/code] if given [param hand] works for [param spell].
 ## If [param exact] is [code]true[/code], then the [param hand] must match the spell exactly.
-static func is_valid_spell(
-	spell: Spell, hand: Array[Card], exact: bool, effects: Array[Effect] = []
-) -> bool:
+static func is_valid_spell(spell: Spell, hand: Array[Card], exact: bool) -> bool:
 	if exact and hand.size() != spell.size():
 		return false
 
 	sort_cards(hand, true)
 
 	var combos := []
+
 	for i in range(spell.parts()):
 		var part := []
-		match spell.rank_combo[i]:
-			Spell.RankCombo.SET:
+		match spell.melds[i]:
+			Spell.Meld.PAIR, Spell.Meld.SET:
 				part = _get_valid_sets(hand, spell, i)
 
-			Spell.RankCombo.RUN:
-				part = _get_valid_runs(hand, spell, i, effects)
-
-			Spell.RankCombo.ANY when spell.aff_combo[i] == Spell.AffCombo.MATCH_ANY:
-				part = _get_valid_match_anys(hand, spell, i)
+			Spell.Meld.RUN:
+				part = _get_valid_runs(hand, spell, i)
 
 		if part.size() < spell.quantity[i]:
 			return false
@@ -232,63 +214,6 @@ static func _build_valid_hands(combos: Array, spell: Spell, part:=0, hand:=[]) -
 
 	# Recursive case: return any finished hands we completed
 	return hands
-
-
-## Returns [code][true][/code] if [param card1] and [param card2] are matching the 
-## affinity [param aff_combo].
-static func _check_aff_combo(aff_combo: Spell.AffCombo, card1: Card, card2: Card) -> bool:
-	match aff_combo:
-		Spell.AffCombo.ANY:
-			return true
-
-		Spell.AffCombo.MATCH_ANY:
-			return card1.affinity == card2.affinity
-
-		_:
-			return false
-
-
-## Returns [code][true][/code] if [param card1] or [param card2] are matching a wild 
-## affinity [param aff_combo].
-static func _check_wild_aff(
-	aff_combo: Spell.AffCombo, card1: Card, card2: Card, effects: Array[Effect]
-) -> bool:
-	match aff_combo:
-		Spell.AffCombo.MATCH_ANY:
-			for effect in effects:
-				if effect is Effect.Wild:
-					if card1.affinity == effect.affinity or card2.affinity == effect.affinity:
-						return true
-			return false
-
-		_:
-			return false
-
-
-## Returns a [Dictionary] with the amount of each rank in [param hand].
-static func _count_ranks(hand: Array[Card]) -> Dictionary:
-	var ranks: Dictionary = {}
-
-	for card in hand:
-		if card.rank not in ranks.keys():
-			ranks[card.rank] = 1
-		else:
-			ranks[card.rank] += 1
-
-	return ranks
-
-
-## Returns a [Dictionary] with the amount of each [member Card.affinity] in [param hand].
-static func _count_affs(hand: Array[Card]) -> Dictionary:
-	var affs: Dictionary = {}
-
-	for card in hand:
-		if card.affinity not in affs.keys():
-			affs[card.affinity] = 1
-		else:
-			affs[card.affinity] += 1
-
-	return affs
 
 
 ## Returns all of the possible combinations that could be made with the cards, but order matters.
@@ -337,21 +262,19 @@ static func _get_set_combinations(cards: Array, size: int) -> Array:
 
 
 ## Returns an [Array] of [Card] objects that are used to make up the composition of a [Spell].
-static func _get_hand_from_spell(spell: Spell, hand: Array[Card], effects: Array[Effect]) -> Array:
+static func _get_hand_from_spell(spell: Spell, hand: Array[Card]) -> Array:
 	sort_cards(hand, true)
 
 	var combos := []
+
 	for i in range(spell.parts()):
 		var part := []
-		match spell.rank_combo[i]:
-			Spell.RankCombo.SET:
+		match spell.melds[i]:
+			Spell.Meld.PAIR, Spell.Meld.SET:
 				part = _get_valid_sets(hand, spell, i)
 
-			Spell.RankCombo.RUN:
-				part = _get_valid_runs(hand, spell, i, effects)
-
-			Spell.RankCombo.ANY when spell.aff_combo[i] == Spell.AffCombo.MATCH_ANY:
-				part = _get_valid_match_anys(hand, spell, i)
+			Spell.Meld.RUN:
+				part = _get_valid_runs(hand, spell, i)
 
 		combos.append(part)
 
@@ -409,7 +332,7 @@ static func _get_valid_combinations(spell: Spell, part: int, hands: Array) -> Ar
 				if card in used:
 					unique = false
 					break
-				if spell.rank_combo[part] == Spell.RankCombo.SET and card.rank in sets:
+				if spell.melds[part] == Spell.Meld.SET and card.rank in sets:
 					unique = false
 					break
 				used.append(card)
@@ -417,11 +340,11 @@ static func _get_valid_combinations(spell: Spell, part: int, hands: Array) -> Ar
 			if not unique:
 				break
 
-			if spell.rank_combo[part] == Spell.RankCombo.SET:
+			if spell.melds[part] == Spell.Meld.SET:
 				sets.append(small_hand[0].rank)
 		
 		# If used has every unique card needed to cast then add to valid combinations
-		if used.size() == spell.card_amt[part] * spell.quantity[part]:
+		if used.size() == spell.get_meld_size(part) * spell.quantity[part]:
 			valid.append(used)
 	return valid
 
@@ -429,31 +352,32 @@ static func _get_valid_combinations(spell: Spell, part: int, hands: Array) -> Ar
 ## Returns all valid sets that could be made with the given [param hand].
 ## It must match the quantity set by the [param spell].
 static func _get_valid_sets(hand: Array[Card], spell: Spell, part: int) -> Array:
-	var by_rank := {}
+	var matches := []
 
 	for card in hand:
-		var check := ""
-		if card.rank == Card.WIND_RANK:
-			check = card.get_wind_str()
-		elif card.rank == Card.DRAGON_RANK:
-			check = card.get_affinity_str()
-		else:
-			check = str(card.rank)
+		var found := false
 
-		if by_rank.has(check):
-			by_rank[check].append(card)
-		else:
-			by_rank[check] = [card]
+		for m in matches:
+			if card.rank == Card.WIND_RANK and m[0].wind != card.wind:
+				continue
+
+			if m[0].rank == card.rank and m[0].affinity == card.affinity:
+				m.append(card)
+				found = true
+				continue
+
+		if not found:
+			matches.append([card])
 
 	var sets := []
 
-	for cards in by_rank.values():
-		if cards.size() >= spell.card_amt[part]:
-			sets.append(cards)
-
+	for m in matches:
+		if m.size() >= spell.get_meld_size(part):
+			sets.append(m)
+	
 	var hands := []
 	for s in sets:
-		hands += _get_set_combinations(s, spell.card_amt[part])
+		hands += _get_set_combinations(s, spell.get_meld_size(part))
 
 	return hands
 
@@ -462,9 +386,7 @@ static func _get_valid_sets(hand: Array[Card], spell: Spell, part: int) -> Array
 ## It must match the quantity set by the [param spell].
 ## Runs have additional checkers for Affinity Combos, Face Cards, and Wild Affinities.[br]
 ## Note: [param hand] must be sorted by rank before using this function.
-static func _get_valid_runs(
-	hand: Array[Card], spell: Spell, part: int, effects: Array[Effect]
-) -> Array:
+static func _get_valid_runs(hand: Array[Card], spell: Spell, part: int) -> Array:
 	var runs := [[hand[0]]]
 
 	for card in hand.slice(1):
@@ -476,78 +398,18 @@ static func _get_valid_runs(
 				(card.rank == Card.BRIDGE_RANK and r[0].rank == Card.MIN_RANK 
 				and r[-1].rank != Card.BRIDGE_RANK)
 			):
-				# Card is matching affinity combo
-				if _check_aff_combo(spell.aff_combo[part], r[-1], card):
-					r.append(card)
-				# Card could be a Wild affinity
-				elif _check_wild_aff(spell.aff_combo[part], r[-1], card, effects):
-					# We append the card to the run, but did not mark added so that it can also
-					# start its own run if needed
+				if r[-1].affinity == card.affinity:
 					r.append(card)
 
 		runs.append([card])
 
 	var hands := []
 	for r in runs:
-		if r.size() >= spell.card_amt[part] and _verify_wilds(r, effects, spell.aff_combo[part]):
-			if r.size() > spell.card_amt[part]:
-				hands += _get_run_combinations(r, spell.card_amt[part])
-			elif r.size() == spell.card_amt[part]:
+		if r.size() >= spell.get_meld_size(part):
+			if r.size() > spell.get_meld_size(part):
+				hands += _get_run_combinations(r, spell.get_meld_size(part))
+			elif r.size() == spell.get_meld_size(part):
 				hands.append(r)
-
-	#print(hands)
-	return hands
-
-
-## This function will make sure that if there are any wilds in the run, that it doesn't exceed
-## the card limit.[br]
-## Note: [param run] is assumed to already be a valid run makeup.[br]
-## Warning: I expect this function to have unexpected results when mixing multiple wilds in a run.
-## Also will act weird if a Wild effect has a 0 card limit, which shouldn't happen anyway.
-static func _verify_wilds(run: Array, effects: Array[Effect], aff_combo: Spell.AffCombo) -> bool:
-	if aff_combo == Spell.AffCombo.MATCH_ANY:
-		if effects.is_empty():
-			return true
-
-		var wilds := {}
-
-		for effect in effects:
-			if effect is Effect.Wild:
-				wilds[effect.affinity] = 0
-
-		for card in run:
-			if card.affinity in wilds.keys():
-				wilds[card.affinity] += 1
-
-		var i := 0
-		for count in wilds.values():
-			if count == run.size():
-				return true
-			if count > effects[i].card_limit:
-				return false
-			i += 1
-
-	return true
-
-
-## Returns all valid match anys that could be made with the given [param hand].
-## It must match the quantity set by the [param spell].
-static func _get_valid_match_anys(hand: Array[Card], spell: Spell, part: int) -> Array:
-	var by_aff := {}
-	for card in hand:
-		if by_aff.has(card.affinity):
-			by_aff[card.affinity].append(card)
-		else:
-			by_aff[card.affinity] = [card]
-			
-	var sets := []
-	for cards in by_aff.values():
-		if cards.size() >= spell.card_amt[part]:
-			sets.append(cards)
-
-	var hands := []
-	for s in sets:
-		hands += _get_set_combinations(s, spell.card_amt[part])
 
 	#print(hands)
 	return hands
