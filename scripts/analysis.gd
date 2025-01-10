@@ -68,13 +68,42 @@ func sample_probabilities(spell: Spell, hand_size: int) -> void:
 
 ## Given an [Array] of [Card] objects, calculate its damage value when cast with [param spell].
 ## This function assumes all the cards in [param hand] will be scored.
-static func calc_dmg(hand: Array, spell: Spell) -> float:
+static func calc_dmg(hand: Array, spell: Spell, effects: Array[Effect] = [], show: bool = false) -> float:
 	var base: int = spell.base
+	var multi: float = spell.multi
 
 	for card in hand:
 		base += card.rank
 
-	var dmg = base * spell.multi
+	for effect in effects:
+		if effect is Effect.AddDamage:
+			var valid := false
+
+			if effect.condition == Effect.Condition.CONTAINS_PAIR:
+				if has_pair(hand):
+					valid = true
+
+			elif (
+				effect.condition == Effect.Condition.CONTAINS_SET or 
+				effect.condition == Effect.Condition.CONTAINS_RUN
+			):
+				if is_valid_spell(Spell.get_spell_from_meld(effect.condition), hand, false):
+					valid = true
+
+			elif effect.condition == Effect.Condition.NONE:
+				valid = true
+
+			if valid:
+				print(effect.name)
+				if effect.multi:
+					multi += effect.add
+				else:
+					base += effect.add
+
+	var dmg = base * multi
+
+	if show:
+		print("[ %d x %0.2f ]" % [base, multi])
 
 	return dmg
 
@@ -116,7 +145,7 @@ static func get_spell_info(spell: Spell) -> String:
 			Spell.Meld.SET:
 				subtitle += "SET"
 
-		subtitle += " | "
+		subtitle += " | " if i == spell.parts() - 1 else " + "
 
 	subtitle += "%d x %0.2f" % [spell.base, spell.multi]
 
@@ -181,6 +210,31 @@ static func is_valid_spell(spell: Spell, hand: Array[Card], exact: bool) -> bool
 		return false
 
 	return true
+
+
+static func has_pair(hand: Array[Card]) -> bool:
+	var matches := []
+
+	for card in hand:
+		var found := false
+
+		for m in matches:
+			if card.rank == Card.WIND_RANK and m[0].wind != card.wind:
+				continue
+
+			if m[0].rank == card.rank and m[0].affinity == card.affinity:
+				m.append(card)
+				found = true
+				continue
+
+		if not found:
+			matches.append([card])
+
+	for m in matches:
+		if m.size() == 2:
+			return true
+
+	return false
 
 
 ## =====  HELPER FUNCTIONS  ===== ##

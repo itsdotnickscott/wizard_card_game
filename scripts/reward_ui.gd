@@ -72,7 +72,7 @@ func _set_choices(rew_type: Reward.Type, btn: Button, player: Player) -> void:
 
 	# Create new labels for each choice
 	for choice in reward.choices:
-		if choice is Spell or choice is Tarot or choice is Idol:
+		if choice is Spell or choice is Tarot or choice is Idol or choice is Relic:
 			var button := Button.new()
 			if choice is Spell:
 				button.text = Analysis.get_spell_info(choice)

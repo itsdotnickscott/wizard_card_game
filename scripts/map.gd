@@ -16,7 +16,7 @@ var stage: int = 1
 func create_stage() -> void:
 	var start := Location.Fight.new(
 		EnemyInfo.new("Practice Dummy", Enemy.Tier.NORMAL, 100, [Attack.new("Stay Still", 0)]), 
-		[Reward.Type.TOME, Reward.Type.CARD_PACK], 
+		[Reward.Type.TOME, Reward.Type.CHOOSE_RELIC], 
 	)
 	var choice1 := Location.Fight.new(
 		EnemyInfo.new("Wild Deer", Enemy.Tier.NORMAL, 175, [Attack.new("Prance", 10)]), 
@@ -64,6 +64,7 @@ func _ready() -> void:
 	Spell.init_library()
 	Idol.init_library()
 	Tarot.init_library()
+	Relic.init_library()
 	
 	player.init()
 	battle.init(player)
@@ -103,6 +104,11 @@ func _on_gain_reward(choice: Variant) -> void:
 
 	elif choice is Idol:
 		player.gain_idol(choice)
+
+	elif choice is Relic:
+		player.gain_relic(choice)
+
+	print("Player gains " + choice.name)
 
 	reward_ui.next_reward()
 

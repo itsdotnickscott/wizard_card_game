@@ -4,7 +4,7 @@ class_name Player extends Unit
 const IDOL_LIMIT = 3
 
 
-@export var max_mana: int = 3
+@export var max_mana: int = 4
 @export var max_discards: int = 4
 @export var hand_limit: int = 8
 @export var select_limit: int = 5
@@ -13,6 +13,7 @@ const IDOL_LIMIT = 3
 @export var spellbook: Array[Spell] = []
 @export var tarots: Array[Tarot] = []
 @export var idols: Array[Idol] = []
+@export var relics: Array[Relic] = []
 
 
 var mana: int = max_mana
@@ -23,10 +24,10 @@ var deck_size: int = 0
 var hand: Array[Card] = []
 var discard: Array[Card] = []
 
-var spell_check_effects: Array[Effect] = []
-
 var basic_affs: Array[Card.Affinity] = []
 var basic_drags: Array[Card.Affinity] = []
+
+var dmg_effects: Array[Effect] = []
 
 
 ## Resets [member Player.mana], [member Player.discards_left], and [member Player.deck] 
@@ -40,17 +41,6 @@ func battle_start() -> void:
 	#set_up_spell_checks()
 
 	reset_deck()
-
-
-## Sets the [member Player.spell_check_effects] to all active effects from spell upgrades.
-#func set_up_spell_checks() -> void:
-	#spell_check_effects = []
-
-	#for spell in spellbook:
-		#for upgrade in spell.upgrades:
-			#for effect in upgrade.effects:
-				#if effect.proc == Effect.Proc.SPELL_CHECK:
-					#spell_check_effects.append(effect)
 
 
 ## Removes 1 [member Player.mana] and discards given [Card] objects from the [member Player.hand].
@@ -137,6 +127,17 @@ func gain_idol(idol: Idol) -> void:
 
 		basic_affs.erase(aff)
 		basic_drags.erase(drag)
+
+
+func gain_relic(relic: Relic) -> void:
+	if relic in relics:
+		print("duplicate relics not implemented")
+
+	else:
+		relics.append(relic)
+
+		if relic.effect.proc == Effect.Proc.CALC_DMG:
+			dmg_effects.append(relic.effect)
 
 
 func get_curr_affs() -> Array[Card.Affinity]:

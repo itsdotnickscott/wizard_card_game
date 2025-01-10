@@ -86,7 +86,7 @@ func cast_action(selected_cards: Array[Card]) -> void:
 	else:
 		print("Player - ", spell.name)
 
-		var dmg := Analysis.calc_dmg(selected_cards, spell)
+		var dmg := Analysis.calc_dmg(selected_cards, spell, player.dmg_effects, true)
 		enemy.take_dmg(dmg)
 		total_dmg += dmg
 

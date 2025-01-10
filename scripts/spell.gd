@@ -108,3 +108,14 @@ static func get_from_id(id: String) -> Spell:
 		return _library[id]
 	else:
 		return null
+
+
+static func get_spell_from_meld(meld: Meld) -> Spell:
+	if meld == Meld.PAIR:
+		return get_from_id("spark")
+	elif meld == Meld.RUN:
+		return get_from_id("weave")
+	elif meld == Meld.SET:
+		return get_from_id("blast")
+	else:
+		return null

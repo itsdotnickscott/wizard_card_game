@@ -8,8 +8,16 @@ enum Target {
 enum Proc {
 	INSTANT,
 	START_TURN,
-	SPELL_CHECK, 
+	SPELL_CHECK,
+	CALC_DMG, 
 	END_TURN
+}
+
+enum Condition {
+	NONE = -1,
+	CONTAINS_PAIR = 0,
+	CONTAINS_RUN = 1,
+	CONTAINS_SET = 2,
 }
 
 
@@ -116,3 +124,17 @@ class ChangeRank extends Effect:
 
 		change = add
 		num_cards = count
+
+
+class AddDamage extends Effect:
+	@export var add: int
+	@export var multi: bool
+	@export var condition: Condition
+
+
+	func _init(plus: int, is_multi: bool, score_if: Condition) -> void:
+		super("Add Damage", Target.PLAYER, Proc.CALC_DMG, -1)
+
+		add = plus
+		multi = is_multi
+		condition = score_if

@@ -60,7 +60,7 @@ trial
 
 
 enum Type {
-	TOME, CHOOSE_IDOL, CARD_PACK, TAROT_PACK
+	TOME, CHOOSE_IDOL, CARD_PACK, TAROT_PACK, CHOOSE_RELIC
 }
 
 
@@ -71,6 +71,7 @@ enum Rarity {
 
 @export var choices: Array
 @export var choice_amt: int
+static var rng := RandomNumberGenerator.new()
 
 
 static func get_random(type: Type, player: Player) -> Reward:
@@ -83,8 +84,21 @@ static func get_random(type: Type, player: Player) -> Reward:
 			return CardPack.random(player)
 		Type.TAROT_PACK:
 			return TarotPack.random()
+		Type.CHOOSE_RELIC:
+			return ChooseRelic.random()
 		_:
 			return null
+
+
+static func get_random_pack(library: Array[Variant], size: int) -> Array[Variant]:
+	var pack := []
+
+	while pack.size() < size:
+		var choice = rng.randi_range(0, library.size() - 1)
+		if not library[choice] in pack:
+			pack.append(library[choice])
+
+	return pack
 
 
 static func to_str(type: Type) -> String:
@@ -97,6 +111,8 @@ static func to_str(type: Type) -> String:
 			return "Card Pack"
 		Type.TAROT_PACK:
 			return "Tarot Pack"
+		Type.CHOOSE_RELIC:
+			return "Choose Relic"
 		_:
 			return "_"
 
@@ -108,57 +124,16 @@ func _init(rewards: Array, choose: int) -> void:
 
 class Tome extends Reward:
 	static func random() -> Tome:
-		var rng := RandomNumberGenerator.new()
-		var tome := []
-		var size := 3
-
-		while tome.size() < size:
-			var spell = get_random_spell(rng)
-			if not (spell in tome):
-				tome.append(spell)
-
-		return Tome.new(tome, 1)
-
-
-	static func get_random_spell(rng: RandomNumberGenerator) -> Spell:
-		var rand := rng.randf_range(0.0, 100.0)
-		var all_spells := Spell.get_all_spells()
-		var spells := []
-		var rarity: Rarity
-
-		if rand < 1000.0:
-			rarity = Rarity.COMMON
-		elif rand < 90.0:
-			rarity = Rarity.UNCOMMON
-		elif rand <= 99.0:
-			rarity = Rarity.RARE
-
-		for spell in all_spells:
-			if spell.tome_rarity == rarity:
-				spells.append(spell)
-
-		var choice := rng.randi_range(0, spells.size() - 1)
-		return spells[choice]
+		return Tome.new(get_random_pack(Spell.get_all_spells(), 3), 1)
 
 
 class ChooseIdol extends Reward:
 	static func random() -> ChooseIdol:
-		var rng := RandomNumberGenerator.new()
-		var all_idols := Idol.get_all_idols()
-		var pack := []
-		var size := 2
-
-		while pack.size() < size:
-			var choice = rng.randi_range(0, all_idols.size() - 1)
-			if not all_idols[choice] in pack:
-				pack.append(all_idols[choice])
-
-		return ChooseIdol.new(pack, 1)
+		return ChooseIdol.new(get_random_pack(Idol.get_all_idols(), 3), 1)
 
 
 class CardPack extends Reward:
 	static func random(player: Player) -> CardPack:
-		var rng := RandomNumberGenerator.new()
 		var pack := []
 		var size := rng.randi_range(3, 5)
 
@@ -185,14 +160,9 @@ class CardPack extends Reward:
 
 class TarotPack extends Reward:
 	static func random() -> TarotPack:
-		var rng := RandomNumberGenerator.new()
-		var all_tarots := Tarot.get_all_tarots()
-		var pack := []
-		var size := 3
+		return TarotPack.new(get_random_pack(Tarot.get_all_tarots(), 3), 1)
 
-		while pack.size() < size:
-			var choice = rng.randi_range(0, all_tarots.size() - 1)
-			if not all_tarots[choice] in pack:
-				pack.append(all_tarots[choice])
 
-		return TarotPack.new(pack, 1)
+class ChooseRelic extends Reward:
+	static func random() -> ChooseRelic:
+		return ChooseRelic.new(get_random_pack(Relic.get_all_relics(), 3), 1)
