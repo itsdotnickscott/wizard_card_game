@@ -108,7 +108,7 @@ func _on_gain_reward(choice: Variant) -> void:
 	elif choice is Relic:
 		player.gain_relic(choice)
 
-	print("Player gains " + choice.name)
+	#print("Player gains " + choice.name)
 
 	reward_ui.next_reward()
 

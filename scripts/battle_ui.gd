@@ -5,6 +5,7 @@ signal cast(selected_cards: Array[Card])
 signal discard(selected_cards: Array[Card])
 signal sort_hand(by_value: bool)
 signal use_tarot(tarot: Tarot, selected_cards: Array[Card])
+signal animation_finished()
 
 
 @onready var card_ui := preload("res://scenes/card_ui.tscn")
@@ -12,12 +13,60 @@ signal use_tarot(tarot: Tarot, selected_cards: Array[Card])
 @onready var player_hand_ui: HBoxContainer = get_node("Hand")
 @onready var player_spell_ui: VBoxContainer = get_node("Spells")
 @onready var tarots_ui: VBoxContainer = get_node("Tarots")
+@onready var damage_ui: Control = get_node("DamageUI")
 @onready var sort_toggle: CheckButton = get_node("SortToggle")
 
 
 var deck_size: int
 var selected_cards: Array[Node] = []
 var select_limit: int
+
+
+func damage_animation(spell: Spell, hand: Array[Card], effects: Array[Effect]) -> void:
+	damage_ui.set_base_spell(spell)
+	damage_ui.visible = true
+
+	for i in range(selected_cards.size()):
+		for child in player_hand_ui.get_children():
+			if child.info in hand:
+				await get_tree().create_timer(0.5).timeout
+
+				damage_ui.add(false, child.info.rank)
+				damage_ui.show_card(child.info)
+
+				_on_card_update_selected(child, false)
+				player_hand_ui.remove_child(child)
+
+	for effect in effects:
+		if effect is Effect.AddDamage:
+			var valid := false
+
+			if effect.condition == Effect.Condition.CONTAINS_PAIR:
+				if Analysis.has_pair(hand):
+					valid = true
+
+			elif (
+				effect.condition == Effect.Condition.CONTAINS_SET or 
+				effect.condition == Effect.Condition.CONTAINS_RUN
+			):
+				if Analysis.is_valid_spell(Spell.get_spell_from_meld(effect.condition), hand, false):
+					valid = true
+
+			elif effect.condition == Effect.Condition.NONE:
+				valid = true
+
+			if valid:
+				await get_tree().create_timer(0.5).timeout
+				if effect.multi:
+					damage_ui.add(true, effect.add)
+				else:
+					damage_ui.add(false, effect.add)
+
+	await get_tree().create_timer(0.5).timeout
+	damage_ui.damage_label()
+	await get_tree().create_timer(1.0).timeout
+	damage_ui.visible = false
+	animation_finished.emit()
 
 
 ## Sets the amount of [Card] objects allowed to be [member Card.selected].

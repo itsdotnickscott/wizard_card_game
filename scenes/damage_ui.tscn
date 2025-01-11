@@ -1,0 +1,105 @@
+[gd_scene load_steps=5 format=3 uid="uid://dhnkrsajkdmri"]
+
+[ext_resource type="Script" path="res://scripts/damage_ui.gd" id="1_d6pmq"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6ylab"]
+bg_color = Color(0.11, 0.11, 0.11, 0.215686)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hqchr"]
+bg_color = Color(0.6, 0.00599999, 0.00599999, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_buo5r"]
+bg_color = Color(0.00599999, 0.2832, 0.6, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="DamageUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_d6pmq")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 1152.0
+offset_bottom = 649.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_6ylab")
+
+[node name="Spell" type="Panel" parent="Panel"]
+layout_mode = 0
+offset_left = 461.0
+offset_top = 114.0
+offset_right = 672.0
+offset_bottom = 234.0
+
+[node name="Name" type="Label" parent="Panel/Spell"]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 19.0
+offset_right = 189.0
+offset_bottom = 42.0
+text = "SPARK"
+horizontal_alignment = 1
+
+[node name="Base" type="Panel" parent="Panel/Spell"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 62.0
+offset_right = 90.0
+offset_bottom = 103.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hqchr")
+
+[node name="Label" type="Label" parent="Panel/Spell/Base"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 3.0
+offset_right = 66.0
+offset_bottom = 38.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 25
+text = "20"
+horizontal_alignment = 1
+
+[node name="X" type="Label" parent="Panel/Spell"]
+layout_mode = 0
+offset_left = 103.0
+offset_top = 70.0
+offset_right = 113.0
+offset_bottom = 93.0
+text = "X"
+
+[node name="Multi" type="Panel" parent="Panel/Spell"]
+layout_mode = 0
+offset_left = 126.0
+offset_top = 62.0
+offset_right = 198.0
+offset_bottom = 103.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_buo5r")
+
+[node name="Label" type="Label" parent="Panel/Spell/Multi"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 3.0
+offset_right = 66.0
+offset_bottom = 38.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 25
+text = "2.0"
+horizontal_alignment = 1
+
+[node name="Hand" type="HBoxContainer" parent="Panel"]
+layout_mode = 0
+offset_left = 195.0
+offset_top = 286.0
+offset_right = 953.0
+offset_bottom = 392.0
+alignment = 1
