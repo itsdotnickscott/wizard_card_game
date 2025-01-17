@@ -5,38 +5,37 @@ signal gain_reward(choice: Variant)
 signal next_location()
 
 
-@onready var card_ui := preload("res://scenes/card_ui.tscn")
+@onready var victory_panel: Panel = get_node("Victory")
+@onready var rewards_list: VBoxContainer = get_node("Victory/VBoxContainer")
+@onready var skip_reward_button: Button = get_node("Victory/SkipButton")
+@onready var next_button: Button = get_node("Victory/NextButton")
 
-
-@onready var rewards_list: VBoxContainer = get_node("Rewards/VBoxContainer")
-@onready var skip_reward_button: Button = get_node("Rewards/SkipButton")
-@onready var next_button: Button = get_node("Rewards/NextButton")
-@onready var cover_panel: Panel = get_node("Rewards/CoverPanel")
-@onready var choices_panel: Panel = get_node("Choices")
-@onready var count_label: Label = get_node("Choices/Count")
-@onready var tome_ui: VBoxContainer = get_node("Choices/Tome")
-@onready var card_pack_ui: HBoxContainer = get_node("Choices/CardPack")
-@onready var skip_choice_button: Button = get_node("Choices/SkipButton")
+@onready var reward_handler: Control = get_node("RewardHandler")
+@onready var basic_reward_ui: Control = get_node("RewardHandler/BasicRewardUI")
+@onready var rune_reward_ui: Control = get_node("RewardHandler/RuneRewardUI")
 
 
 func set_rewards(location: Location, player: Player) -> void:
-	choices_panel.visible = false
+	reward_handler.visible = false
 
 	for child in rewards_list.get_children():
 		child.queue_free()
 
+	# Create Gold Button
 	if location.gold > 0:
 		var button := Button.new()
 		button.text = "%d Gold" % location.gold
 		button.disabled = true
 		rewards_list.add_child(button)
 
+	# Create Dust Button
 	if location.dust > 0:
 		var button := Button.new()
 		button.text = "%d Magic Dust" % location.dust
 		button.disabled = true
 		rewards_list.add_child(button)
 
+	# Create button for each reward
 	if not location.rewards.is_empty():
 		skip_reward_button.visible = true
 		next_button.visible = false
@@ -45,12 +44,12 @@ func set_rewards(location: Location, player: Player) -> void:
 			var button := Button.new()
 			button.text = Reward.to_str(reward)
 			rewards_list.add_child(button)
-			button.pressed.connect(_set_choices.bind(reward, button, player))
+			button.pressed.connect(_handle_reward.bind(reward, button, player))
 
 
 func next_reward() -> void:
-	cover_panel.visible = false
-	choices_panel.visible = false
+	victory_panel.visible = true
+	reward_handler.visible = false
 
 	for button in rewards_list.get_children():
 		if button.disabled == false:
@@ -60,44 +59,21 @@ func next_reward() -> void:
 	next_button.visible = true
 
 
-func _set_choices(rew_type: Reward.Type, btn: Button, player: Player) -> void:
+func _handle_reward(rew_type: Reward.Type, btn: Button, player: Player) -> void:
 	btn.disabled = true
-	cover_panel.visible = true
+	victory_panel.visible = false
 
-	_reset_choices()
+	basic_reward_ui.visible = false
+	rune_reward_ui.visible = false
 
 	var reward = Reward.get_random(rew_type, player)
+	var choice = reward.choices[0]
 
-	count_label.text = "Choose %d:" % [reward.choice_amt] 
+	if choice is Spell or choice is Tarot or choice is Idol or choice is Relic or choice is Card:
+		basic_reward_ui.set_choices(reward)
+		basic_reward_ui.visible = true
 
-	# Create new labels for each choice
-	for choice in reward.choices:
-		if choice is Spell or choice is Tarot or choice is Idol or choice is Relic:
-			var button := Button.new()
-			if choice is Spell:
-				button.text = Analysis.get_spell_info(choice)
-			else:
-				button.text = choice.name
-			tome_ui.add_child(button)
-			button.pressed.connect(_on_reward_chosen.bind(choice))
-			tome_ui.visible = true
-
-		elif choice is Card:
-			var card := card_ui.instantiate()
-			card_pack_ui.add_child(card)
-			card.set_display(choice)
-			card.get_node("Button").pressed.connect(_on_reward_chosen.bind(card.info))
-			card_pack_ui.visible = true
-
-
-	choices_panel.visible = true
-
-
-func _reset_choices() -> void:
-	for container in get_tree().get_nodes_in_group("choices"):
-		container.visible = false
-		for child in container.get_children():
-			child.queue_free()
+	reward_handler.visible = true
 
 
 func _on_reward_chosen(choice: Variant) -> void:

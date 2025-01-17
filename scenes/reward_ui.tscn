@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://djq5yfcgvs60j"]
+[gd_scene load_steps=4 format=3 uid="uid://djq5yfcgvs60j"]
 
 [ext_resource type="Script" path="res://scripts/reward_ui.gd" id="1_obmo8"]
-[ext_resource type="PackedScene" uid="uid://bbdhec2d0jaoc" path="res://scenes/card_ui.tscn" id="2_b8vkq"]
+[ext_resource type="PackedScene" uid="uid://jmqexem0ndw1" path="res://scenes/basic_reward_ui.tscn" id="2_27or5"]
+[ext_resource type="PackedScene" uid="uid://c2rpm7arqpa6e" path="res://scenes/rune_reward_ui.tscn" id="3_o3811"]
 
 [node name="RewardUI" type="Control"]
 layout_mode = 3
@@ -12,14 +13,14 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_obmo8")
 
-[node name="Rewards" type="Panel" parent="."]
+[node name="Victory" type="Panel" parent="."]
 layout_mode = 0
-offset_left = 327.0
-offset_top = 34.0
-offset_right = 858.0
-offset_bottom = 350.0
+offset_left = 312.0
+offset_top = 163.0
+offset_right = 843.0
+offset_bottom = 479.0
 
-[node name="Text" type="Label" parent="Rewards"]
+[node name="Text" type="Label" parent="Victory"]
 layout_mode = 0
 offset_left = 114.0
 offset_top = 13.0
@@ -30,32 +31,32 @@ text = "VICTORY!
 LOOT:"
 horizontal_alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Rewards"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Victory"]
 layout_mode = 0
 offset_left = 125.0
 offset_top = 106.0
 offset_right = 407.0
 offset_bottom = 292.0
 
-[node name="Button" type="Button" parent="Rewards/VBoxContainer"]
+[node name="Button" type="Button" parent="Victory/VBoxContainer"]
 layout_mode = 2
 disabled = true
 text = "10 Gold"
 
-[node name="Button2" type="Button" parent="Rewards/VBoxContainer"]
+[node name="Button2" type="Button" parent="Victory/VBoxContainer"]
 layout_mode = 2
 disabled = true
 text = "10 Magic Dust"
 
-[node name="Button3" type="Button" parent="Rewards/VBoxContainer"]
+[node name="Button3" type="Button" parent="Victory/VBoxContainer"]
 layout_mode = 2
 text = "Tome"
 
-[node name="Button4" type="Button" parent="Rewards/VBoxContainer"]
+[node name="Button4" type="Button" parent="Victory/VBoxContainer"]
 layout_mode = 2
 text = "Card Pack"
 
-[node name="SkipButton" type="Button" parent="Rewards"]
+[node name="SkipButton" type="Button" parent="Victory"]
 layout_mode = 0
 offset_left = 358.0
 offset_top = 278.0
@@ -63,7 +64,7 @@ offset_right = 527.0
 offset_bottom = 310.0
 text = "SKIP REWARDS >>"
 
-[node name="NextButton" type="Button" parent="Rewards"]
+[node name="NextButton" type="Button" parent="Victory"]
 visible = false
 layout_mode = 0
 offset_left = 442.0
@@ -72,78 +73,19 @@ offset_right = 527.0
 offset_bottom = 310.0
 text = "NEXT >>"
 
-[node name="CoverPanel" type="Panel" parent="Rewards"]
+[node name="RewardHandler" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="BasicRewardUI" parent="RewardHandler" instance=ExtResource("2_27or5")]
 visible = false
-layout_mode = 0
-offset_right = 531.0
-offset_bottom = 316.0
+layout_mode = 1
 
-[node name="Choices" type="Panel" parent="."]
-layout_mode = 0
-offset_left = 328.0
-offset_top = 364.0
-offset_right = 859.0
-offset_bottom = 608.0
+[node name="RuneRewardUI" parent="RewardHandler" instance=ExtResource("3_o3811")]
+visible = false
+layout_mode = 1
 
-[node name="Count" type="Label" parent="Choices"]
-layout_mode = 0
-offset_left = 180.0
-offset_top = 9.0
-offset_right = 343.0
-offset_bottom = 32.0
-text = "Choose 1:"
-horizontal_alignment = 1
-
-[node name="Tome" type="VBoxContainer" parent="Choices" groups=["choices"]]
-layout_mode = 0
-offset_left = 50.0
-offset_top = 44.0
-offset_right = 471.0
-offset_bottom = 217.0
-
-[node name="Choice1" type="Button" parent="Choices/Tome"]
-layout_mode = 2
-text = "Choice 1"
-
-[node name="Choice2" type="Button" parent="Choices/Tome"]
-layout_mode = 2
-text = "Choice 2"
-
-[node name="Choice3" type="Button" parent="Choices/Tome"]
-layout_mode = 2
-text = "Choice 3"
-
-[node name="CardPack" type="HBoxContainer" parent="Choices" groups=["choices"]]
-layout_mode = 0
-offset_left = 7.0
-offset_top = 43.0
-offset_right = 523.0
-offset_bottom = 207.0
-alignment = 1
-
-[node name="Card" parent="Choices/CardPack" instance=ExtResource("2_b8vkq")]
-layout_mode = 2
-
-[node name="Card2" parent="Choices/CardPack" instance=ExtResource("2_b8vkq")]
-layout_mode = 2
-
-[node name="Card3" parent="Choices/CardPack" instance=ExtResource("2_b8vkq")]
-layout_mode = 2
-
-[node name="Card4" parent="Choices/CardPack" instance=ExtResource("2_b8vkq")]
-layout_mode = 2
-
-[node name="Card5" parent="Choices/CardPack" instance=ExtResource("2_b8vkq")]
-layout_mode = 2
-
-[node name="SkipButton" type="Button" parent="Choices"]
-layout_mode = 0
-offset_left = 355.0
-offset_top = 206.0
-offset_right = 524.0
-offset_bottom = 238.0
-text = "SKIP REWARD >>"
-
-[connection signal="pressed" from="Rewards/SkipButton" to="." method="_on_next_button_pressed"]
-[connection signal="pressed" from="Rewards/NextButton" to="." method="_on_next_button_pressed"]
-[connection signal="pressed" from="Choices/SkipButton" to="." method="_on_skip_choice_button_pressed"]
+[connection signal="pressed" from="Victory/SkipButton" to="." method="_on_next_button_pressed"]
+[connection signal="pressed" from="Victory/NextButton" to="." method="_on_next_button_pressed"]
+[connection signal="reward_chosen" from="RewardHandler/BasicRewardUI" to="." method="_on_reward_chosen"]

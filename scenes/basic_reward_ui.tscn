@@ -1,0 +1,79 @@
+[gd_scene load_steps=3 format=3 uid="uid://jmqexem0ndw1"]
+
+[ext_resource type="Script" path="res://scripts/basic_reward_ui.gd" id="1_1whqu"]
+[ext_resource type="PackedScene" uid="uid://bbdhec2d0jaoc" path="res://scenes/card_ui.tscn" id="1_s7uhy"]
+
+[node name="BasicRewardUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_1whqu")
+
+[node name="Choices" type="Panel" parent="."]
+offset_left = 326.0
+offset_top = 200.0
+offset_right = 857.0
+offset_bottom = 444.0
+
+[node name="Count" type="Label" parent="Choices"]
+layout_mode = 0
+offset_left = 180.0
+offset_top = 9.0
+offset_right = 343.0
+offset_bottom = 32.0
+text = "Choose 1:"
+horizontal_alignment = 1
+
+[node name="List" type="VBoxContainer" parent="Choices"]
+layout_mode = 0
+offset_left = 50.0
+offset_top = 44.0
+offset_right = 471.0
+offset_bottom = 217.0
+
+[node name="Choice1" type="Button" parent="Choices/List"]
+layout_mode = 2
+text = "Choice 1"
+
+[node name="Choice2" type="Button" parent="Choices/List"]
+layout_mode = 2
+text = "Choice 2"
+
+[node name="Choice3" type="Button" parent="Choices/List"]
+layout_mode = 2
+text = "Choice 3"
+
+[node name="Cards" type="HBoxContainer" parent="Choices"]
+visible = false
+layout_mode = 0
+offset_left = 7.0
+offset_top = 43.0
+offset_right = 523.0
+offset_bottom = 207.0
+alignment = 1
+
+[node name="Card" parent="Choices/Cards" instance=ExtResource("1_s7uhy")]
+layout_mode = 2
+
+[node name="Card2" parent="Choices/Cards" instance=ExtResource("1_s7uhy")]
+layout_mode = 2
+
+[node name="Card3" parent="Choices/Cards" instance=ExtResource("1_s7uhy")]
+layout_mode = 2
+
+[node name="Card4" parent="Choices/Cards" instance=ExtResource("1_s7uhy")]
+layout_mode = 2
+
+[node name="Card5" parent="Choices/Cards" instance=ExtResource("1_s7uhy")]
+layout_mode = 2
+
+[node name="SkipButton" type="Button" parent="Choices"]
+layout_mode = 0
+offset_left = 355.0
+offset_top = 206.0
+offset_right = 524.0
+offset_bottom = 238.0
+text = "SKIP REWARD >>"
