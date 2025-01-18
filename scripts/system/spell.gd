@@ -63,8 +63,8 @@ static func init_library() -> void:
 			10, 1.0
 		),
 		
-		"weave": Spell.new(
-			"Weave", Reward.Rarity.COMMON,
+		"flare": Spell.new(
+			"Flare", Reward.Rarity.COMMON,
 			[Spell.Meld.RUN], [1],
 			20, 2.0
 		),
@@ -75,14 +75,14 @@ static func init_library() -> void:
 			30, 3.0
 		),
 
-		"flare": Spell.new(
-			"Flare", Reward.Rarity.COMMON,
+		"twin_bolt": Spell.new(
+			"Twin Bolt", Reward.Rarity.COMMON,
 			[Spell.Meld.PAIR], [2],
 			20, 2.0
 		),
 
-		"thread": Spell.new(
-			"Thread", Reward.Rarity.COMMON,
+		"weave": Spell.new(
+			"Weave", Reward.Rarity.COMMON,
 			[Spell.Meld.RUN, Spell.Meld.PAIR], [1, 1],
 			25, 3.0
 		),

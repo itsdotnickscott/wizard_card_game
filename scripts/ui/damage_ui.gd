@@ -27,14 +27,33 @@ func add(to_multi: bool, by: int) -> void:
 		multi += by
 	else:
 		base += by
-	
+
+	shake_value(to_multi)
 	update_labels()
 
 
-func show_card(card: Card) -> void:
+func shake_value(is_multi: bool) -> void:
+	var value = $Panel/Spell/Multi/Label if is_multi else $Panel/Spell/Base/Label
+
+	var tween = get_tree().create_tween()
+	tween.tween_property(value, "rotation_degrees", 6, 0.075)\
+	.set_trans(Tween.TRANS_SPRING).set_ease(Tween.EASE_OUT)
+	tween.tween_property(value, "rotation_degrees", -6, 0.075)\
+	.set_trans(Tween.TRANS_SPRING).set_ease(Tween.EASE_OUT)
+	tween.tween_property(value, "rotation_degrees", 2, 0.075)\
+	.set_trans(Tween.TRANS_SPRING).set_ease(Tween.EASE_OUT)
+	tween.tween_property(value, "rotation_degrees", -2, 0.075)\
+	.set_trans(Tween.TRANS_SPRING).set_ease(Tween.EASE_OUT)
+	tween.tween_property(value, "rotation_degrees", 0, 0.075)\
+	.set_trans(Tween.TRANS_SPRING).set_ease(Tween.EASE_OUT)
+
+
+func show_card(card: Card, scored: bool) -> void:
 	var new_card := card_ui.instantiate()
 	$Panel/Hand.add_child(new_card)
 	new_card.set_display(card)
+	if not scored:
+		new_card.disable()
 
 
 func damage_label() -> void:

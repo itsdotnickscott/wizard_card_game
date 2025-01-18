@@ -1,6 +1,6 @@
 [gd_scene load_steps=14 format=3 uid="uid://ds5bf8cdlryeg"]
 
-[ext_resource type="Script" path="res://scripts/battle_ui.gd" id="1_bixgw"]
+[ext_resource type="Script" path="res://scripts/ui/battle_ui.gd" id="1_bixgw"]
 [ext_resource type="PackedScene" uid="uid://bbdhec2d0jaoc" path="res://scenes/card_ui.tscn" id="2_j8uyp"]
 [ext_resource type="PackedScene" uid="uid://dhnkrsajkdmri" path="res://scenes/damage_ui.tscn" id="3_o3mxr"]
 

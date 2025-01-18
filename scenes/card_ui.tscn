@@ -1,9 +1,9 @@
 [gd_scene load_steps=7 format=3 uid="uid://bbdhec2d0jaoc"]
 
-[ext_resource type="Script" path="res://scripts/card_ui.gd" id="1_obmbc"]
+[ext_resource type="Script" path="res://scripts/ui/card_ui.gd" id="1_obmbc"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0j5ra"]
-bg_color = Color(0.94, 0.921513, 0.9212, 0.392157)
+bg_color = Color(0.1659, 0.166635, 0.21, 0.388235)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
@@ -109,5 +109,11 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 30
 text = "🔥"
 horizontal_alignment = 1
+
+[node name="Disabled" type="Panel" parent="."]
+visible = false
+offset_right = 72.0
+offset_bottom = 96.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_0j5ra")
 
 [connection signal="pressed" from="Button" to="." method="_on_card_pressed"]

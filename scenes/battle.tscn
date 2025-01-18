@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://co63ppggsddeu"]
 
-[ext_resource type="Script" path="res://scripts/battle.gd" id="1_3jwy8"]
+[ext_resource type="Script" path="res://scripts/system/battle.gd" id="1_3jwy8"]
 [ext_resource type="PackedScene" uid="uid://ds5bf8cdlryeg" path="res://scenes/battle_ui.tscn" id="1_ft7lq"]
 [ext_resource type="PackedScene" uid="uid://bfsu0cdf4p143" path="res://scenes/enemy.tscn" id="3_b0wen"]
 [ext_resource type="PackedScene" uid="uid://b3bc0c71i46go" path="res://scenes/escape_ui.tscn" id="6_pllud"]

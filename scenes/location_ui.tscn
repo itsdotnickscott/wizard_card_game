@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bbnksj70okplw"]
 
-[ext_resource type="Script" path="res://scripts/location_ui.gd" id="1_ivj7l"]
+[ext_resource type="Script" path="res://scripts/ui/location_ui.gd" id="1_ivj7l"]
 
 [node name="LocationUI" type="Control"]
 custom_minimum_size = Vector2(75, 31)

@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://djq5yfcgvs60j"]
 
-[ext_resource type="Script" path="res://scripts/reward_ui.gd" id="1_obmo8"]
+[ext_resource type="Script" path="res://scripts/ui/reward_ui.gd" id="1_obmo8"]
 [ext_resource type="PackedScene" uid="uid://jmqexem0ndw1" path="res://scenes/basic_reward_ui.tscn" id="2_27or5"]
 [ext_resource type="PackedScene" uid="uid://c2rpm7arqpa6e" path="res://scenes/rune_reward_ui.tscn" id="3_o3811"]
 

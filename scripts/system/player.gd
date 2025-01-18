@@ -57,7 +57,7 @@ func cast_cards(selected_cards: Array[Card]) -> Spell:
 		hand.erase(card)
 		discard.append(card)
 
-	return Analysis.get_valid_spell(spellbook, selected_cards, true)
+	return Analysis.get_valid_spell(spellbook, selected_cards, false)
 
 
 ## Discards given [Card] objects from the [member Player.hand]. Returns [code]true[/code] if 
@@ -197,8 +197,11 @@ func _create_base_deck() -> Array[Card]:
 func _create_base_spellbook() -> Array[Spell]:
 	return [
 		Spell.get_from_id("spark"),
-		Spell.get_from_id("weave"), 
+		Spell.get_from_id("flare"), 
 		Spell.get_from_id("blast"), 
+		Spell.get_from_id("twin_bolt"),
+		Spell.get_from_id("weave"),
+		Spell.get_from_id("rapture")
 	]
 
 

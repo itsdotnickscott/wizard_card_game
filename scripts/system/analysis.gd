@@ -44,7 +44,7 @@ func sample_probabilities(spell: Spell, hand_size: int) -> void:
 
 		if is_valid_spell(spell, hand, false):
 			result += 1
-			var cards = _get_hand_from_spell(spell, hand)
+			var cards = get_hand_from_spell(spell, hand)
 			var dmg = calc_dmg(cards, spell)
 
 			if dmg < min_dmg:
@@ -68,7 +68,7 @@ func sample_probabilities(spell: Spell, hand_size: int) -> void:
 
 ## Given an [Array] of [Card] objects, calculate its damage value when cast with [param spell].
 ## This function assumes all the cards in [param hand] will be scored.
-static func calc_dmg(hand: Array, spell: Spell, effects: Array[Effect] = [], show: bool = false) -> float:
+static func calc_dmg(hand: Array[Card], spell: Spell, effects: Array[Effect] = [], show: bool = false) -> float:
 	var base: int = spell.base
 	var multi: float = spell.multi
 
@@ -167,10 +167,10 @@ static func get_valid_spell(spells: Array[Spell], hand: Array[Card], exact: bool
 		return null
 	elif valid.size() > 1:
 		var best: Spell = valid[0]
-		var high: float = calc_dmg(_get_hand_from_spell(valid[0], hand), valid[0])
+		var high: float = calc_dmg(get_hand_from_spell(valid[0], hand), valid[0])
 
 		for spell in valid.slice(1):
-			var scoring_hand := _get_hand_from_spell(spell, hand)
+			var scoring_hand := get_hand_from_spell(spell, hand)
 			var dmg := calc_dmg(scoring_hand, spell)
 
 			if dmg > high:
@@ -180,6 +180,26 @@ static func get_valid_spell(spells: Array[Spell], hand: Array[Card], exact: bool
 		return best
 	else:
 		return valid[0]
+
+
+## Returns an [Array] of [Card] objects that are used to make up the composition of a [Spell].
+static func get_hand_from_spell(spell: Spell, hand: Array[Card]) -> Array[Card]:
+	sort_cards(hand, true)
+
+	var combos := []
+
+	for i in range(spell.parts()):
+		var part := []
+		match spell.melds[i]:
+			Spell.Meld.PAIR, Spell.Meld.SET:
+				part = _get_valid_sets(hand, spell, i)
+
+			Spell.Meld.RUN:
+				part = _get_valid_runs(hand, spell, i)
+
+		combos.append(part)
+
+	return _untyped_arr_to_card_arr(_get_unique_valid_hand(spell, combos))
 
 
 ## Returns [code]true[/code] if given [param hand] works for [param spell].
@@ -296,7 +316,7 @@ static func _get_run_combinations(cards: Array, size: int) -> Array:
 ## Note: Assumes [param cards] is already a valid set.
 static func _get_set_combinations(cards: Array, size: int) -> Array:
 	# Base cases
-	if size == 0:
+	if size <= 0:
 		return [[]] # Return a 2D array with an empty combination
 	if size > cards.size():
 		return [] # No combinations possible
@@ -313,26 +333,6 @@ static func _get_set_combinations(cards: Array, size: int) -> Array:
 			combinations.append([card] + combination)
 
 	return combinations
-
-
-## Returns an [Array] of [Card] objects that are used to make up the composition of a [Spell].
-static func _get_hand_from_spell(spell: Spell, hand: Array[Card]) -> Array:
-	sort_cards(hand, true)
-
-	var combos := []
-
-	for i in range(spell.parts()):
-		var part := []
-		match spell.melds[i]:
-			Spell.Meld.PAIR, Spell.Meld.SET:
-				part = _get_valid_sets(hand, spell, i)
-
-			Spell.Meld.RUN:
-				part = _get_valid_runs(hand, spell, i)
-
-		combos.append(part)
-
-	return _get_unique_valid_hand(spell, combos)
 			
 
 ## Given [param combos], an [Array] of all possible sets, runs, or match anys based on the
@@ -350,10 +350,10 @@ static func _get_unique_valid_hand(spell: Spell, combos: Array) -> Array:
 
 	elif hands.size() > 1:
 		var best: Array = hands[0]
-		var high: float = calc_dmg(hands[0], spell)
+		var high: float = calc_dmg(_untyped_arr_to_card_arr(hands[0]), spell)
 
 		for hand in hands.slice(1):
-			var dmg = calc_dmg(hand, spell)
+			var dmg = calc_dmg(_untyped_arr_to_card_arr(hand), spell)
 
 			if dmg > high:
 				best = hand
@@ -363,6 +363,12 @@ static func _get_unique_valid_hand(spell: Spell, combos: Array) -> Array:
 
 	else:
 		return hands[0]
+
+
+static func _untyped_arr_to_card_arr(arr: Array) -> Array[Card]:
+	var hand: Array[Card] = []
+	hand.assign(arr)
+	return hand
 
 
 ## Returns an [Array] of valid hands that could be made from the current part.

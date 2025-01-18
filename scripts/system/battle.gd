@@ -89,7 +89,8 @@ func cast_action(selected_cards: Array[Card]) -> void:
 		battle_ui.damage_animation(spell, selected_cards, player.dmg_effects)
 		await battle_ui.animation_finished
 
-		var dmg := Analysis.calc_dmg(selected_cards, spell, player.dmg_effects, true)
+		var scoring_hand := Analysis.get_hand_from_spell(spell, selected_cards)
+		var dmg := Analysis.calc_dmg(scoring_hand, spell, player.dmg_effects, true)
 		enemy.take_dmg(dmg)
 		total_dmg += dmg
 

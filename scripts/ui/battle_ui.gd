@@ -23,16 +23,22 @@ var select_limit: int
 
 
 func damage_animation(spell: Spell, hand: Array[Card], effects: Array[Effect]) -> void:
+	const TIME := 0.33
+	var scoring_cards := Analysis.get_hand_from_spell(spell, hand)
+
 	damage_ui.set_base_spell(spell)
 	damage_ui.visible = true
 
 	for i in range(selected_cards.size()):
 		for child in player_hand_ui.get_children():
 			if child.info in hand:
-				await get_tree().create_timer(0.5).timeout
+				await get_tree().create_timer(TIME).timeout
 
-				damage_ui.add(false, child.info.rank)
-				damage_ui.show_card(child.info)
+				if child.info in scoring_cards:
+					damage_ui.show_card(child.info, true)
+					damage_ui.add(false, child.info.rank)
+				else:
+					damage_ui.show_card(child.info, false)
 
 				_on_card_update_selected(child, false)
 				player_hand_ui.remove_child(child)
@@ -56,15 +62,16 @@ func damage_animation(spell: Spell, hand: Array[Card], effects: Array[Effect]) -
 				valid = true
 
 			if valid:
-				await get_tree().create_timer(0.5).timeout
+				await get_tree().create_timer(TIME).timeout
 				if effect.multi:
 					damage_ui.add(true, effect.add)
 				else:
 					damage_ui.add(false, effect.add)
 
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(TIME * 2).timeout
 	damage_ui.damage_label()
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.5).timeout
+
 	damage_ui.visible = false
 	animation_finished.emit()
 

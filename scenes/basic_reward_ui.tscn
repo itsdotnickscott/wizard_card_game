@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://jmqexem0ndw1"]
 
-[ext_resource type="Script" path="res://scripts/basic_reward_ui.gd" id="1_1whqu"]
+[ext_resource type="Script" path="res://scripts/ui/basic_reward_ui.gd" id="1_1whqu"]
 [ext_resource type="PackedScene" uid="uid://bbdhec2d0jaoc" path="res://scenes/card_ui.tscn" id="1_s7uhy"]
 
 [node name="BasicRewardUI" type="Control"]
@@ -13,6 +13,7 @@ grow_vertical = 2
 script = ExtResource("1_1whqu")
 
 [node name="Choices" type="Panel" parent="."]
+layout_mode = 0
 offset_left = 326.0
 offset_top = 200.0
 offset_right = 857.0

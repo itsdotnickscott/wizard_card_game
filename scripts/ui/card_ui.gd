@@ -29,6 +29,10 @@ func set_display(card: Card) -> void:
 	aff_label.text = card.get_affinity_str()
 
 
+func disable(on: bool = true) -> void:
+	$Disabled.visible = on
+
+
 func _on_card_pressed() -> void:
 	select_card(not selected)
 	update_selected.emit(self, selected)
