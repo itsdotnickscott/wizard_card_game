@@ -15,37 +15,37 @@ var stage: int = 1
 
 func create_stage() -> void:
 	var start := Location.Fight.new(
-		EnemyInfo.new("Practice Dummy", Enemy.Tier.NORMAL, 100, [Attack.new("Stay Still", 0)]), 
-		[Reward.Type.TOME, Reward.Type.CHOOSE_RELIC], 
+		EnemyInfo.new("Practice Dummy", Enemy.Tier.NORMAL, 100),
+		[Reward.Type.TOME, Reward.Type.CHOOSE_RELIC]
 	)
 	var choice1 := Location.Fight.new(
-		EnemyInfo.new("Wild Deer", Enemy.Tier.NORMAL, 175, [Attack.new("Prance", 10)]), 
-		[Reward.Type.TOME, Reward.Type.CARD_PACK],
+		EnemyInfo.new("Wild Deer", Enemy.Tier.NORMAL, 175),
+		[Reward.Type.TOME, Reward.Type.CARD_PACK]
 	)
 	var choice2 := Location.Fight.new(
-		EnemyInfo.new("Wild Skunk", Enemy.Tier.NORMAL, 150, [Attack.new("Spray", 15)]), 
-		[Reward.Type.TOME, Reward.Type.CARD_PACK],
-	) 
-	var choice1a := Location.Fight.new(
-		EnemyInfo.new("Wild Bear", Enemy.Tier.NORMAL, 300, [Attack.new("Claw", 20)]), 
-		[Reward.Type.TAROT_PACK, Reward.Type.CARD_PACK], 
-	) 
+		EnemyInfo.new("Wild Skunk", Enemy.Tier.NORMAL, 150),
+		[Reward.Type.TOME, Reward.Type.CARD_PACK]
+	)
+	var choice1a := Location.Fight.new( 
+		EnemyInfo.new("Wild Bear", Enemy.Tier.NORMAL, 300),
+		[Reward.Type.TAROT_PACK, Reward.Type.CARD_PACK]
+	)
 	var choice1b := Location.Fight.new(
-		EnemyInfo.new("Wild Wolf", Enemy.Tier.NORMAL, 275, [Attack.new("Pounce", 25)]), 
-		[Reward.Type.TAROT_PACK, Reward.Type.CARD_PACK],
-	) 
+		EnemyInfo.new("Wild Wolf", Enemy.Tier.NORMAL, 275),
+		[Reward.Type.TAROT_PACK, Reward.Type.CARD_PACK]
+	)
 	var choice2a := Location.Fight.new(
-		EnemyInfo.new("Wild Crocodile", Enemy.Tier.NORMAL, 300, [Attack.new("Crunch", 20)]),
-		[Reward.Type.TAROT_PACK, Reward.Type.CARD_PACK],
-	) 
+		EnemyInfo.new("Wild Crocodile", Enemy.Tier.NORMAL, 300),
+		[Reward.Type.TAROT_PACK, Reward.Type.CARD_PACK]
+	)
 	var choice2b := Location.Fight.new(
-		EnemyInfo.new("Wild Snake", Enemy.Tier.NORMAL, 275, [Attack.new("Bite", 25)]), 
-		[Reward.Type.TAROT_PACK, Reward.Type.CARD_PACK],
-	) 
+		EnemyInfo.new("Wild Snake", Enemy.Tier.NORMAL, 275),
+		[Reward.Type.TAROT_PACK, Reward.Type.CARD_PACK]
+	)
 	var shop := Location.Market.new()
 	var boss := Location.Fight.new(
-		EnemyInfo.new("Metal Guard", Enemy.Tier.BOSS, 500, [Attack.new("Sword and Shield", 60)]),
-		[Reward.Type.CHOOSE_IDOL, Reward.Type.CARD_PACK],
+		EnemyInfo.new("Metal Guard", Enemy.Tier.BOSS, 500),
+		[Reward.Type.CHOOSE_IDOL, Reward.Type.CARD_PACK]
 	)
 
 	start.set_links([choice1, choice2])

@@ -1,4 +1,4 @@
-class_name Player extends Unit
+class_name Player extends Node2D
 
 
 const IDOL_LIMIT = 3
@@ -33,8 +33,6 @@ var dmg_effects: Array[Effect] = []
 ## Resets [member Player.mana], [member Player.discards_left], and [member Player.deck] 
 ## to their default values.
 func battle_start() -> void:
-	super()
-
 	mana = max_mana
 	discards_left = max_discards
 	
@@ -192,23 +190,9 @@ func _create_base_deck() -> Array[Card]:
 	return new_deck
 
 
-## Returns three starting [Spell] objects, Twin Bolts (Set, 2 Cards, Any), Chromatic Weave
-## (Run, 3 Cards, Match Any), and Elemental Blast (Set, 3 Cards, Any)).
-func _create_base_spellbook() -> Array[Spell]:
-	return [
-		Spell.get_from_id("spark"),
-		Spell.get_from_id("flare"), 
-		Spell.get_from_id("blast"), 
-		Spell.get_from_id("twin_bolt"),
-		Spell.get_from_id("weave"),
-		Spell.get_from_id("rapture")
-	]
-
-
 func init() -> void:
 	deck = _create_base_deck()
 	deck_size = deck.size()
-	#spellbook = Spell.get_all_spells() 
-	spellbook = _create_base_spellbook()
+	spellbook = Spell.get_all_spells() 
 	basic_affs = [Card.Affinity.DOT, Card.Affinity.BAMBOO, Card.Affinity.CHARACTER]
 	basic_drags = [Card.Affinity.RED_DRAGON, Card.Affinity.GREEN_DRAGON, Card.Affinity.WHITE_DRAGON]

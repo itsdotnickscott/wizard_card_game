@@ -58,5 +58,7 @@ static func init_library() -> void:
 	}
 
 
-static func get_all_tarots() -> Array:
-	return _library.values()
+static func get_all_tarots() -> Array[Tarot]:
+	var all: Array[Tarot] = []
+	all.assign(_library.values())
+	return all

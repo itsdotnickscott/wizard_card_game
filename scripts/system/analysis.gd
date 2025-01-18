@@ -68,7 +68,9 @@ func sample_probabilities(spell: Spell, hand_size: int) -> void:
 
 ## Given an [Array] of [Card] objects, calculate its damage value when cast with [param spell].
 ## This function assumes all the cards in [param hand] will be scored.
-static func calc_dmg(hand: Array[Card], spell: Spell, effects: Array[Effect] = [], show: bool = false) -> float:
+static func calc_dmg(
+	hand: Array[Card], spell: Spell, effects: Array[Effect] = [], show: bool = false
+) -> float:
 	var base: int = spell.base
 	var multi: float = spell.multi
 
@@ -129,7 +131,6 @@ static func sort_cards(cards: Array[Card], by_rank: bool) -> void:
 		cards.sort_custom(asc_aff)
 	
 
-
 ## Prints various important info of a [param spell] onto the console.
 static func get_spell_info(spell: Spell) -> String:
 	var subtitle := ""
@@ -138,6 +139,8 @@ static func get_spell_info(spell: Spell) -> String:
 		subtitle += str(spell.quantity[i]) + "x "
 
 		match spell.melds[i]:
+			Spell.Meld.LOW_CARD:
+				subtitle += "LOW CARD"
 			Spell.Meld.PAIR:
 				subtitle += "PAIR"
 			Spell.Meld.RUN:
@@ -191,6 +194,13 @@ static func get_hand_from_spell(spell: Spell, hand: Array[Card]) -> Array[Card]:
 	for i in range(spell.parts()):
 		var part := []
 		match spell.melds[i]:
+			Spell.Meld.LOW_CARD:
+				var low: Card = hand[0]
+				for card in hand.slice(1):
+					if card.rank < low.rank:
+						low = card
+				part = [[low]]
+
 			Spell.Meld.PAIR, Spell.Meld.SET:
 				part = _get_valid_sets(hand, spell, i)
 
@@ -215,6 +225,13 @@ static func is_valid_spell(spell: Spell, hand: Array[Card], exact: bool) -> bool
 	for i in range(spell.parts()):
 		var part := []
 		match spell.melds[i]:
+			Spell.Meld.LOW_CARD:
+				var low: Card = hand[0]
+				for card in hand.slice(1):
+					if card.rank < low.rank:
+						low = card
+				part = [[low]]
+
 			Spell.Meld.PAIR, Spell.Meld.SET:
 				part = _get_valid_sets(hand, spell, i)
 
@@ -265,12 +282,12 @@ static func has_pair(hand: Array[Card]) -> bool:
 ## i.e. for a full house, we check all valid three-of-a-kinds with all valid pairs
 ## And pairs have valid combos that include the cards used from the part before which we
 ## don't want to include.
-static func _build_valid_hands(combos: Array, spell: Spell, part:=0, hand:=[]) -> Array:
+static func _build_valid_hands(combos: Array, spell: Spell, part:=0, hand:=[]) -> Array[Array]:
 	# Base case: if we've reached the last part then we've constructed a unique hand
 	if part == combos.size():
 		return [hand]
 
-	var hands := []
+	var hands: Array[Array] = []
 
 	for small_hand in combos[part]:
 		var unique := true
@@ -294,8 +311,8 @@ static func _build_valid_hands(combos: Array, spell: Spell, part:=0, hand:=[]) -
 ## Effectively, if [param cards] has more cards than [param size], it will create different
 ## combinations of them.[br]
 ## Note: Assumes [param cards] is already a valid run.
-static func _get_run_combinations(cards: Array, size: int) -> Array:
-	var combinations := []
+static func _get_run_combinations(cards: Array, size: int) -> Array[Array]:
+	var combinations: Array[Array] = []
 
 	if cards[0].rank == Card.MIN_RANK and cards[-1].rank == Card.BRIDGE_RANK:
 		cards.push_front(cards.pop_back())
@@ -314,7 +331,7 @@ static func _get_run_combinations(cards: Array, size: int) -> Array:
 ## Effectively, if [param cards] has more cards than [param size], it will create different
 ## combinations of them.[br]
 ## Note: Assumes [param cards] is already a valid set.
-static func _get_set_combinations(cards: Array, size: int) -> Array:
+static func _get_set_combinations(cards: Array, size: int) -> Array[Array]:
 	# Base cases
 	if size <= 0:
 		return [[]] # Return a 2D array with an empty combination
@@ -322,7 +339,7 @@ static func _get_set_combinations(cards: Array, size: int) -> Array:
 		return [] # No combinations possible
 
 	# Recursive step: take one card and find combinations of the rest
-	var combinations := []
+	var combinations: Array[Array] = []
 
 	for i in range(cards.size()):
 		var card = cards[i]
@@ -337,7 +354,7 @@ static func _get_set_combinations(cards: Array, size: int) -> Array:
 
 ## Given [param combos], an [Array] of all possible sets, runs, or match anys based on the
 ## [param spell], return the best scoring hand.
-static func _get_unique_valid_hand(spell: Spell, combos: Array) -> Array:
+static func _get_unique_valid_hand(spell: Spell, combos: Array) -> Array[Card]:
 	var combinations := []
 
 	for i in range(spell.parts()):
@@ -359,10 +376,10 @@ static func _get_unique_valid_hand(spell: Spell, combos: Array) -> Array:
 				best = hand
 				high = dmg
 
-		return best
+		return _untyped_arr_to_card_arr(best)
 
 	else:
-		return hands[0]
+		return _untyped_arr_to_card_arr(hands[0])
 
 
 static func _untyped_arr_to_card_arr(arr: Array) -> Array[Card]:
@@ -373,9 +390,9 @@ static func _untyped_arr_to_card_arr(arr: Array) -> Array[Card]:
 
 ## Returns an [Array] of valid hands that could be made from the current part.
 ## "Valid" means that it has the proper quantity of unique [Card] objects.
-static func _get_valid_combinations(spell: Spell, part: int, hands: Array) -> Array:
+static func _get_valid_combinations(spell: Spell, part: int, hands: Array) -> Array[Array]:
 	var combos := _get_set_combinations(hands, spell.quantity[part])
-	var valid := []
+	var valid: Array[Array] = []
 
 	# A combo represents ways to make up one part of the spell given the hand
 	# ie. a 2-pair could represent [[Card(2,0), Card(2,1)], [Card(3,0), Card(3,1)]]
@@ -411,7 +428,7 @@ static func _get_valid_combinations(spell: Spell, part: int, hands: Array) -> Ar
 
 ## Returns all valid sets that could be made with the given [param hand].
 ## It must match the quantity set by the [param spell].
-static func _get_valid_sets(hand: Array[Card], spell: Spell, part: int) -> Array:
+static func _get_valid_sets(hand: Array[Card], spell: Spell, part: int) -> Array[Array]:
 	var matches := []
 
 	for card in hand:
@@ -435,7 +452,7 @@ static func _get_valid_sets(hand: Array[Card], spell: Spell, part: int) -> Array
 		if m.size() >= spell.get_meld_size(part):
 			sets.append(m)
 	
-	var hands := []
+	var hands: Array[Array] = []
 	for s in sets:
 		hands += _get_set_combinations(s, spell.get_meld_size(part))
 
@@ -446,7 +463,7 @@ static func _get_valid_sets(hand: Array[Card], spell: Spell, part: int) -> Array
 ## It must match the quantity set by the [param spell].
 ## Runs have additional checkers for Affinity Combos, Face Cards, and Wild Affinities.[br]
 ## Note: [param hand] must be sorted by rank before using this function.
-static func _get_valid_runs(hand: Array[Card], spell: Spell, part: int) -> Array:
+static func _get_valid_runs(hand: Array[Card], spell: Spell, part: int) -> Array[Array]:
 	var runs := [[hand[0]]]
 
 	for card in hand.slice(1):
@@ -463,7 +480,7 @@ static func _get_valid_runs(hand: Array[Card], spell: Spell, part: int) -> Array
 
 		runs.append([card])
 
-	var hands := []
+	var hands: Array[Array] = []
 	for r in runs:
 		if r.size() >= spell.get_meld_size(part):
 			if r.size() > spell.get_meld_size(part):

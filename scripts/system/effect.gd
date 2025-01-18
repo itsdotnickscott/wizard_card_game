@@ -7,10 +7,9 @@ enum Target {
 
 enum Proc {
 	INSTANT,
-	START_TURN,
+	TURN,
 	SPELL_CHECK,
 	CALC_DMG, 
-	END_TURN
 }
 
 enum Condition {

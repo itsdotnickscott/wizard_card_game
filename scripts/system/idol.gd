@@ -21,21 +21,23 @@ static func init_library() -> void:
 	_library = {
 		"fire": Idol.new(
 			"Infernal Idol", Card.Affinity.FIRE, 
-			Effect.Burn.new(Effect.Target.ENEMY, Effect.Proc.START_TURN, 10, 3),
+			Effect.Burn.new(Effect.Target.ENEMY, Effect.Proc.TURN, 10, 3),
 			Card.Affinity.RED_DRAGON
 		),
 		"water": Idol.new(
 			"Idol of Flowing", Card.Affinity.WATER,
-			Effect.Heal.new(Effect.Target.PLAYER, Effect.Proc.END_TURN, 10, 1),
+			Effect.Heal.new(Effect.Target.PLAYER, Effect.Proc.TURN, 10, 1),
 			Card.Affinity.WHITE_DRAGON
 		),
 		"earth": Idol.new(
 			"Weathered Idol", Card.Affinity.EARTH,
-			Effect.Shield.new(Effect.Target.PLAYER, Effect.Proc.START_TURN, 10, 1),
+			Effect.Shield.new(Effect.Target.PLAYER, Effect.Proc.TURN, 10, 1),
 			Card.Affinity.GREEN_DRAGON
 		)
 	}
 
 
-static func get_all_idols() -> Array:
-	return _library.values()
+static func get_all_idols() -> Array[Idol]:
+	var all: Array[Idol] = []
+	all.assign(_library.values())
+	return all

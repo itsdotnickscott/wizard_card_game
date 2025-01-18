@@ -1,7 +1,7 @@
 extends Control
 
 
-signal escape(val: int)
+signal escape()
 
 
 @onready var escape_label = get_node("EscapePanel/Escape")
@@ -16,4 +16,4 @@ func set_escape_damage(val: int) -> void:
 
 
 func _on_escape_pressed() -> void:
-	escape.emit(damage)
+	escape.emit()

@@ -1,7 +1,7 @@
 class_name Spell extends Resource
 
 
-enum Meld { PAIR, RUN, SET }
+enum Meld { LOW_CARD = -1, PAIR, RUN, SET }
 
 
 static var _library = {}
@@ -36,7 +36,10 @@ func parts() -> int:
 
 
 func get_meld_size(part: int):
-	return 2 if melds[part] == Meld.PAIR else 3
+	match melds[part]:
+		Meld.LOW_CARD: return 1
+		Meld.PAIR: return 2
+		_: return 3
 
 
 func size() -> int:
@@ -57,6 +60,12 @@ func level_up() -> void:
 
 static func init_library() -> void:
 	_library = {
+		"fizzle": Spell.new(
+			"Fizzle", Reward.Rarity.EPIC,
+			[Spell.Meld.LOW_CARD], [1],
+			0, 1.0
+		),
+
 		"spark": Spell.new(
 			"Spark", Reward.Rarity.COMMON,
 			[Spell.Meld.PAIR], [1], 
@@ -99,8 +108,10 @@ static func get_spell_library() -> Dictionary:
 	return _library
 
 
-static func get_all_spells() -> Array:
-	return _library.values()
+static func get_all_spells() -> Array[Spell]:
+	var all: Array[Spell] = []
+	all.assign(_library.values())
+	return all
 
 
 static func get_from_id(id: String) -> Spell:

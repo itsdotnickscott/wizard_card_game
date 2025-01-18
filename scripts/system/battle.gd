@@ -2,7 +2,7 @@ class_name Battle extends Node2D
 
 
 signal player_win()
-signal player_escape()
+#signal player_escape()
 signal player_lose()
 
 
@@ -29,8 +29,7 @@ func start(enemy_info: EnemyInfo) -> void:
 	enemy.reset_enemy(enemy_info)
 	battle_ui.update_display(player, enemy)
 	battle_ui.set_deck_size(player.deck.size())
-
-	# For now, only the player gets a turn
+	
 	player_turn()
 	
 
@@ -48,8 +47,6 @@ func player_turn() -> void:
 	player.draw_to_limit()
 	Analysis.sort_cards(player.hand, battle_ui.sort_toggle.button_pressed)
 
-	process_effects(player, player.start_turn_effects)
-
 	battle_ui.update_display(player, enemy)
 
 
@@ -58,20 +55,7 @@ func enemy_turn() -> void:
 
 	curr_state = State.ENEMY_ATTACK
 
-	process_effects(enemy, enemy.start_turn_effects)
-
-	print("%s - %s" % [enemy.name, enemy.attacks[0].name])
-
-	var dmg := enemy.attacks[0].damage
-	player.take_dmg(dmg)
-
-	battle_ui.update_player_stats(player)
-
-	if player.health <= 0:
-		player_lose.emit()
-		return
-
-	process_effects(enemy, enemy.end_turn_effects)
+	process_enemy_turn_effects(enemy.turn_effects)
 
 	player_turn()
 
@@ -80,29 +64,23 @@ func enemy_turn() -> void:
 func cast_action(selected_cards: Array[Card]) -> void:
 	curr_state = State.PLAYER_ANIMATION
 	var spell := player.cast_cards(selected_cards)
+	print("Player - ", spell.name)
 
-	if spell == null:
-		print("Player - Fizzle! (Invalid Spell)")
-	else:
-		print("Player - ", spell.name)
+	battle_ui.damage_animation(spell, selected_cards, player.dmg_effects)
+	await battle_ui.animation_finished
 
-		battle_ui.damage_animation(spell, selected_cards, player.dmg_effects)
-		await battle_ui.animation_finished
+	var scoring_hand := Analysis.get_hand_from_spell(spell, selected_cards)
+	var dmg := Analysis.calc_dmg(scoring_hand, spell, player.dmg_effects, true)
+	enemy.take_dmg(dmg)
+	total_dmg += dmg
 
-		var scoring_hand := Analysis.get_hand_from_spell(spell, selected_cards)
-		var dmg := Analysis.calc_dmg(scoring_hand, spell, player.dmg_effects, true)
-		enemy.take_dmg(dmg)
-		total_dmg += dmg
+	if enemy.health <= 0:
+		player_win.emit()
+		return
 
-		if enemy.health <= 0:
-			player_win.emit()
-			return
+	idol_synergies(selected_cards)
 
-		idol_synergies(selected_cards)
-
-		battle_ui.update_enemy_stats(enemy, total_dmg, dmg, spell.name)
-
-	process_effects(player, player.end_turn_effects)
+	battle_ui.update_enemy_stats(enemy, total_dmg, dmg, spell.name)
 	
 	enemy_turn()
 
@@ -151,11 +129,11 @@ func use_tarot(tarot: Tarot, selected_cards: Array[Card]) -> void:
 func add_effect(effect: Effect) -> void:
 	if effect.proc != Effect.Proc.SPELL_CHECK:
 		var instance := effect.new_instance()
-		var unit := get_target(effect)
+		var unit = get_target(effect)
 		unit.apply_effect(instance)
 
 
-func process_effects(unit: Unit, effects: Array[Effect]) -> void:
+func process_enemy_turn_effects(effects: Array[Effect]) -> void:
 	for effect in effects:
 		if effect is Effect.Burn:
 			burn_effect(effect)
@@ -170,11 +148,11 @@ func process_effects(unit: Unit, effects: Array[Effect]) -> void:
 			effect.turns -= 1
 
 			if effect.turns > 0:
-				print("%s - %s [%d turns remaining]" % [unit.name, effect.name, effect.turns])
+				print("%s - %s [%d turns remaining]" % [enemy.name, effect.name, effect.turns])
 			else:
-				print("%s - %s [expired]" % [unit.name, effect.name])
+				print("%s - %s [expired]" % [enemy.name, effect.name])
 
-	unit.clear_finished_effects()
+	enemy.clear_finished_effects()
 
 
 func burn_effect(effect: Effect) -> void:
@@ -194,7 +172,7 @@ func shield_effect(effect: Effect) -> void:
 	targ.gain_shield(effect)
 
 
-func get_target(effect: Effect) -> Unit:
+func get_target(effect: Effect) -> Variant:
 	if effect.target == Effect.Target.PLAYER:
 		return player
 	else:
@@ -208,7 +186,7 @@ func discard_action(selected_cards: Array[Card]) -> void:
 
 
 func out_of_mana():
-	escape_ui.set_escape_damage(enemy.attacks[0].damage * 3)
+	escape_ui.set_escape_damage(0)
 	escape_ui.visible = true
 	battle_ui.visible = false
 
@@ -229,15 +207,9 @@ func _on_insta_win_pressed() -> void:
 	player_win.emit()
 
 
-func _on_escape(dmg: int) -> void:
+func _on_escape() -> void:
 	print("Escape!")
-	player.take_dmg(dmg)
-
-	if player.health <= 0:
-		player_lose.emit()
-		return
-	
-	player_escape.emit()
+	player_lose.emit()
 
 	escape_ui.visible = false
 	battle_ui.visible = true

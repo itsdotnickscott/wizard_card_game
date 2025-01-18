@@ -45,5 +45,7 @@ static func init_library() -> void:
 	}
 
 
-static func get_all_relics() -> Array:
-	return _library.values()
+static func get_all_relics() -> Array[Relic]:
+	var all: Array[Relic] = []
+	all.assign(_library.values())
+	return all

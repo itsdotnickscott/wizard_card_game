@@ -112,8 +112,6 @@ func update_enemy(enemy: Enemy):
 
 
 func update_player_stats(player: Player) -> void:
-	$PlayerStats/HPValue.text = "%d/%d" % [player.health, player.max_health]
-	$PlayerStats/ShieldValue.text = "%d" % [player.total_shield()]
 	$PlayerStats/ManaValue.text = "%d/%d" % [player.mana, player.max_mana]
 	$PlayerStats/DiscardValue.text = "%d/%d" % [player.discards_left, player.max_discards]
 	$PlayerStats/DeckValue.text = "%d/%d" % [player.deck.size(), deck_size]
@@ -132,6 +130,7 @@ func update_player_spells(spells: Array[Spell]) -> void:
 	# Delete current labels
 	for child in player_spell_ui.get_children():
 		# Can be queue freed because spell is represented as a label
+		player_spell_ui.remove_child(child)
 		child.queue_free()
 
 	# Create new labels for each spell
@@ -148,6 +147,7 @@ func update_player_hand(hand: Array[Card]) -> void:
 	for child in player_hand_ui.get_children():
 		_on_card_update_selected(child, false)
 		# remove_child is used instead of queue_free because Cards need to stay alive in player hand
+		player_hand_ui.remove_child(child)
 		child.queue_free()
 
 	# Create new buttons based on player hand
@@ -185,7 +185,6 @@ func update_enemy_stats(
 ) -> void:
 	$EnemyStats/NameValue.text = "❗  %s  ❗" % [enemy.name]
 	$EnemyStats/HPValue.text = "%d/%d" % [enemy.health, enemy.max_health]
-	$EnemyStats/AtkValue.text = "%d" % [enemy.attacks[0].damage]
 	if new_dmg != -1:
 		$EnemyStats/LastSpellValue.text = "%d  (%s)" % [new_dmg, spell_name]
 	if tot_dmg != -1:

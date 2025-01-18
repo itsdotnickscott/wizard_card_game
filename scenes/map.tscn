@@ -24,7 +24,6 @@ visible = false
 [node name="DefeatUI" parent="." instance=ExtResource("6_ylwqa")]
 visible = false
 
-[connection signal="player_escape" from="Battle" to="." method="_on_next_location"]
 [connection signal="player_lose" from="Battle" to="." method="_on_battle_player_lose"]
 [connection signal="player_win" from="Battle" to="." method="_on_battle_player_win"]
 [connection signal="location_pressed" from="MapUI" to="." method="_on_location_pressed"]
