@@ -25,7 +25,6 @@ var hand: Array[Card] = []
 var discard: Array[Card] = []
 
 var basic_affs: Array[Card.Affinity] = []
-var basic_drags: Array[Card.Affinity] = []
 
 var dmg_effects: Array[Effect] = []
 
@@ -115,16 +114,13 @@ func gain_idol(idol: Idol) -> void:
 		idols.append(idol)
 		
 		var aff: Card.Affinity = basic_affs.pick_random()
-		var drag: Card.Affinity = idol.dragon_pref if idol.dragon_pref in basic_drags \
-		else basic_drags.pick_random()
 
 		reset_deck()
 		for card in deck:
-			if card.affinity == aff or card.affinity == drag:
+			if card.affinity == aff:
 				card.change_aff(idol.affinity)
 
 		basic_affs.erase(aff)
-		basic_drags.erase(drag)
 
 
 func gain_relic(relic: Relic) -> void:
@@ -145,13 +141,6 @@ func get_curr_affs() -> Array[Card.Affinity]:
 	return idol_affs + basic_affs
 
 
-func get_curr_drags() -> Array[Card.Affinity]:
-	var idol_affs: Array[Card.Affinity] = []
-	for idol in idols:
-		idol_affs.append(idol.affinity)
-	return idol_affs + basic_drags
-
-
 ## Returns a 30-card_scene [Deck], with three of each value (2-10), and a Face card (W)
 ## split up evenly among three different affinities (fire, water, earth).[br]
 ## Face cards that are worth 11 damage and can be used in runs before 2 and after 10.
@@ -159,7 +148,7 @@ func _create_base_deck() -> Array[Card]:
 	var new_deck: Array[Card] = []
 
 	var val := 1
-	var aff := 3
+	var aff := 0
 
 	for t in range(3):
 		val = 1
@@ -169,15 +158,15 @@ func _create_base_deck() -> Array[Card]:
 				new_deck.append(new_card)
 				aff += 1
 			val += 1
-			aff = 3
+			aff = 0
 
-	aff = 3
+	aff = 0
 	for i in range(3):
 		for j in range(3):
 			var new_card := Card.new(Card.Type.DRAGON, aff)
 			new_deck.append(new_card)
 			aff += 1
-		aff = 3
+		aff = 0
 
 	var wind := 1
 	for i in range(3):
@@ -194,5 +183,4 @@ func init() -> void:
 	deck = _create_base_deck()
 	deck_size = deck.size()
 	spellbook = Spell.get_all_spells() 
-	basic_affs = [Card.Affinity.DOT, Card.Affinity.BAMBOO, Card.Affinity.CHARACTER]
-	basic_drags = [Card.Affinity.RED_DRAGON, Card.Affinity.GREEN_DRAGON, Card.Affinity.WHITE_DRAGON]
+	basic_affs = [Card.Affinity.FIRE, Card.Affinity.WATER, Card.Affinity.EARTH]

@@ -1,7 +1,7 @@
 class_name Spell extends Resource
 
 
-enum Meld { LOW_CARD = -1, PAIR, RUN, SET }
+enum Meld { HIGH_CARD = -1, PAIR, RUN, SET }
 
 
 static var _library = {}
@@ -17,14 +17,15 @@ static var _library = {}
 
 func _init(
 	spell_name: String, rarity: Reward.Rarity,
-	combo: Array[Meld], quant: Array[int], base_dmg: int, mult: float
+	meld_combo: Array[Meld], quant: Array[int], 
+	base_dmg: int, mult: float
 ) -> void:
-	if combo.size() != quant.size():
-		print("invalid spell - combo and quant params need to be the same size")
+	if meld_combo.size() != quant.size():
+		print("invalid spell - meld comboand quant params all need to be the same size")
 		return
 
 	name = spell_name
-	melds = combo
+	melds = meld_combo
 	quantity = quant
 	base = base_dmg
 	multi = mult
@@ -37,7 +38,7 @@ func parts() -> int:
 
 func get_meld_size(part: int):
 	match melds[part]:
-		Meld.LOW_CARD: return 1
+		Meld.HIGH_CARD: return 1
 		Meld.PAIR: return 2
 		_: return 3
 
@@ -62,8 +63,8 @@ static func init_library() -> void:
 	_library = {
 		"fizzle": Spell.new(
 			"Fizzle", Reward.Rarity.EPIC,
-			[Spell.Meld.LOW_CARD], [1],
-			0, 1.0
+			[Spell.Meld.HIGH_CARD], [1],
+			0, 0.5
 		),
 
 		"spark": Spell.new(

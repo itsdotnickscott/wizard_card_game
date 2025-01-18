@@ -14,17 +14,10 @@ enum Type {
 
 enum Affinity {
 	NONE = -1,
-	DOT,
-	BAMBOO,
-	CHARACTER,
 	FIRE,
 	WATER,
 	EARTH,
 	WIND,
-	ARCANA,
-	RED_DRAGON,
-	GREEN_DRAGON,
-	WHITE_DRAGON,
 }
 
 enum Wind { NONE, EAST, SOUTH, WEST, NORTH }
@@ -83,18 +76,6 @@ func get_affinity_str() -> String:
 
 static func get_affinity_str_from(aff: Affinity) -> String:
 	match aff:
-		Affinity.DOT:
-			return "🧿"
-		Affinity.BAMBOO:
-			return "🎋"
-		Affinity.CHARACTER:
-			return "🈺"
-		Affinity.RED_DRAGON:
-			return "🔴"
-		Affinity.GREEN_DRAGON:
-			return "🟢"
-		Affinity.WHITE_DRAGON:
-			return "⚪"
 		Affinity.FIRE:
 			return "🔥"
 		Affinity.WATER:
@@ -103,8 +84,6 @@ static func get_affinity_str_from(aff: Affinity) -> String:
 			return "🍃"
 		Affinity.WIND:
 			return "🌫️"
-		Affinity.ARCANA:
-			return "🎆"
 		_:
 			return "_"
 

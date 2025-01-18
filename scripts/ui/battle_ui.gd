@@ -70,7 +70,7 @@ func damage_animation(spell: Spell, hand: Array[Card], effects: Array[Effect]) -
 
 	await get_tree().create_timer(TIME * 2).timeout
 	damage_ui.damage_label()
-	await get_tree().create_timer(1.5).timeout
+	await get_tree().create_timer(1.25).timeout
 
 	damage_ui.visible = false
 	animation_finished.emit()

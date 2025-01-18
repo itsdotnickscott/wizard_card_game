@@ -139,8 +139,8 @@ static func get_spell_info(spell: Spell) -> String:
 		subtitle += str(spell.quantity[i]) + "x "
 
 		match spell.melds[i]:
-			Spell.Meld.LOW_CARD:
-				subtitle += "LOW CARD"
+			Spell.Meld.HIGH_CARD:
+				subtitle += "HIGH CARD"
 			Spell.Meld.PAIR:
 				subtitle += "PAIR"
 			Spell.Meld.RUN:
@@ -194,14 +194,14 @@ static func get_hand_from_spell(spell: Spell, hand: Array[Card]) -> Array[Card]:
 	for i in range(spell.parts()):
 		var part := []
 		match spell.melds[i]:
-			Spell.Meld.LOW_CARD:
-				var low: Card = hand[0]
-				for card in hand.slice(1):
-					if card.rank < low.rank:
-						low = card
-				part = [[low]]
+			Spell.Meld.HIGH_CARD:
+				for card in hand:
+					part.append([card])
 
-			Spell.Meld.PAIR, Spell.Meld.SET:
+			Spell.Meld.PAIR:
+				part = _get_valid_pairs(hand, spell, i)
+				
+			Spell.Meld.SET:
 				part = _get_valid_sets(hand, spell, i)
 
 			Spell.Meld.RUN:
@@ -225,14 +225,14 @@ static func is_valid_spell(spell: Spell, hand: Array[Card], exact: bool) -> bool
 	for i in range(spell.parts()):
 		var part := []
 		match spell.melds[i]:
-			Spell.Meld.LOW_CARD:
-				var low: Card = hand[0]
-				for card in hand.slice(1):
-					if card.rank < low.rank:
-						low = card
-				part = [[low]]
+			Spell.Meld.HIGH_CARD:
+				for card in hand:
+					part.append([card])
 
-			Spell.Meld.PAIR, Spell.Meld.SET:
+			Spell.Meld.PAIR:
+				part = _get_valid_pairs(hand, spell, i)
+				
+			Spell.Meld.SET:
 				part = _get_valid_sets(hand, spell, i)
 
 			Spell.Meld.RUN:
@@ -275,6 +275,135 @@ static func has_pair(hand: Array[Card]) -> bool:
 
 
 ## =====  HELPER FUNCTIONS  ===== ##
+
+
+static func _sort_cards_into_arrays(by_rank: bool, by_aff: bool, cards: Array[Card]) -> Array[Array]:
+	var sorted: Array[Array] = []
+
+	# Sort all cards by rank / wind
+	for card in cards:
+		var found := false
+
+		for arr in sorted:
+			if by_rank:
+				if card.rank == Card.WIND_RANK and arr[0].wind != card.wind:
+					continue
+
+				if arr[0].rank == card.rank:
+					if by_aff and card.affinity != arr[0].affinity:
+						continue
+					arr.append(card)
+					found = true
+					break
+
+			elif by_aff:
+				if card.affinity == arr[0].affinity:
+					arr.append(card)
+					found = true
+					break
+
+		if not found:
+			sorted.append([card])
+	
+	return sorted
+
+
+## Returns all valid pairs that could be made with the given [param hand].
+## It must match the quantity set by the [param spell].
+static func _get_valid_pairs(hand: Array[Card], spell: Spell, part: int) -> Array[Array]:
+	var matches := _sort_cards_into_arrays(true, true, hand)
+	var sets := []
+
+	for arr in matches:
+		if arr.size() >= spell.get_meld_size(part):
+			sets.append(arr)
+
+	return _filter_combos_to_size(sets, spell.get_meld_size(part))
+
+
+## Returns all valid runs that could be made with the given [param hand].
+## It must match the quantity set by the [param spell].
+## Runs have additional checkers for Affinity Combos, Face Cards, and Wild Affinities.[br]
+## Note: [param hand] must be sorted by rank before using this function.
+static func _get_valid_runs(hand: Array[Card], spell: Spell, part: int) -> Array[Array]:
+	var matches := _sort_cards_into_arrays(true, true, hand)
+	var runs := []
+
+	var find_next_idx := func(match: bool, i: int, affs: Array[Card.Affinity] = []) -> int:
+		var travel := 1
+		for arr in matches.slice(i + 1):
+			# Card is next in sequence
+			if arr[0].rank == matches[i][0].rank + 1:
+				if (match and arr[0].affinity == hand[i].affinity) or \
+				(not match and not arr[0].affinity in affs):
+					return i + travel
+			travel += 1
+		return -1
+	
+	var idx = 0
+	for arr in matches:
+		# When t is 0 it searches for matching runs and when t is 1 it searches for unique runs
+		for t in range(2):
+			var run := [arr[0]]
+			var affs: Array[Card.Affinity] = [arr[0].affinity]
+			var next = find_next_idx.call(true, idx) if t == 0 \
+				else find_next_idx.call(false, idx, affs)
+
+			while next != -1:
+				run.append(matches[next][0])
+
+				if t == 0:
+					next = find_next_idx.call(true, next)
+				else:
+					affs.append(matches[next][0].affinity)
+					next = find_next_idx.call(false, next, affs)
+
+			if run.size() >= spell.get_meld_size(part):
+				runs.append(run)
+
+		idx += 1
+
+	return _filter_combos_to_size(runs, spell.get_meld_size(part))
+	
+
+## Returns all valid sets that could be made with the given [param hand].
+## It must match the quantity set by the [param spell].
+static func _get_valid_sets(hand: Array[Card], spell: Spell, part: int) -> Array[Array]:
+	var by_rank := _sort_cards_into_arrays(true, false, hand)
+	var sets := []
+
+	# Find matching sets eith either all matching or all unique affinities
+	for rank in by_rank:
+		var by_aff := _sort_cards_into_arrays(false, true, _untyped_arr_to_card_arr(rank))
+
+		# Only one affinity
+		if by_aff.size() == 1:
+			# Check for enough cards
+			if by_aff[0].size() >= spell.get_meld_size(part):
+				sets.append(by_aff[0]) 
+		
+		# Enough unique affinities
+		while by_aff.size() >= spell.get_meld_size(part):
+			# Take a card from each affinity
+			var cards := []
+			for i in range(by_aff.size()):
+				cards.append(by_aff[i].pop_front())
+			sets.append(cards)
+
+			# Remove any empty arrays
+			var non_empty := func(x: Array) -> bool:
+				return not x.is_empty()
+			by_aff = by_aff.filter(non_empty)
+
+	return _filter_combos_to_size(sets, spell.get_meld_size(part))
+
+
+static func _filter_combos_to_size(combos: Array, size: int) -> Array[Array]:
+	var hands: Array[Array] = []
+	for arr in combos:
+		hands += _get_set_combinations(arr, size)
+
+	return hands
 
 
 ## This function recursively combines all valid combinations through each spell part. It checks
@@ -424,69 +553,3 @@ static func _get_valid_combinations(spell: Spell, part: int, hands: Array) -> Ar
 		if used.size() == spell.get_meld_size(part) * spell.quantity[part]:
 			valid.append(used)
 	return valid
-
-
-## Returns all valid sets that could be made with the given [param hand].
-## It must match the quantity set by the [param spell].
-static func _get_valid_sets(hand: Array[Card], spell: Spell, part: int) -> Array[Array]:
-	var matches := []
-
-	for card in hand:
-		var found := false
-
-		for m in matches:
-			if card.rank == Card.WIND_RANK and m[0].wind != card.wind:
-				continue
-
-			if m[0].rank == card.rank and m[0].affinity == card.affinity:
-				m.append(card)
-				found = true
-				continue
-
-		if not found:
-			matches.append([card])
-
-	var sets := []
-
-	for m in matches:
-		if m.size() >= spell.get_meld_size(part):
-			sets.append(m)
-	
-	var hands: Array[Array] = []
-	for s in sets:
-		hands += _get_set_combinations(s, spell.get_meld_size(part))
-
-	return hands
-
-
-## Returns all valid runs that could be made with the given [param hand].
-## It must match the quantity set by the [param spell].
-## Runs have additional checkers for Affinity Combos, Face Cards, and Wild Affinities.[br]
-## Note: [param hand] must be sorted by rank before using this function.
-static func _get_valid_runs(hand: Array[Card], spell: Spell, part: int) -> Array[Array]:
-	var runs := [[hand[0]]]
-
-	for card in hand.slice(1):
-		for r in runs:
-			if (
-				# Card is next rank in set
-				(card.rank == r[-1].rank + 1) or   
-				# Card is a W (Face card) and is bridging a 2 3 run
-				(card.rank == Card.BRIDGE_RANK and r[0].rank == Card.MIN_RANK 
-				and r[-1].rank != Card.BRIDGE_RANK)
-			):
-				if r[-1].affinity == card.affinity:
-					r.append(card)
-
-		runs.append([card])
-
-	var hands: Array[Array] = []
-	for r in runs:
-		if r.size() >= spell.get_meld_size(part):
-			if r.size() > spell.get_meld_size(part):
-				hands += _get_run_combinations(r, spell.get_meld_size(part))
-			elif r.size() == spell.get_meld_size(part):
-				hands.append(r)
-
-	#print(hands)
-	return hands

@@ -8,7 +8,7 @@ func _ready():
 	tween.tween_property(self, "position", Vector2(position.x + 70, position.y), 1.0)\
 	.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 
-	tween.tween_property(self, "modulate", Color(255, 0, 0, 0), 0.5)\
+	tween.tween_property(self, "modulate", Color(255, 0, 0, 0), 0.25)\
 	.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 
 	tween.tween_callback(self.queue_free)
